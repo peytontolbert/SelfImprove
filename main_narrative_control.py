@@ -331,9 +331,14 @@ async def main():
     
     # Initialize spreadsheet manager
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
-    # Example: Read data from the spreadsheet
+    # Example: Read data from the spreadsheet and log it
     data = spreadsheet_manager.read_data("A1:C10")
     logger.info(f"Data read from spreadsheet: {data}")
+
+    # Example: Write data to the spreadsheet
+    new_data = [["Task", "Status"], ["Improve logging", "Completed"], ["Refactor code", "In Progress"]]
+    spreadsheet_manager.write_data((5, 1), new_data)
+    logger.info("New data written to spreadsheet")
 
     # Start the narrative-controlled improvement process
     try:
