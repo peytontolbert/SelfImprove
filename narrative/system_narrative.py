@@ -102,11 +102,13 @@ class SystemNarrative:
             try:
                 # Log the start of system state analysis
                 await self.log_state("Analyzing current system state")
+                self.logger.info("System state analysis started.")
                 self.logger.info("Starting system state analysis.")
                 system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
                 # Log the start of generating improvement suggestions
                 await self.log_state("Generating improvement suggestions")
+                self.logger.info("Improvement suggestions generation started.")
                 self.logger.info("Generating improvement suggestions.")
                 improvements = await si.analyze_performance(system_state)
 
@@ -145,6 +147,7 @@ class SystemNarrative:
 
                 # Log the start of additional system improvement tasks
                 await self.log_state("Performing additional system improvement tasks")
+                self.logger.info("Additional system improvement tasks started.")
                 self.logger.info("Performing additional system improvement tasks.")
                 await task_queue.manage_orchestration()
                 code_analysis = await ca.analyze_code(ollama, "current_system_code")
@@ -165,6 +168,7 @@ class SystemNarrative:
                     await self.log_state("Deployment deferred based on Ollama's decision")
 
                 await self.log_state("Performing version control operations")
+                self.logger.info("Version control operations started.")
                 changes = "Recent system changes"
                 await vcs.commit_changes(ollama, changes)
 

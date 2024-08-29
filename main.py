@@ -166,6 +166,7 @@ class SelfImprovement:
             except Exception as e:
                 logger.error(f"Error during continuous improvement: {str(e)}")
                 await self.ollama.adaptive_error_handling(e, {"context": "continuous_improvement"})
+                await narrative.log_error(f"Error during continuous improvement: {str(e)}")
             await asyncio.sleep(3600)  # Run every hour
 
     async def get_system_metrics(self):
@@ -299,6 +300,7 @@ async def main():
     
     # Start continuous improvement
     await narrative.log_state("Starting continuous improvement process")
+    logger.info("Continuous improvement process initialized.")
     # Start the improvement process
     await si.improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
     # Log the start of the improvement process
