@@ -8,7 +8,8 @@ class ReinforcementLearningModule:
     - get_feedback: Provides feedback based on system metrics for adaptive learning.
     """
 
-    def __init__(self):
+    def __init__(self, ollama):
+        self.ollama = ollama
         self.logger = logging.getLogger(__name__)
 
     async def get_feedback(self, metrics):
