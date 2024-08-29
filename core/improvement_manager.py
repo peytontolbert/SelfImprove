@@ -16,26 +16,28 @@ class ImprovementManager:
             response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="improvement_suggestion")
             suggestions = response.get("suggestions", [])
             self.logger.info(f"Suggested improvements: {suggestions}")
+            # Log the suggestions for future analysis
+            self.logger.info(f"Suggested improvements: {suggestions}")
             return suggestions
         except Exception as e:
             self.logger.error(f"Error suggesting improvements: {str(e)}")
+            # Consider retrying the suggestion process or notifying an admin
             return []
 
     async def validate_improvements(self, improvements: List[str]) -> List[str]:
         try:
-            try:
-                validated = []
-                for improvement in improvements:
+            validated = []
+            for improvement in improvements:
+                try:
                     validation = await self.ollama.validate_improvement(improvement)
                     if validation.get('is_valid', False):
                         validated.append(improvement)
                     else:
                         self.logger.info(f"Invalid improvement suggestion: {improvement}")
-                self.logger.info(f"Validated improvements: {validated}")
-                return validated
-            except Exception as e:
-                self.logger.error(f"Error validating improvements: {str(e)}")
-                return []
+                except Exception as e:
+                    self.logger.error(f"Error validating improvement '{improvement}': {str(e)}")
+            self.logger.info(f"Validated improvements: {validated}")
+            return validated
         except Exception as e:
             self.logger.error(f"Error validating improvements: {str(e)}")
             return []
@@ -52,6 +54,10 @@ class ImprovementManager:
                     result = await self.apply_system_update(implementation['system_update'])
                     results.append(result)
             self.logger.info(f"Applied improvements: {results}")
+            # Log the results for analysis and feedback
+            self.logger.info(f"Applied improvements: {results}")
+            # Implement a feedback loop to learn from the results
+            await self.provide_feedback_on_improvements(improvements, results)
             return results
         except Exception as e:
             self.logger.error(f"Error applying improvements: {str(e)}")
@@ -64,3 +70,15 @@ class ImprovementManager:
     async def apply_system_update(self, system_update: str) -> Dict[str, Any]:
         self.logger.info(f"Updating system: {system_update}")
         return {"status": "success", "message": "System update applied"}
+    async def provide_feedback_on_improvements(self, improvements: List[str], results: List[Dict[str, Any]]):
+        """Provide feedback on the applied improvements to refine future suggestions."""
+        feedback_data = {"improvements": improvements, "results": results}
+        try:
+            feedback_response = await self.ollama.query_ollama(
+                self.ollama.system_prompt,
+                f"Analyze the results of these improvements and provide feedback: {feedback_data}",
+                task="improvement_feedback"
+            )
+            self.logger.info(f"Feedback on improvements: {feedback_response}")
+        except Exception as e:
+            self.logger.error(f"Error providing feedback on improvements: {str(e)}")
