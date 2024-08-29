@@ -64,12 +64,24 @@ class ImprovementManager:
             return []
 
     async def apply_code_change(self, code_change: str) -> Dict[str, Any]:
-        self.logger.info(f"Applying code change: {code_change}")
-        return {"status": "success", "message": "Code change applied"}
+        try:
+            self.logger.info(f"Applying code change: {code_change}")
+            # Implement the actual code change logic here
+            # For example, execute a script or modify a file
+            return {"status": "success", "message": "Code change applied"}
+        except Exception as e:
+            self.logger.error(f"Failed to apply code change: {str(e)}")
+            return {"status": "failure", "message": f"Code change failed: {str(e)}"}
 
     async def apply_system_update(self, system_update: str) -> Dict[str, Any]:
-        self.logger.info(f"Updating system: {system_update}")
-        return {"status": "success", "message": "System update applied"}
+        try:
+            self.logger.info(f"Updating system: {system_update}")
+            # Implement the actual system update logic here
+            # For example, restart a service or update a configuration
+            return {"status": "success", "message": "System update applied"}
+        except Exception as e:
+            self.logger.error(f"Failed to update system: {str(e)}")
+            return {"status": "failure", "message": f"System update failed: {str(e)}"}
     async def provide_feedback_on_improvements(self, improvements: List[str], results: List[Dict[str, Any]]):
         """Provide feedback on the applied improvements to refine future suggestions."""
         feedback_data = {"improvements": improvements, "results": results}
