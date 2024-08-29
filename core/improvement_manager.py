@@ -77,12 +77,14 @@ class ImprovementManager:
     async def apply_system_update(self, system_update: str) -> Dict[str, Any]:
         try:
             self.logger.info(f"Updating system: {system_update}")
-            # Restart a service or update a configuration
-            subprocess.run(["./apply_system_update.sh", system_update], check=True)
+            # Ensure the update script is executed
+            result = subprocess.run(["./apply_system_update.sh", system_update], check=True, capture_output=True, text=True)
             self.logger.info(f"System update executed successfully: {system_update}")
+            self.logger.debug(f"Update script output: {result.stdout}")
             return {"status": "success", "message": "System update applied successfully"}
-        except Exception as e:
+        except subprocess.CalledProcessError as e:
             self.logger.error(f"Failed to update system: {str(e)}")
+            self.logger.debug(f"Update script error output: {e.stderr}")
             return {"status": "failure", "message": f"System update failed: {str(e)}"}
     async def proactive_monitoring(self):
         """Monitor system metrics and detect potential issues proactively."""
