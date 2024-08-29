@@ -25,6 +25,9 @@ class VersionControlSystem:
             subprocess.run(["git", "add", "."], check=True)
             subprocess.run(["git", "commit", "-m", commit_message], check=True)
             logger.info("Changes committed to version control system.")
+            # Suggest branching strategy
+            branching_strategy = await ollama.query_ollama("version_control", "Suggest a branching strategy")
+            logger.info(f"Branching strategy suggested: {branching_strategy}")
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to commit changes: {e}")
         logger.info(f"Committing changes: {changes}")

@@ -73,7 +73,9 @@ class OllamaInterface:
     async def improve_system(self, performance_metrics: Dict[str, Any], context: Dict[str, Any] = None) -> List[str]:
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"
         response = await self.query_ollama("system_improvement", prompt, context)
-        return response.get("suggestions", [])
+        # Suggest resource allocation and scaling strategies
+        scaling_suggestions = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {performance_metrics}", context)
+        return response.get("suggestions", []) + scaling_suggestions.get("scaling_suggestions", [])
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
         prompt = f"Implement this improvement: {improvement}. Consider the system's current architecture and capabilities. Provide a detailed plan for implementation."
@@ -98,6 +100,8 @@ class OllamaInterface:
         """Update the system prompt dynamically."""
         self.system_prompt = new_prompt
         self.logger.info(f"System prompt updated: {new_prompt}")
+        # Save the updated prompt to the knowledge base
+        await self.knowledge_base.add_entry("system_prompt", {"prompt": new_prompt})
 
     async def cached_query(self, prompt: str, task: str) -> Dict[str, Any]:
         """Cache frequently used prompts to reduce API calls."""
@@ -116,7 +120,9 @@ class OllamaInterface:
         context_str = json.dumps(context)
         prompt = f"Generate a prompt for the task '{task}' with the following context: {context_str}"
         response = await self.query_ollama(self.system_prompt, prompt)
-        return response.get("generated_prompt", "")
+        # Refine the prompt for better user understanding
+        refined_prompt = await self.refine_prompt(response.get("generated_prompt", ""), task)
+        return refined_prompt
 
     async def handle_multi_step_task(self, task: str, steps: List[str]) -> List[Dict[str, Any]]:
         """Handle a multi-step task by breaking it down and processing each step."""
@@ -137,6 +143,9 @@ class OllamaInterface:
         """Manage prompt templates dynamically."""
         self.prompt_templates[template_name] = template
         self.logger.info(f"Prompt template '{template_name}' added/updated")
+        # Generate documentation for the prompt template
+        documentation = await self.query_ollama("documentation_generation", f"Generate documentation for the prompt template: {template_name}")
+        self.logger.info(f"Documentation generated for '{template_name}': {documentation}")
 
     async def use_prompt_template(self, template_name: str, **kwargs) -> str:
         """Use a prompt template with given parameters."""

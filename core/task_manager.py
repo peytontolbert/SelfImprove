@@ -12,8 +12,10 @@ class TaskQueue:
         # Use Ollama to decide on task creation and management
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I create this task: {task_details}", task="task_management")
         if decision.get('create_task', False):
-            self.tasks.append(task_details)
-            logger.info(f"Task created: {task_details}")
+            # Decompose the task into subtasks
+            subtasks = await self.ollama.query_ollama(self.ollama.system_prompt, f"Decompose this task into subtasks: {task_details}", task="task_decomposition")
+            self.tasks.extend(subtasks.get('subtasks', [task_details]))
+            logger.info(f"Task created with subtasks: {subtasks.get('subtasks', [task_details])}")
         else:
             logger.info(f"Task creation declined: {task_details}")
 

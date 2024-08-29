@@ -12,9 +12,14 @@ class ErrorHandler:
         self.log_error(error)
         recovery_suggestion = await ollama_interface.handle_error(error)
         
-        if recovery_suggestion and recovery_suggestion.get('decompose_task', False):
-            subtasks = await self.decompose_task(ollama_interface, recovery_suggestion.get('original_task'))
-            recovery_suggestion['subtasks'] = subtasks
+        if recovery_suggestion:
+            if recovery_suggestion.get('decompose_task', False):
+                subtasks = await self.decompose_task(ollama_interface, recovery_suggestion.get('original_task'))
+                recovery_suggestion['subtasks'] = subtasks
+            if recovery_suggestion.get('retry', False):
+                self.logger.info("Retrying the operation as suggested by Ollama.")
+            if recovery_suggestion.get('alternate_approach', False):
+                self.logger.info("Considering an alternate approach as suggested by Ollama.")
         else:
             self.logger.error("No valid recovery suggestion received from Ollama.")
             recovery_suggestion = {"error": "No valid recovery suggestion"}

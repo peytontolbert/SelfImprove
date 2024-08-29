@@ -33,6 +33,9 @@ class SystemNarrative:
         await self.log_with_ollama(message, context)
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
+        # Analyze feedback and suggest improvements
+        feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}", task="feedback_analysis")
+        self.logger.info(f"Feedback analysis: {feedback}")
 
     async def log_decision(self, decision, rationale=None):
         """Log decisions with detailed rationale."""
@@ -139,6 +142,9 @@ class SystemNarrative:
                         await eh.handle_error(ollama, error)
 
                 await self.log_state("Completed improvement cycle")
+                # Consult Ollama on ethical implications
+                ethical_considerations = await ollama.query_ollama("ethical_consideration", "Assess the ethical implications of recent system changes")
+                self.logger.info(f"Ethical considerations: {ethical_considerations}")
 
             except Exception as e:
                 await self.log_error(f"Error in control_improvement_process: {str(e)}")
