@@ -51,7 +51,15 @@ class KnowledgeBase:
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
 
-    async def analyze_knowledge_base(self):
+    async def get_longterm_memory(self):
+        """Retrieve long-term memory entries."""
+        entries = await self.list_entries()
+        longterm_memory = {}
+        for entry in entries:
+            data = await self.get_entry(entry)
+            longterm_memory[entry] = data
+        self.logger.info(f"Retrieved long-term memory: {longterm_memory}")
+        return longterm_memory
         entries = await self.list_entries()
         analysis = await self.ollama.query_ollama("knowledge_base", f"Analyze the current state of the knowledge base with these entries: {entries}")
         analysis_result = analysis.get('analysis', "No analysis available")

@@ -10,9 +10,12 @@ class SystemNarrative:
 
     async def generate_thoughts(self, context=None):
         """Generate detailed thoughts or insights about the current state and tasks."""
+        longterm_memory = await self.ollama.knowledge_base.get_longterm_memory()
         prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
         if context:
             prompt += f" | Context: {context}"
+        if longterm_memory:
+            prompt += f" | Long-term Memory: {longterm_memory}"
         ollama_response = await self.ollama.query_ollama("thought_generation", prompt)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
