@@ -129,22 +129,30 @@ async def main():
             recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
 
-    # Monitor system performance
-    performance_metrics = {"task_count": len(task_queue)}
-    improvements = await ollama.improve_system(performance_metrics)
-    ui.display_output(f"Suggested improvements: {improvements}")
-        
-    # Monitor system performance
-    performance_metrics = {"task_count": len(task_queue)}
-    improvements = await ollama.improve_system(performance_metrics)
-    ui.display_output(f"Suggested improvements: {improvements}")
-    try:
-        prompt = pm.load_prompt("example_task")
-        response = await ollama.query_ollama(ollama.system_prompt, prompt)
-        ui.display_output(response)
-    except Exception as e:
-        recovery = await eh.handle_error(ollama, e)
-        ui.display_output(f"Error handled: {recovery}")
+    # Implement feedback loop for system improvement
+    while True:
+        performance_metrics = {"task_count": len(task_queue)}
+        improvements = await ollama.improve_system(performance_metrics)
+        ui.display_output(f"Suggested improvements: {improvements}")
+
+        # Refine user interaction process
+        user_input = ui.get_input()
+        if user_input.lower() == "exit":
+            break
+
+        try:
+            # Load and refine prompt
+            prompt = pm.load_prompt("example_task")
+            refined_prompt = await ollama.refine_prompt(prompt, "example_task")
+
+            # Query Ollama with refined prompt
+            response = await ollama.query_ollama(ollama.system_prompt, refined_prompt)
+            ui.display_output(response)
+
+        except Exception as e:
+            # Handle errors using ErrorHandler
+            recovery = await eh.handle_error(ollama, e)
+            ui.display_output(f"Error handled: {recovery}")
 
 if __name__ == "__main__":
     asyncio.run(main())
