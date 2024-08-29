@@ -224,6 +224,8 @@ class SelfImprovement:
             logger.warning(f"Attempt {attempt + 1} failed, retrying...")
         logger.error("All attempts failed, returning None")
         return None
+
+async def main():
     narrative = SystemNarrative()
     await narrative.log_state("Initializing system components")
     ollama = OllamaInterface()
