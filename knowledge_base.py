@@ -191,7 +191,7 @@ class KnowledgeBase:
             elif isinstance(data, list):
                 return [extract_key_insights(item) for item in data]
             else:
-                return str(data)[:50]  # Limit individual entries to 50 characters
+                return str(data)[:500]  # Limit individual entries to 50 characters
 
         memory_str = json.dumps(extract_key_insights(memory))
         if len(memory_str) > max_length:
