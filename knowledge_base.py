@@ -182,6 +182,14 @@ class KnowledgeBase:
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
 
+    def summarize_memory(self, memory, max_length=1000):
+        """Summarize or trim the memory to fit within the context limits."""
+        memory_str = json.dumps(memory)
+        if len(memory_str) > max_length:
+            # Implement a simple summarization strategy
+            return memory_str[:max_length] + "..."
+        return memory_str
+
     async def get_longterm_memory(self):
         """Retrieve long-term memory entries."""
         if not self.longterm_memory:

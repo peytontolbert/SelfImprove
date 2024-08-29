@@ -44,9 +44,9 @@ class OllamaInterface:
         if use_contextual_memory:
             if "longterm_memory" not in context:
                 context_memory = await self.knowledge_base.get_longterm_memory()
-                # Simplify context memory structure
-                simplified_context_memory = self.simplify_context_memory(context_memory)
-                context.update({"context_memory": simplified_context_memory})
+                # Summarize context memory to fit within context limits
+                summarized_memory = self.knowledge_base.summarize_memory(context_memory)
+                context.update({"context_memory": summarized_memory})
         if refine and task not in ["logging", "categorization"]:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
