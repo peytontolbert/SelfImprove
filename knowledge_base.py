@@ -53,9 +53,11 @@ class KnowledgeBase:
 
     @staticmethod
     def _create_node(tx, label, properties):
-        query = f"MERGE (n:{label} $properties)"
+        # Construct the query with explicit property assignments
+        property_assignments = ", ".join([f"n.{k} = ${k}" for k in properties.keys()])
+        query = f"MERGE (n:{label}) SET {property_assignments}"
         sanitized_properties = {k: (json.dumps(v) if isinstance(v, (dict, list)) else v) for k, v in properties.items()}
-        tx.run(query, properties=sanitized_properties)
+        tx.run(query, **sanitized_properties)
 
     def add_relationship(self, from_node, to_node, relationship_type, properties=None):
         """Add or update a relationship with properties between nodes."""
