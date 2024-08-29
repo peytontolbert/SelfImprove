@@ -26,9 +26,12 @@ class OllamaInterface:
     async def __aexit__(self, exc_type, exc, tb):
         await self.session.close()
 
-    async def query_ollama(self, system_prompt: str, prompt: str, refine: bool = True) -> Dict[str, Any]:
+    async def query_ollama(self, system_prompt: str, prompt: str, context: Dict[str, Any] = None, refine: bool = True) -> Dict[str, Any]:
         if refine:
             prompt = await self.refine_prompt(prompt, system_prompt)
+        if context:
+            context_str = json.dumps(context, indent=2)
+            prompt = f"Context: {context_str}\n\n{prompt}"
         for attempt in range(self.max_retries):
             try:
                 result = self.gpt.chat_with_ollama(system_prompt, prompt)
@@ -52,24 +55,24 @@ class OllamaInterface:
         response = await self.query_ollama("prompt_refinement", refinement_prompt, refine=False)
         return response.get("refined_prompt", prompt)
 
-    async def analyze_code(self, code: str) -> Dict[str, Any]:
+    async def analyze_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
-        response = await self.query_ollama(prompt, {"task": "code_analysis"})
+        response = await self.query_ollama("code_analysis", prompt, context)
         return response if response else {"error": "No response from Ollama"}
 
-    async def generate_code(self, spec: str) -> str:
+    async def generate_code(self, spec: str, context: Dict[str, Any] = None) -> str:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
-        response = await self.query_ollama(prompt, {"task": "code_generation"})
+        response = await self.query_ollama("code_generation", prompt, context)
         return response.get("code", "") if response else ""
 
-    async def handle_error(self, error: Exception) -> Dict[str, Any]:
+    async def handle_error(self, error: Exception, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
-        response = await self.query_ollama(prompt, {"task": "error_handling"})
+        response = await self.query_ollama("error_handling", prompt, context)
         return response if response else {"error": "No response from Ollama"}
 
-    async def improve_system(self, performance_metrics: Dict[str, Any]) -> List[str]:
+    async def improve_system(self, performance_metrics: Dict[str, Any], context: Dict[str, Any] = None) -> List[str]:
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"
-        response = await self.query_ollama(prompt, {"task": "system_improvement"})
+        response = await self.query_ollama("system_improvement", prompt, context)
         return response.get("suggestions", [])
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
