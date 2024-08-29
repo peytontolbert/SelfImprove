@@ -70,7 +70,10 @@ class OllamaInterface:
         if result is None:
             recovery_suggestion = await self.suggest_error_recovery(Exception("Max retries reached"))
             self.logger.warning(f"Max retries reached. Recovery suggestion: {recovery_suggestion}")
-            return {"recoveryStrategy": "Fallback strategy: Restart the system and contact support if the issue persists."}
+            return {
+                "recoveryStrategy": "Fallback strategy: Restart the system and contact support if the issue persists.",
+                "recoverySuggestion": recovery_suggestion
+            }
 
         self.logger.debug(f"Request payload: {prompt}")
 
