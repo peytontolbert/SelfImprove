@@ -12,6 +12,9 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface
         self.longterm_memory = {}
+        self.base_directory = "knowledge_base_data"
+        if not os.path.exists(self.base_directory):
+            os.makedirs(self.base_directory)
 
     def close(self):
         self.driver.close()
