@@ -29,7 +29,6 @@ class SystemNarrative:
         await self.log_with_ollama(message, context)
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
-        await self.generate_thoughts(context)
 
     async def log_decision(self, decision, rationale=None):
         """Log decisions with detailed rationale."""
@@ -39,7 +38,6 @@ class SystemNarrative:
             self.logger.info(f"System Decision: {decision}")
         await self.log_with_ollama(decision, rationale)
         # Generate and log thoughts about the decision
-        await self.generate_thoughts({"decision": decision, "rationale": rationale})
         await self.generate_thoughts({"decision": decision, "rationale": rationale})
 
     async def log_error(self, error, context=None):
@@ -75,7 +73,6 @@ class SystemNarrative:
         if system_state.get('critical_issues', 0) > 0:
             return 1800  # 30 minutes
         return 3600  # 1 hour
-        """Control the process of improving system capabilities."""
         while True:
             try:
                 await self.log_state("Analyzing current system state")
