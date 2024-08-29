@@ -324,13 +324,13 @@ async def main():
     config = load_configuration()
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
 
-def load_configuration():
-    return {
-        "retry_attempts": int(os.getenv("RETRY_ATTEMPTS", 3)),
-        "timeout": int(os.getenv("TIMEOUT", 30)),
-        "log_level": logging.INFO
-    }
+async def main():
+    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh = initialize_components()
+    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
+    # Initialize configuration settings
+    config = load_configuration()
+    logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
     await narrative.log_state("System components initialized successfully")
     
@@ -408,6 +408,13 @@ def load_configuration():
         logger.info("System components shut down successfully")
         if ollama.session and not ollama.session.closed:
             await ollama.__aexit__(None, None, None)
+
+def load_configuration():
+    return {
+        "retry_attempts": int(os.getenv("RETRY_ATTEMPTS", 3)),
+        "timeout": int(os.getenv("TIMEOUT", 30)),
+        "log_level": logging.INFO
+    }
 
 if __name__ == "__main__":
     asyncio.run(main())
