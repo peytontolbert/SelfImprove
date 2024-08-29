@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 import logging
 from chat_with_ollama import ChatGPT
 class OllamaInterface:
-    def __init__(self, api_endpoint: str, max_retries: int = 3):
+    def __init__(self, max_retries: int = 3):
         self.gpt = ChatGPT()
         self.max_retries = max_retries
         self.session = None
@@ -20,7 +20,7 @@ class OllamaInterface:
     async def __aexit__(self, exc_type, exc, tb):
         await self.session.close()
 
-    async def query_ollama(self, system_prompt: str, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def query_ollama(self, system_prompt: str, prompt: str) -> Dict[str, Any]:
         for attempt in range(self.max_retries):
             try:
                 result = self.gpt.chat_with_ollama(f"{system_prompt}\n\n{prompt}")
