@@ -3,7 +3,11 @@ import openpyxl
 class SpreadsheetManager:
     def __init__(self, file_path):
         self.file_path = file_path
-        self.workbook = openpyxl.load_workbook(file_path)
+        try:
+            self.workbook = openpyxl.load_workbook(file_path)
+        except FileNotFoundError:
+            self.workbook = openpyxl.Workbook()
+            self.workbook.save(file_path)
         self.sheet = self.workbook.active
 
     def read_data(self, cell_range):
