@@ -207,7 +207,7 @@ class SelfImprovement:
 
 async def main():
     narrative = SystemNarrative()
-    narrative.log_state("Initializing system components")
+    await narrative.log_state("Initializing system components")
     ollama = OllamaInterface()
     task_queue = TaskQueue(ollama)
     kb = KnowledgeBase(ollama_interface=ollama)
@@ -222,8 +222,8 @@ async def main():
     eh = ErrorHandler()
     
     # Start continuous improvement
-    narrative.log_state("Starting continuous improvement process")
-    await SelfImprovement.improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
+    await narrative.log_state("Starting continuous improvement process")
+    await si.improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
 
 if __name__ == "__main__":
     asyncio.run(main())
