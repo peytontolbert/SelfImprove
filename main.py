@@ -202,7 +202,10 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
 
         except Exception as e:
             await narrative.log_error(f"Error in improve_system_capabilities: {str(e)}")
-            await eh.handle_error(ollama, e)
+            recovery_suggestion = await eh.handle_error(ollama, e)
+            if recovery_suggestion.get('decompose_task', False):
+                subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
+                narrative.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
 
         # Wait before the next improvement cycle
         await asyncio.sleep(3600)  # Wait for an hour
