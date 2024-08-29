@@ -142,9 +142,9 @@ class SystemNarrative:
                         await eh.handle_error(ollama, error)
 
                 await self.log_state("Completed improvement cycle")
-                # Consult Ollama on ethical implications
-                ethical_considerations = await ollama.query_ollama("ethical_consideration", "Assess the ethical implications of recent system changes")
-                self.logger.info(f"Ethical considerations: {ethical_considerations}")
+                # Consult Ollama on alignment implications
+                alignment_considerations = await ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes")
+                self.logger.info(f"Alignment considerations: {alignment_considerations}")
 
             except Exception as e:
                 await self.log_error(f"Error in control_improvement_process: {str(e)}")

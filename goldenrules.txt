@@ -12,7 +12,7 @@ Golden Rules for Ollama-Centric Development
 10. Knowledge Integration: Regularly update the knowledge base with new information and insights gained from Ollama interactions.
 11. User Interaction Refinement: Use Ollama to continuously improve how the system interprets and responds to user inputs.
 12. Ollama-Centric Testing: Develop and refine testing strategies using Ollama's insights and suggestions.
-13. Ethical Consideration: Regularly consult Ollama on ethical implications of system decisions and actions.
+13. Alignment Consideration: Regularly consult Ollama on alignment implications of system decisions and actions.
 14. Resource Optimization: Use Ollama to make decisions about resource allocation and system scaling.
 15. Documentation Generation: Use Ollama to generate, refine, and keep documentation up-to-date.
 16. Versioning Ollama Interactions: Maintain detailed versions of Ollama interactions to track the evolution of decision-making processes and understand the impact of various changes.
