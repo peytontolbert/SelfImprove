@@ -171,6 +171,19 @@ class OllamaInterface:
         self.knowledge_base.log_interaction("OllamaInterface", "learn_from_experience", {"experience_data": experience_data}, improvement="Learned from experience")
         return result
 
+    async def collaborative_learning(self, other_ai_systems: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
+        """Learn collaboratively with other AI systems."""
+        prompt = f"Collaborate with these AI systems: {other_ai_systems} to enhance learning and share knowledge: {json.dumps(knowledge)}"
+        context = {"other_ai_systems": other_ai_systems, "knowledge": knowledge}
+        collaboration_result = await self.query_ollama("collaborative_learning", prompt, context=context)
+        self.logger.info(f"Collaborative learning result: {collaboration_result}")
+        return collaboration_result
+        prompt = f"Analyze this experience data and extract learnings: {json.dumps(experience_data)}. Focus on patterns, successful strategies, and areas for improvement."
+        context = {"experience_data": experience_data}
+        result = await self.query_ollama(self.system_prompt, prompt, task="experience_learning", context=context)
+        self.knowledge_base.log_interaction("OllamaInterface", "learn_from_experience", {"experience_data": experience_data}, improvement="Learned from experience")
+        return result
+
     def get_conversation_history(self) -> List[Dict[str, Any]]:
         return self.conversation_history
 

@@ -42,6 +42,37 @@ class SystemNarrative:
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
         return thoughts
 
+    async def creative_problem_solving(self, problem_description):
+        """Generate novel solutions to complex problems."""
+        context = {"problem_description": problem_description}
+        solutions = await self.ollama.query_ollama("creative_problem_solving", f"Generate novel solutions for the following problem: {problem_description}", context=context)
+        self.logger.info(f"Creative solutions generated: {solutions}")
+        await self.knowledge_base.add_entry("creative_solutions", solutions)
+        return solutions
+        """Generate detailed thoughts or insights about the current state and tasks."""
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
+        prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
+        if context:
+            prompt += f" | Context: {context}"
+        if longterm_memory:
+            prompt += f" | Long-term Memory: {longterm_memory}"
+        context = context or {}
+        context.update({
+            "longterm_memory": longterm_memory,
+            "current_tasks": "List of current tasks",
+            "system_status": "Current system status"
+        })
+        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+        self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+        self.track_request("thought_generation", prompt, "thoughts")
+        ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
+        thoughts = ollama_response.get('thoughts', 'No thoughts generated')
+        self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
+        await self.knowledge_base.save_longterm_memory(longterm_memory)
+        # Log thoughts to spreadsheet
+        self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
+        return thoughts
+
     def track_request(self, task, prompt, expected_response):
         """Track requests made to Ollama and the expected responses."""
         self.request_log.append({
