@@ -9,6 +9,7 @@ class KnowledgeBase:
         self.base_directory = base_directory
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
+        self.longterm_memory = {}
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface or OllamaInterface()
@@ -66,21 +67,22 @@ class KnowledgeBase:
 
     async def get_longterm_memory(self):
         """Retrieve long-term memory entries."""
-        entries = await self.list_entries()
-        longterm_memory = {}
-        for entry in entries:
-            data = await self.get_entry(entry)
-            longterm_memory[entry] = data
-        self.logger.info(f"Retrieved long-term memory: {longterm_memory}")
-        await self.save_longterm_memory(longterm_memory)
-        return longterm_memory
+        if not self.longterm_memory:
+            entries = await self.list_entries()
+            for entry in entries:
+                data = await self.get_entry(entry)
+                self.longterm_memory[entry] = data
+            self.logger.info(f"Retrieved long-term memory: {self.longterm_memory}")
+            await self.save_longterm_memory(self.longterm_memory)
+        return self.longterm_memory
 
     async def save_longterm_memory(self, longterm_memory):
         """Save long-term memory to a file."""
+        self.longterm_memory.update(longterm_memory)
         file_path = os.path.join(self.base_directory, "longterm_memory.json")
         with open(file_path, 'w') as file:
-            json.dump(longterm_memory, file)
-        self.logger.info("Long-term memory saved to file.")
+            json.dump(self.longterm_memory, file)
+        self.logger.info("Long-term memory updated and saved to file.")
         entries = await self.list_entries()
         analysis = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze the current state of the knowledge base with these entries: {entries}", task="knowledge_base")
         analysis_result = analysis.get('analysis', "No analysis available")
