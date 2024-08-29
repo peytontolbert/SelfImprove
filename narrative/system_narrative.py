@@ -123,7 +123,12 @@ class SystemNarrative:
         # Generate and log thoughts about the decision
         await self.generate_thoughts({"decision": decision, "rationale": rationale})
 
-    async def log_error(self, error, context=None):
+    async def suggest_recovery_strategy(self, error):
+        """Suggest a recovery strategy for a given error."""
+        error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
+        context = {"error": str(error)}
+        recovery_suggestion = await self.ollama.query_ollama(self.ollama.system_prompt, error_prompt, task="error_recovery", context=context)
+        return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
         """Log errors with context and recovery strategies."""
         error_context = context or {}
         error_context.update({"error": str(error), "timestamp": time.time()})

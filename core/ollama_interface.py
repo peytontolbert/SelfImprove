@@ -118,7 +118,12 @@ class OllamaInterface:
         # Include task-specific details in the context
         context = {"task": task, "prompt_length": len(prompt)}
         response = await self.query_ollama("prompt_refinement", refinement_prompt, context=context, refine=False)
-        return response.get("refined_prompt", prompt).strip()
+        refined_prompt = response.get("refined_prompt", prompt)
+        if isinstance(refined_prompt, str):
+            return refined_prompt.strip()
+        else:
+            self.logger.error("Refined prompt is not a string.")
+            return prompt
 
     async def analyze_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
