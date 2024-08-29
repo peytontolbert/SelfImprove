@@ -69,8 +69,8 @@ class SystemNarrative:
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
         # Analyze feedback and suggest improvements
-        self.track_request("feedback_analysis", f"Analyze feedback for the current state: {message}", "feedback")
-        feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}", task="feedback_analysis", context=context)
+        self.track_request("feedback_analysis", f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", "feedback")
+        feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=context)
         self.logger.info(f"Feedback analysis: {feedback}")
 
     async def log_decision(self, decision, rationale=None):
