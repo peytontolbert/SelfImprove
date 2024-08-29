@@ -230,6 +230,7 @@ class SelfImprovement:
     - retry_ollama_call: Retries a function call with Ollama if the result is None.
     """
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
+        self.logger = logging.getLogger(__name__)
         self.ollama = ollama
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
