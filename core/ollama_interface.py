@@ -70,7 +70,14 @@ class OllamaInterface:
                     raise Exception(f"Max retries reached. Error: {str(e)}. Recovery suggestion: {recovery_suggestion}")
 
     async def refine_prompt(self, prompt: str, task: str) -> str:
-        refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
+        if task == "general":
+            refinement_prompt = (
+                f"Refine the following prompt for assessing alignment implications:\n\n"
+                f"Assess the alignment implications of recent system changes. "
+                f"Consider user behavior nuances and organizational goals."
+            )
+        else:
+            refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
         context = {"task": task}
         response = await self.query_ollama("prompt_refinement", refinement_prompt, context=context, refine=False)
         return response.get("refined_prompt", prompt).strip()
