@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any
-
+import subprocess
 class ImprovementManager:
     def __init__(self, ollama_interface):
         self.ollama = ollama_interface
