@@ -373,12 +373,12 @@ async def main():
             "task": "self_improvement",
             "description": "Improving system based on long-term memory analysis"
         }
-        ollama.manage_conversation_context(context_id, context)
-        await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, context_id=context_id)
+        await ollama.manage_conversation_context(context_id, context)
+        await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
     except Exception as e:
         # Implement error classification and fallback strategies
         error_handler = ErrorHandler()
-        error_types = error_handler.classify_errors()
+        error_types = error_handler.classify_errors(e)
         logger.info(f"Error types classified: {error_types}")
         # Implement fallback strategies based on error types
         fallback_strategy = error_handler.get_fallback_strategy(e)

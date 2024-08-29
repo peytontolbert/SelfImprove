@@ -24,7 +24,8 @@ class OllamaInterface:
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
-        await self.session.close()
+        if self.session:
+            await self.session.close()
 
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, timeout: int = 30) -> Dict[str, Any]:
         if refine and task not in ["logging", "categorization"]:
