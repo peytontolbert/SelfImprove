@@ -107,10 +107,10 @@ def main():
         # Process input and interact with Ollama
         try:
             prompt = pm.load_prompt("example_task")
-            response = ollama.query_ollama(prompt)
+            response = await ollama.query_ollama(prompt)
             ui.display_output(response)
         except Exception as e:
-            recovery = eh.handle_error(e)
+            recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
 
 if __name__ == "__main__":
