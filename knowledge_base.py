@@ -196,7 +196,8 @@ class KnowledgeBase:
 
     async def save_longterm_memory(self, longterm_memory):
         """Save long-term memory to a file."""
-        self.longterm_memory.update({str(k): v for k, v in longterm_memory.items()})
+        # Ensure long-term memory is updated with new data
+        self.longterm_memory.update({str(k): v for k, v in longterm_memory.items() if v})
         for entry_name, data in longterm_memory.items():
             self.add_node("LongTermMemory", {"name": entry_name, "data": data})
         file_path = os.path.join(self.base_directory, "longterm_memory.json")

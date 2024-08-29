@@ -36,6 +36,8 @@ class SystemNarrative:
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
+        # Update long-term memory with generated thoughts
+        longterm_memory.update({"thoughts": thoughts})
         await self.knowledge_base.save_longterm_memory(longterm_memory)
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
@@ -85,10 +87,13 @@ class SystemNarrative:
     async def log_state(self, message, context=None):
         if context is None:
             context = {}
+        # Include more detailed context information
         context.update({
             "system_status": "Current system status",
             "recent_changes": "Recent changes in the system",
-            "longterm_memory": await self.knowledge_base.get_longterm_memory()
+            "longterm_memory": await self.knowledge_base.get_longterm_memory(),
+            "current_tasks": "List of current tasks",
+            "performance_metrics": await self.ollama.query_ollama("system_metrics", "Provide an overview of the current system capabilities and performance.")
         })
         self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
