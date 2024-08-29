@@ -56,6 +56,10 @@ class OllamaInterface:
         response = await self.query_ollama(prompt, {"task": "system_improvement"})
         return response.get("suggestions", [])
 
+    async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
+        prompt = f"Implement this improvement: {improvement}"
+        return await self.query_ollama(prompt, {"task": "improvement_implementation"})
+
     async def refine_prompt(self, prompt: str, task: str) -> str:
         refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
         response = await self.query_ollama(refinement_prompt, {"task": "prompt_refinement"})

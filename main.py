@@ -49,6 +49,17 @@ class SelfImprovement:
         improvements = await ollama.improve_system(metrics)
         return improvements
 
+    async def apply_improvements(self, ollama, improvements):
+        for improvement in improvements:
+            implementation = await ollama.query_ollama("improvement_implementation", f"Implement this improvement: {improvement}")
+            if implementation.get('code_change'):
+                # Here you would apply the code change
+                print(f"Applying code change: {implementation['code_change']}")
+            if implementation.get('system_update'):
+                # Here you would update system parameters or configurations
+                print(f"Updating system: {implementation['system_update']}")
+        return "Improvements applied"
+
 async def main():
     ui = UserInterface()
     ollama = OllamaInterface()
@@ -111,9 +122,8 @@ async def main():
             improvements = await si.analyze_performance(ollama, performance_metrics)
             if improvements:
                 ui.display_output(f"Suggested improvements: {improvements}")
-                for improvement in improvements:
-                    logger.info(f"Applying improvement: {improvement}")
-                    # Implement logic to apply improvements
+                result = await si.apply_improvements(ollama, improvements)
+                ui.display_output(f"Improvement application result: {result}")
 
         except Exception as e:
             recovery = await eh.handle_error(ollama, e)

@@ -49,3 +49,10 @@ class KnowledgeBase:
         analysis = await self.analyze_knowledge_base()
         suggestions = await self.ollama.query_ollama("knowledge_base", f"Suggest improvements based on this analysis: {analysis}")
         return suggestions.get('improvements', [])
+
+    async def apply_improvement(self, improvement):
+        implementation = await self.ollama.implement_improvement(improvement)
+        if implementation.get('knowledge_base_update'):
+            await self.add_entry(f"improvement_{len(self.list_entries()) + 1}", implementation['knowledge_base_update'])
+            return f"Applied improvement: {improvement}"
+        return f"No knowledge base update for improvement: {improvement}"
