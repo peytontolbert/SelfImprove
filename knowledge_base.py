@@ -11,6 +11,7 @@ class KnowledgeBase:
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface
+        self.longterm_memory = {}
 
     def close(self):
         self.driver.close()
