@@ -222,7 +222,7 @@ async def main():
     
     # Start continuous improvement
     narrative.log_state("Starting continuous improvement process")
-    await improve_system_capabilities(ollama, improvement_manager, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
+    await SelfImprovement.improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
 
 if __name__ == "__main__":
     asyncio.run(main())
