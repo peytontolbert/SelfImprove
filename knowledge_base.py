@@ -59,7 +59,15 @@ class KnowledgeBase:
             data = await self.get_entry(entry)
             longterm_memory[entry] = data
         self.logger.info(f"Retrieved long-term memory: {longterm_memory}")
+        await self.save_longterm_memory(longterm_memory)
         return longterm_memory
+
+    async def save_longterm_memory(self, longterm_memory):
+        """Save long-term memory to a file."""
+        file_path = os.path.join(self.base_directory, "longterm_memory.json")
+        with open(file_path, 'w') as file:
+            json.dump(longterm_memory, file)
+        self.logger.info("Long-term memory saved to file.")
         entries = await self.list_entries()
         analysis = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze the current state of the knowledge base with these entries: {entries}", task="knowledge_base")
         analysis_result = analysis.get('analysis', "No analysis available")

@@ -28,6 +28,7 @@ class SystemNarrative:
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
+        await self.knowledge_base.save_longterm_memory(longterm_memory)
         return thoughts
 
     async def log_state(self, message, context=None):
