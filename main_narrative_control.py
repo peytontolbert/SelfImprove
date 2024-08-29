@@ -306,7 +306,6 @@ async def main():
     SystemNarrative. The narrative can reset, change actions, and influence decisions dynamically.
     """
     ollama = OllamaInterface()
-    kb = KnowledgeBase(ollama_interface=ollama)
     rl_module = ReinforcementLearningModule(ollama)
 
     # Initialize configuration settings
@@ -321,7 +320,6 @@ async def main():
     logger.info("Initializing system components with detailed logging and context management")
     await narrative.log_state("System components initialized successfully")
     task_queue = TaskQueue(ollama)
-    kb = KnowledgeBase(ollama_interface=ollama)
     vcs = VersionControlSystem()
     ca = CodeAnalysis()
     tf = TestingFramework()
