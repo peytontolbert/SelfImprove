@@ -1,9 +1,12 @@
+import logging
 from core.ollama_interface import OllamaInterface
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
 import asyncio
 from file_system import FileSystem
-# user_interface.py
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 class UserInterface:
     def get_input(self):
         # Get input from the user
@@ -122,7 +125,7 @@ async def main():
                     # Apply improvements to the system
                     for improvement in improvements:
                         # Example: Log improvements or take action based on suggestions
-                        self.logger.info(f"Applying improvement: {improvement}")
+                        logger.info(f"Applying improvement: {improvement}")
 
                 # Check if tasks are completed and handle them
                 if task_queue.is_task_completed(task_details):
