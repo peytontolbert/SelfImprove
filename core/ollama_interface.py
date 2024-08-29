@@ -34,11 +34,12 @@ class OllamaInterface:
         if context:
             # Ensure context is comprehensive and relevant
             context = {k: v for k, v in context.items() if v is not None}
+            context.update({"timestamp": time.time()})
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
         else:
             # Provide a more informative default context
-            context = {"default": "No specific context provided. Please ensure to include relevant details for better results."}
+            context = {"default": "No specific context provided. Please ensure to include relevant details for better results.", "timestamp": time.time()}
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
             self.logger.warning("No specific context provided. Using default context.")

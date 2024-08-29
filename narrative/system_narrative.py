@@ -45,7 +45,7 @@ class SystemNarrative:
             "recent_changes": "Recent changes in the system",
             "longterm_memory": await self.knowledge_base.get_longterm_memory()
         })
-        self.logger.info(f"System State: {message} | Context: {context}")
+        self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
         await self.log_with_ollama(message, context)
         # Log state to spreadsheet
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
@@ -155,6 +155,7 @@ class SystemNarrative:
                     for feedback in rl_feedback:
                         self.logger.info(f"Integrating feedback: {feedback}")
                         # Implement logic to integrate feedback into decision-making processes
+                        await self.knowledge_base.add_entry("integrated_feedback", {"feedback": feedback})
 
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()

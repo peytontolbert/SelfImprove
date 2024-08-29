@@ -10,6 +10,8 @@ class ErrorHandler:
 
     async def handle_error(self, ollama_interface, error):
         self.log_error(error)
+        error_type = type(error).__name__
+        self.logger.info(f"Handling error of type: {error_type}")
         recovery_suggestion = await ollama_interface.handle_error(error)
         
         if recovery_suggestion:
