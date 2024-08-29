@@ -42,10 +42,11 @@ class OllamaInterface:
         if context is None:
             context = {}
         if use_contextual_memory:
-            context_memory = await self.knowledge_base.get_longterm_memory()
-            # Simplify context memory structure
-            simplified_context_memory = self.simplify_context_memory(context_memory)
-            context.update({"context_memory": simplified_context_memory})
+            if "longterm_memory" not in context:
+                context_memory = await self.knowledge_base.get_longterm_memory()
+                # Simplify context memory structure
+                simplified_context_memory = self.simplify_context_memory(context_memory)
+                context.update({"context_memory": simplified_context_memory})
         if refine and task not in ["logging", "categorization"]:
             # Augment the prompt with retrieved documents
             prompt = await self.rag_retrieval.augment_prompt_with_retrieval(prompt, task)

@@ -21,6 +21,7 @@ class SystemNarrative:
         """Generate detailed thoughts or insights about the current state and tasks."""
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         self.logger.info(f"Using long-term memory: {json.dumps(longterm_memory, indent=2)}")
+        context.update({"longterm_memory": longterm_memory})
         prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
         if context:
             prompt += f" | Context: {context}"
