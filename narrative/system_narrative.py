@@ -159,7 +159,6 @@ class SystemNarrative:
                 await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count), timeout=300)  # 5-minute timeout for the entire cycle
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
-                await self.adaptive_error_handling(e, eh, ollama)
             except Exception as e:
                 await self.handle_general_error(e, eh, ollama)
 
