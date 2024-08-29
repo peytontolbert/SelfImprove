@@ -145,15 +145,6 @@ class KnowledgeBase:
         self.logger.info(f"Knowledge base analysis: {analysis_result}")
         return analysis_result
 
-    async def analyze_capability_evolution(self):
-        """Analyze the evolution of system capabilities."""
-        capabilities = await self.list_entries()
-        analysis = []
-        for capability in capabilities:
-            evolution = self.get_capability_evolution(capability)
-            analysis.append({"capability": capability, "evolution": evolution})
-        self.logger.info(f"Capability evolution analysis: {analysis}")
-        return analysis
 
     async def apply_improvement(self, improvement):
         implementation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Implement this improvement: {improvement}", task="improvement_implementation")
