@@ -95,7 +95,8 @@ class DeploymentManager:
         logger.info(f"Rollback plan generated: {rollback_plan}")
 
 class SelfImprovement:
-    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
+    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager, narrative: SystemNarrative):
+        self.narrative = narrative
         self.ollama = ollama
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
@@ -166,7 +167,7 @@ class SelfImprovement:
             except Exception as e:
                 logger.error(f"Error during continuous improvement: {str(e)}")
                 await self.ollama.adaptive_error_handling(e, {"context": "continuous_improvement"})
-                await narrative.log_error(f"Error during continuous improvement: {str(e)}")
+                await self.narrative.log_error(f"Error during continuous improvement: {str(e)}")
             await asyncio.sleep(3600)  # Run every hour
 
     async def get_system_metrics(self):
@@ -293,7 +294,7 @@ async def main():
     tf = TestingFramework()
     dm = DeploymentManager()
     improvement_manager = ImprovementManager(ollama)
-    si = SelfImprovement(ollama, kb, improvement_manager)
+    si = SelfImprovement(ollama, kb, improvement_manager, narrative)
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
