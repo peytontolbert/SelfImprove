@@ -14,9 +14,9 @@ class KnowledgeBase:
         user = user or os.getenv("NEO4J_USER", "neo4j")
         password = password or os.getenv("NEO4J_PASSWORD", "12345678")
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
-        self.initialize_database()
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
+        self.initialize_database()
         self.ollama = ollama_interface
         self.longterm_memory = {}
         self.base_directory = "knowledge_base_data"
@@ -43,7 +43,7 @@ class KnowledgeBase:
     @staticmethod
     def _create_initial_nodes(tx):
         # Create initial nodes or constraints if needed
-        tx.run("CREATE CONSTRAINT IF NOT EXISTS ON (n:Node) ASSERT n.name IS UNIQUE")
+        tx.run("CREATE CONSTRAINT IF NOT EXISTS FOR (n:Node) REQUIRE n.name IS UNIQUE")
 
     def add_node(self, label, properties):
         with self.driver.session() as session:
