@@ -1,7 +1,6 @@
 ```mermaid
 graph TD;
     A[Main Function] -->|Initializes| B[OllamaInterface]
-    A -->|Initializes| R[RAGRetrieval]
     A -->|Initializes| C[KnowledgeBase]
     A -->|Initializes| D[ReinforcementLearningModule]
     A -->|Initializes| E[TaskQueue]
