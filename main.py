@@ -103,7 +103,7 @@ async def main():
     pm = PromptManager()
     # Manage task orchestration
     task_queue.manage_orchestration()
-        user_input = ui.get_input()
+    user_input = ui.get_input()
         if user_input.lower() == "exit":
             break
         
