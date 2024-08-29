@@ -349,10 +349,10 @@ async def main():
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
 
-    # Implement feedback loop optimization
-    feedback_data = await narrative.get_feedback_data()
-    spreadsheet_manager.write_data((30, 1), [["Feedback", "Analysis"]] + feedback_data)
-    logger.info("Logged feedback data to spreadsheet")
+    # Implement continuous improvement loops
+    improvement_data = await si.get_improvement_data()
+    spreadsheet_manager.write_data((40, 1), [["Improvement", "Outcome"]] + improvement_data)
+    logger.info("Logged improvement data to spreadsheet")
     error_handler = ErrorHandler()
     error_types = error_handler.classify_errors()
     logger.info(f"Error types classified: {error_types}")
