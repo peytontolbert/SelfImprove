@@ -197,6 +197,11 @@ async def main():
             elif recovery.get('retry', False):
                 logger.warning(f"Retrying after error: {str(e)}")
                 continue  # Retry the current iteration
+            elif recovery.get('decompose_task', False):
+                logger.info(f"Task decomposed into subtasks: {recovery.get('subtasks', [])}")
+                for subtask in recovery.get('subtasks', []):
+                    await task_queue.create_task(subtask)
+                ui.display_output(f"Task decomposed into {len(recovery.get('subtasks', []))} subtasks")
             else:
                 logger.error(f"Non-critical error occurred: {str(e)}")
 
