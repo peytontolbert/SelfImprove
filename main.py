@@ -88,7 +88,7 @@ async def main():
     # System startup and initialization logic
     # Initialize components
     ui = UserInterface()
-    ollama = OllamaInterface(api_endpoint="http://localhost:11434")
+    ollama = OllamaInterface()
     task_queue = TaskQueue()
     kb = KnowledgeBase()
     vcs = VersionControlSystem()
