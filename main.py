@@ -112,6 +112,10 @@ async def main():
             break
 
         try:
+            # Create and manage tasks
+            task_details = {"task_name": "example_task", "priority": "high"}
+            task_queue.create_task(task_details)
+
             # Load and refine prompt
             prompt = pm.load_prompt("example_task")
             refined_prompt = await ollama.refine_prompt(prompt, "example_task")
