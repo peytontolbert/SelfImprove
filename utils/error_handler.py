@@ -11,18 +11,6 @@ class ErrorHandler:
     def classify_errors(self, error):
         """Classify errors into categories."""
         # Enhanced error classification logic
-        error_types = {
-            "ValueError": "value_error",
-            "TypeError": "type_error",
-            "KeyError": "key_error",
-            "AttributeError": "attribute_error",
-            "IndexError": "index_error",
-            "IOError": "io_error",
-            "OSError": "os_error",
-            "TimeoutError": "timeout_error",
-            "ConnectionError": "connection_error",
-            "generic": "generic_error"
-        }
         self.logger.info(f"Classified error '{str(error)}' as '{error_types.get(type(error).__name__, 'generic_error')}'")
         error_types = {
             "ValueError": "value_error",
