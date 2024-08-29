@@ -100,10 +100,14 @@ class SystemNarrative:
         system_state = {}
         while True:
             try:
+                # Log the start of system state analysis
                 await self.log_state("Analyzing current system state")
+                logger.info("Starting system state analysis.")
                 system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
+                # Log the start of generating improvement suggestions
                 await self.log_state("Generating improvement suggestions")
+                logger.info("Generating improvement suggestions.")
                 improvements = await si.analyze_performance(system_state)
 
                 if improvements:
@@ -139,7 +143,9 @@ class SystemNarrative:
                                 "after": new_metrics
                             })
 
+                # Log the start of additional system improvement tasks
                 await self.log_state("Performing additional system improvement tasks")
+                logger.info("Performing additional system improvement tasks.")
                 await task_queue.manage_orchestration()
                 code_analysis = await ca.analyze_code(ollama, "current_system_code")
                 if code_analysis.get('improvements'):
