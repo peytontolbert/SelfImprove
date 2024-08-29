@@ -349,13 +349,17 @@ async def main():
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
 
-    # Implement additional golden rules
-    golden_rules = await ollama.query_ollama("golden_rules", "Review and update the golden rules based on current system performance and insights.")
-    logger.info(f"Updated golden rules: {golden_rules}")
-    # Implement continuous system evaluation and iteration
-    system_evaluation = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
-    logger.info(f"System evaluation: {system_evaluation}")
-    await si.learn_from_experience(system_evaluation)
+    # Implement dynamic prompt management
+    dynamic_prompts = await ollama.query_ollama("dynamic_prompt_management", "Evolve prompts based on their effectiveness and current system capabilities.")
+    logger.info(f"Dynamic prompts updated: {dynamic_prompts}")
+    # Enhance feedback loop optimization
+    feedback_data = await narrative.get_feedback_data()
+    spreadsheet_manager.write_data((30, 1), [["Feedback", "Analysis"]] + feedback_data)
+    logger.info("Logged feedback data to spreadsheet")
+    # Ollama-driven architecture evolution
+    architecture_suggestions = await ollama.query_ollama("architecture_evolution", "Suggest improvements for the current system architecture.")
+    logger.info(f"Architecture suggestions: {architecture_suggestions}")
+    await si.learn_from_experience(architecture_suggestions)
     error_handler = ErrorHandler()
     error_types = error_handler.classify_errors()
     logger.info(f"Error types classified: {error_types}")
