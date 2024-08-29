@@ -31,11 +31,11 @@ class SystemNarrative:
             "current_tasks": "List of current tasks",
             "system_status": "Current system status"
         })
-        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}", extra={"context": context})
         self.track_request("thought_generation", prompt, "thoughts")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
-        self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
+        self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
         await self.knowledge_base.save_longterm_memory(longterm_memory)
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]])
@@ -87,7 +87,7 @@ class SystemNarrative:
     async def log_error(self, error, context=None):
         """Log errors with context and recovery strategies."""
         if context:
-            self.logger.error(f"System Error: {error} | Context: {context}")
+            self.logger.error(f"System Error: {error} | Context: {context}", extra={"error": str(error), "context": context})
         else:
             self.logger.error(f"System Error: {error} | Context: {json.dumps(context or {})}")
         await self.log_with_ollama(error, context)
@@ -98,7 +98,7 @@ class SystemNarrative:
             context = {}
         context.update({"error": str(error)})
         recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery", context=context)
-        self.logger.info(f"Recovery Strategy: {recovery_strategy}")
+        self.logger.info(f"Recovery Strategy: {recovery_strategy}", extra={"recovery_strategy": recovery_strategy})
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
         context = {"error": str(error)}
         recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery", context=context)
