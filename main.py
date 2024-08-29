@@ -108,7 +108,7 @@ async def main():
         # Process input and interact with Ollama
         try:
             prompt = pm.load_prompt("example_task")
-            response = await ollama.query_ollama(prompt)
+            response = await ollama.query_ollama(ollama.system_prompt, prompt)
             ui.display_output(response)
         except Exception as e:
             recovery = await eh.handle_error(ollama, e)
