@@ -53,7 +53,9 @@ class KnowledgeBase:
     @staticmethod
     def _create_node(tx, label, properties):
         query = f"CREATE (n:{label} $properties)"
-        tx.run(query, properties=properties)
+        # Convert non-primitive types to JSON strings
+        sanitized_properties = {k: (json.dumps(v) if isinstance(v, (dict, list)) else v) for k, v in properties.items()}
+        tx.run(query, properties=sanitized_properties)
 
     def add_relationship(self, from_node, to_node, relationship_type, properties=None):
         with self.driver.session() as session:
