@@ -3,7 +3,7 @@ import os
 import json
 import asyncio
 from core.ollama_interface import OllamaInterface
-
+import time
 class KnowledgeBase:
     def __init__(self, base_directory="knowledge_base", ollama_interface=None):
         self.base_directory = base_directory
