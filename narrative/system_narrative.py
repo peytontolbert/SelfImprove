@@ -8,13 +8,15 @@ class SystemNarrative:
         self.ollama = ollama_interface or OllamaInterface()
         logging.basicConfig(level=logging.INFO)
 
-    async def log_with_ollama(self, message, context=None):
-        """Log a message with insights from Ollama."""
-        prompt = f"Log this message with context: {message}"
+    async def generate_thoughts(self, context=None):
+        """Generate thoughts or insights about the current state and tasks."""
+        prompt = "Generate thoughts about the current system state and tasks."
         if context:
             prompt += f" | Context: {context}"
-        ollama_response = await self.ollama.query_ollama("logging", prompt)
-        self.logger.info(f"Ollama Insight: {ollama_response.get('insight', 'No insight provided')}")
+        ollama_response = await self.ollama.query_ollama("thought_generation", prompt)
+        thoughts = ollama_response.get('thoughts', 'No thoughts generated')
+        self.logger.info(f"Ollama Thoughts: {thoughts}")
+        return thoughts
 
     async def log_state(self, message, context=None):
         if context:
@@ -22,6 +24,8 @@ class SystemNarrative:
         else:
             self.logger.info(f"System State: {message}")
         await self.log_with_ollama(message, context)
+        # Generate and log thoughts about the current state
+        await self.generate_thoughts(context)
 
     async def log_decision(self, decision, rationale=None):
         if rationale:
