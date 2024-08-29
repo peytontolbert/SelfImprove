@@ -54,7 +54,8 @@ class OllamaInterface:
 
     async def analyze_code(self, code: str) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
-        return await self.query_ollama(prompt, {"task": "code_analysis"})
+        response = await self.query_ollama(prompt, {"task": "code_analysis"})
+        return response if response else {"error": "No response from Ollama"}
 
     async def generate_code(self, spec: str) -> str:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
@@ -63,7 +64,8 @@ class OllamaInterface:
 
     async def handle_error(self, error: Exception) -> Dict[str, Any]:
         prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
-        return await self.query_ollama(prompt, {"task": "error_handling"})
+        response = await self.query_ollama(prompt, {"task": "error_handling"})
+        return response if response else {"error": "No response from Ollama"}
 
     async def improve_system(self, performance_metrics: Dict[str, Any]) -> List[str]:
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"

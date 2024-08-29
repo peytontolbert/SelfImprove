@@ -200,7 +200,7 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
             narrative.log_state("Completed improvement cycle")
 
         except Exception as e:
-            narrative.log_error(f"Error in improve_system_capabilities: {str(e)}")
+            await narrative.log_error(f"Error in improve_system_capabilities: {str(e)}")
             await eh.handle_error(ollama, e)
 
         # Wait before the next improvement cycle
