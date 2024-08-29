@@ -96,11 +96,7 @@ async def main():
     # Manage task orchestration
     task_queue.manage_orchestration()
 
-    # Check if the system is ready for expansion
-    system_ready = check_system_readiness()
-
-    if system_ready:
-
+    while True:
         try:
             # Create and manage tasks
             task_details = {"task_name": "example_task", "priority": "high"}
@@ -120,12 +116,6 @@ async def main():
                 improvements = await ollama.improve_system(performance_metrics)
                 ui.display_output(f"Suggested improvements: {improvements}")
 
-                # Automate code refinement and generation
-                for improvement in improvements:
-                    new_code = await ollama.generate_code(improvement)
-                    ui.display_output(f"Generated code for improvement: {new_code}")
-                    # Here you could add logic to apply the new code if appropriate
-
                 # Check if tasks are completed and handle them
                 if task_queue.is_task_completed(task_details):
                     ui.display_output("Task completed successfully.")
@@ -142,8 +132,5 @@ async def main():
             recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
 
-def check_system_readiness():
-    # Placeholder function to determine if the system is ready for expansion
-    # This can be replaced with actual logic to assess system capabilities
-    return True
+if __name__ == "__main__":
     asyncio.run(main())
