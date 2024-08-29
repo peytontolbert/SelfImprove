@@ -297,8 +297,17 @@ async def main():
     }
     logging.getLogger().setLevel(config["log_level"])
 
+    # Initialize configuration settings
+    config = {
+        "retry_attempts": 3,
+        "timeout": 30,
+        "log_level": logging.INFO
+    }
+    logging.getLogger().setLevel(config["log_level"])
+
     narrative = SystemNarrative()
-    await narrative.log_state("Initializing system components")
+    logger.info("Initializing system components with detailed logging and context management")
+    await narrative.log_state("System components initialized successfully")
     ollama = OllamaInterface()
     task_queue = TaskQueue(ollama)
     kb = KnowledgeBase(ollama_interface=ollama)
@@ -316,9 +325,9 @@ async def main():
     try:
         await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
     except Exception as e:
-        logger.error("An unexpected error occurred", exc_info=True)
+        logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
-        await narrative.log_error(f"An error occurred during the improvement process: {str(e)}")
+        await narrative.log_error(f"An error occurred: {str(e)}", {"error": str(e)})
     finally:
         await narrative.log_state("Shutting down system components")
         # Perform any necessary cleanup or shutdown procedures here
