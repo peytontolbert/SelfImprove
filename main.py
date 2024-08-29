@@ -1,12 +1,12 @@
 import logging
 import asyncio
+import json
 from core.ollama_interface import OllamaInterface
 from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
-import json
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -45,7 +45,7 @@ class DeploymentManager:
             logger.info("Deployment deferred based on Ollama's decision")
 
 class SelfImprovement:
-    def __init__(self, ollama, knowledge_base):
+    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase):
         self.ollama = ollama
         self.knowledge_base = knowledge_base
 
@@ -102,7 +102,7 @@ async def main():
     ca = CodeAnalysis()
     tf = TestingFramework()
     dm = DeploymentManager()
-    si = SelfImprovement()
+    si = SelfImprovement(ollama, kb)
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
@@ -171,6 +171,9 @@ async def main():
                 }
                 learning = await si.learn_from_experience(experience_data)
                 ui.display_output(f"System learning: {learning}")
+
+            # Add a small delay to prevent excessive CPU usage
+            await asyncio.sleep(0.1)
 
         except Exception as e:
             recovery = await eh.handle_error(ollama, e)
