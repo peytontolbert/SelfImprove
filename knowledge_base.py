@@ -25,7 +25,7 @@ class KnowledgeBase:
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
 
-    async def get_entry(self, entry_name):
+    async def get_entry(self, entry_name, version=None):
         version = version or self.get_latest_version(entry_name)
         file_path = os.path.join(self.base_directory, f"{entry_name}_v{version}.json")
         if os.path.exists(file_path):
