@@ -100,10 +100,6 @@ async def main():
     system_ready = check_system_readiness()
 
     if system_ready:
-        while True:
-            user_input = ui.get_input()
-            if user_input.lower() == "exit":
-                break
 
         try:
             # Create and manage tasks
