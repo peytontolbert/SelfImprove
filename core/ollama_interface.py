@@ -165,6 +165,7 @@ class OllamaInterface:
         return await self.query_ollama(self.system_prompt, prompt, task="improvement_validation", context=context)
 
     async def learn_from_experience(self, experience_data: Dict[str, Any]) -> Dict[str, Any]:
+        pass
 
     async def collaborative_learning(self, other_ai_systems: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Learn collaboratively with other AI systems."""

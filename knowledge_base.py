@@ -92,6 +92,7 @@ class KnowledgeBase:
         result = tx.run(query, capability_name=capability_name)
         return [{"current": record["current"], "relationship": record["r"], "next": record["next"]} for record in result]
     async def add_entry(self, entry_name, data, metadata=None, narrative_context=None, context=None):
+        pass
 
     async def integrate_cross_disciplinary_knowledge(self, disciplines: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate knowledge across multiple disciplines."""
