@@ -120,16 +120,13 @@ async def main():
             ui.display_output(f"Error handled: {recovery}")
 
     # Implement feedback loop for system improvement
-    while True:
-        performance_metrics = {"task_count": len(task_queue)}
-        improvements = await ollama.improve_system(performance_metrics)
-        ui.display_output(f"Suggested improvements: {improvements}")
+    performance_metrics = {"task_count": len(task_queue)}
+    improvements = await ollama.improve_system(performance_metrics)
+    ui.display_output(f"Suggested improvements: {improvements}")
 
-        # Refine user interaction process
-        user_input = ui.get_input()
-        if user_input.lower() == "exit":
-            break
-
+    # Refine user interaction process
+    user_input = ui.get_input()
+    if user_input.lower() != "exit":
         try:
             # Load and refine prompt
             prompt = pm.load_prompt("example_task")
