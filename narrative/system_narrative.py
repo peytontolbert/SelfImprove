@@ -49,6 +49,13 @@ class SystemNarrative:
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
 
+    async def log_with_ollama(self, message, context=None):
+        """Log messages with Ollama's assistance."""
+        prompt = f"Log this message: {message}"
+        if context:
+            prompt += f" | Context: {context}"
+        await self.ollama.query_ollama("logging", prompt)
+
     async def log_recovery(self, recovery_action, success=True):
         status = "successful" if success else "failed"
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
