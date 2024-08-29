@@ -149,17 +149,6 @@ class SystemNarrative:
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
         await self.log_with_ollama(recovery_action, {"success": success})
 
-    def calculate_improvement_cycle_frequency(self, system_state):
-        """Calculate the sleep duration between improvement cycles based on system performance."""
-        # Example logic: Adjust sleep duration based on a simple metric
-        # This can be replaced with more sophisticated logic as needed
-        performance_metric = system_state.get("performance_metric", 1)
-        if performance_metric > 0.8:
-            return 1800  # 30 minutes
-        elif performance_metric > 0.5:
-            return 3600  # 1 hour
-        else:
-            return 7200  # 2 hours
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         await self.self_optimization(ollama, kb)
         system_state = {}
@@ -202,8 +191,6 @@ class SystemNarrative:
             self.logger.info(f"Adaptive learning data: {learning_data}")
             await self.knowledge_base.add_entry("adaptive_learning", learning_data)
 
-            # Check for reset command and adjust sleep duration
-            await self.check_reset_and_sleep(ollama, system_state)
 
     async def dynamic_goal_setting(self, ollama, system_state):
         """Set and adjust system goals dynamically based on performance metrics."""
