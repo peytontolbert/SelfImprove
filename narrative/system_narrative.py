@@ -172,13 +172,29 @@ class SystemNarrative:
         # Assess alignment implications
         await self.assess_alignment_implications(ollama)
 
-        # Use reinforcement learning feedback
+        # Use reinforcement learning feedback and predictive analysis
         rl_feedback = await self.rl_module.get_feedback(system_state)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
         await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
         self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
+
+        # Integrate predictive analysis
+        predictive_insights = await self.ollama.query_ollama("predictive_analysis", "Provide predictive insights based on current system metrics.", context=system_state)
+        self.logger.info(f"Predictive insights: {predictive_insights}")
+        await self.knowledge_base.add_entry("predictive_insights", {"insights": predictive_insights})
+        self.spreadsheet_manager.write_data((30, 1), [["Predictive Insights"], [predictive_insights]])
+
+        # Evolve feedback loop for long-term evolution
+        await self.evolve_feedback_loop(rl_feedback, predictive_insights)
         await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
-        await self.integrate_feedback_loop(rl_feedback)
+
+    async def evolve_feedback_loop(self, rl_feedback, predictive_insights):
+        """Evolve the feedback loop by integrating reinforcement learning feedback and predictive insights."""
+        combined_feedback = rl_feedback + predictive_insights.get("suggestions", [])
+        self.logger.info(f"Evolving feedback loop with combined feedback: {combined_feedback}")
+        await self.knowledge_base.add_entry("evolved_feedback", {"combined_feedback": combined_feedback})
+        self.spreadsheet_manager.write_data((35, 1), [["Evolved Feedback"], [combined_feedback]])
+        # Implement further logic to utilize combined feedback for long-term evolution
 
     async def apply_and_log_improvement(self, si, kb, improvement, system_state):
         await self.log_decision(f"Applying improvement: {improvement}")
