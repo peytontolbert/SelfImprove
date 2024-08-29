@@ -47,17 +47,18 @@ class KnowledgeBase:
         tx.run("CREATE CONSTRAINT IF NOT EXISTS FOR (n:Node) REQUIRE n.name IS UNIQUE")
 
     def add_node(self, label, properties):
+        """Add a node with detailed properties to the graph."""
         with self.driver.session() as session:
             session.write_transaction(self._create_node, label, properties)
 
     @staticmethod
     def _create_node(tx, label, properties):
-        query = f"CREATE (n:{label} $properties)"
-        # Convert non-primitive types to JSON strings
+        query = f"MERGE (n:{label} $properties)"
         sanitized_properties = {k: (json.dumps(v) if isinstance(v, (dict, list)) else v) for k, v in properties.items()}
         tx.run(query, properties=sanitized_properties)
 
     def add_relationship(self, from_node, to_node, relationship_type, properties=None):
+        """Add or update a relationship with properties between nodes."""
         with self.driver.session() as session:
             session.write_transaction(self._create_relationship, from_node, to_node, relationship_type, properties)
 
@@ -65,7 +66,9 @@ class KnowledgeBase:
     def _create_relationship(tx, from_node, to_node, relationship_type, properties):
         query = (
             f"MATCH (a), (b) WHERE a.name = $from_node AND b.name = $to_node "
-            f"CREATE (a)-[r:{relationship_type} {{properties}}]->(b)"
+            f"MERGE (a)-[r:{relationship_type}]->(b) "
+            f"ON CREATE SET r = $properties "
+            f"ON MATCH SET r += $properties"
         )
         tx.run(query, from_node=from_node, to_node=to_node, properties=properties or {})
 
@@ -79,20 +82,19 @@ class KnowledgeBase:
         with self.driver.session() as session:
             session.write_transaction(self._create_relationship, from_capability, to_capability, relationship_type, properties)
 
+    def query_insights(self, query):
+        """Execute a custom query to retrieve insights from the graph database."""
+        with self.driver.session() as session:
+            result = session.run(query)
+            return [record.data() for record in result]
+
     def get_capability_evolution(self, capability_name):
         """Retrieve the evolution of a specific capability."""
-        with self.driver.session() as session:
-            result = session.read_transaction(self._find_capability_evolution, capability_name)
-            return result
-
-    @staticmethod
-    def _find_capability_evolution(tx, capability_name):
         query = (
             "MATCH (c:Capability {name: $capability_name})-[r]->(next:Capability) "
             "RETURN c.name AS current, r, next.name AS next"
         )
-        result = tx.run(query, capability_name=capability_name)
-        return [{"current": record["current"], "relationship": record["r"], "next": record["next"]} for record in result]
+        return self.query_insights(query)
     async def add_entry(self, entry_name, data, metadata=None, narrative_context=None, context=None):
         if context:
             data.update({"context": context})
