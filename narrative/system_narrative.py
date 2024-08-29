@@ -38,17 +38,20 @@ class SystemNarrative:
         return thoughts
 
     async def log_state(self, message, context=None):
-        if context:
-            self.logger.info(f"System State: {message} | Context: {context}")
-        else:
-            self.logger.info(f"System State: {message}")
+        if context is None:
+            context = {}
+        context.update({
+            "system_status": "Current system status",
+            "recent_changes": "Recent changes in the system",
+            "longterm_memory": await self.knowledge_base.get_longterm_memory()
+        })
+        self.logger.info(f"System State: {message} | Context: {context}")
         await self.log_with_ollama(message, context)
         # Log state to spreadsheet
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
         # Analyze feedback and suggest improvements
-        context = {"current_state": message}
         feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}", task="feedback_analysis", context=context)
         self.logger.info(f"Feedback analysis: {feedback}")
 

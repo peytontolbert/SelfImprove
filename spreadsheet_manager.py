@@ -21,6 +21,9 @@ class SpreadsheetManager:
         """Write data to the spreadsheet starting from a specified cell."""
         for row_idx, row_data in enumerate(data, start=start_cell[0]):
             for col_idx, value in enumerate(row_data, start=start_cell[1]):
+                # Convert complex data types to JSON strings
+                if isinstance(value, (dict, list)):
+                    value = json.dumps(value, indent=2)
                 self.sheet.cell(row=row_idx, column=col_idx, value=value)
         self.workbook.save(self.file_path)
 
