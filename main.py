@@ -101,12 +101,16 @@ async def main():
     
     # Initialize PromptManager
     pm = PromptManager()
-    while True:
+    # Manage task orchestration
+    task_queue.manage_orchestration()
         user_input = ui.get_input()
         if user_input.lower() == "exit":
             break
         
-        # Process input and interact with Ollama
+        # Monitor system performance
+        performance_metrics = {"task_count": len(task_queue)}
+        improvements = await ollama.improve_system(performance_metrics)
+        ui.display_output(f"Suggested improvements: {improvements}")
         try:
             prompt = pm.load_prompt("example_task")
             response = await ollama.query_ollama(ollama.system_prompt, prompt)
