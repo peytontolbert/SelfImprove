@@ -317,15 +317,15 @@ async def main():
     }
     logging.getLogger().setLevel(config["log_level"])
 
-    narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb)
-    logger.info("Initializing system components with detailed logging and context management")
-    await narrative.log_state("System components initialized successfully")
     task_queue = TaskQueue(ollama)
     vcs = VersionControlSystem()
     ca = CodeAnalysis()
     tf = TestingFramework()
     dm = DeploymentManager()
     kb = KnowledgeBase(ollama_interface=ollama)
+    narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb)
+    logger.info("Initializing system components with detailed logging and context management")
+    await narrative.log_state("System components initialized successfully")
     improvement_manager = ImprovementManager(ollama)
     si = SelfImprovement(ollama, kb, improvement_manager)
     fs = FileSystem()
