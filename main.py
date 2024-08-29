@@ -1,6 +1,7 @@
 from core.ollama_interface import OllamaInterface
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
+import asyncio
 # user_interface.py
 class UserInterface:
     def get_input(self):
