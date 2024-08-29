@@ -164,7 +164,7 @@ class OllamaInterface:
         prompt = f"Analyze this experience data and extract learnings: {json.dumps(experience_data)}. Focus on patterns, successful strategies, and areas for improvement."
         context = {"experience_data": experience_data}
         result = await self.query_ollama(self.system_prompt, prompt, task="experience_learning", context=context)
-        self.knowledge_base.log_interaction("OllamaInterface", "learn_from_experience", {"experience_data": experience_data})
+        self.knowledge_base.log_interaction("OllamaInterface", "learn_from_experience", {"experience_data": experience_data}, improvement="Learned from experience")
         return result
 
     def get_conversation_history(self) -> List[Dict[str, Any]]:

@@ -407,7 +407,8 @@ async def main():
         if ollama.session and not ollama.session.closed:
             await ollama.__aexit__(None, None, None)
         logger.info("System components shut down successfully")
-        await ollama.__aexit__(None, None, None)
+        if ollama.session and not ollama.session.closed:
+            await ollama.__aexit__(None, None, None)
 
 if __name__ == "__main__":
     asyncio.run(main())
