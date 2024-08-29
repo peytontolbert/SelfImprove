@@ -125,6 +125,40 @@ class SelfImprovement:
         return refinements
 
 
+async def improve_system_capabilities(ollama, si, kb):
+    while True:
+        # Analyze current system state
+        system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+        
+        # Generate improvement suggestions
+        improvements = await si.analyze_performance(system_state)
+        
+        if improvements:
+            for improvement in improvements:
+                # Validate the improvement
+                validation = await si.validate_improvements([improvement])
+                if validation:
+                    # Apply the improvement
+                    result = await si.apply_improvements([improvement])
+                    
+                    # Learn from the experience
+                    experience_data = {
+                        "improvement": improvement,
+                        "result": result,
+                        "system_state": system_state
+                    }
+                    learning = await si.learn_from_experience(experience_data)
+                    
+                    # Update knowledge base
+                    await kb.add_entry(f"improvement_{int(time.time())}", {
+                        "improvement": improvement,
+                        "result": result,
+                        "learning": learning
+                    })
+        
+        # Wait for a while before the next improvement cycle
+        await asyncio.sleep(3600)  # Wait for an hour
+
 async def main():
     ui = UserInterface()
     ollama = OllamaInterface()
@@ -138,8 +172,12 @@ async def main():
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
+    
     # Start continuous improvement in the background
     asyncio.create_task(si.continuous_improvement())
+    
+    # Start system capability improvement in the background
+    asyncio.create_task(improve_system_capabilities(ollama, si, kb))
 
     while True:
         try:
@@ -186,28 +224,6 @@ async def main():
                 elif kb_op == 'improve':
                     suggestions = await kb.suggest_improvements()
                     ui.display_output(f"Improvement suggestions: {suggestions}")
-
-            # Continuous improvement loop
-            performance_metrics = {"task_count": task_queue.get_task_count()}
-            system_state = {"metrics": performance_metrics, "task_queue": task_queue.tasks}
-            
-            state_evaluation = await ollama.evaluate_system_state(system_state)
-            ui.display_output(f"System state evaluation: {state_evaluation}")
-
-            improvements = await si.analyze_performance(performance_metrics)
-            if improvements:
-                ui.display_output(f"Suggested improvements: {improvements}")
-                results = await si.apply_improvements(improvements)
-                ui.display_output(f"Improvement application results: {results}")
-
-                # Learn from the experience
-                experience_data = {
-                    "improvements": improvements,
-                    "results": results,
-                    "system_state": system_state
-                }
-                learning = await si.learn_from_experience(experience_data)
-                ui.display_output(f"System learning: {learning}")
 
             # Prompt refinement
             prompt_refinements = await si.suggest_prompt_refinements()
