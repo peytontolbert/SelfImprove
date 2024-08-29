@@ -44,7 +44,7 @@ class OllamaInterface:
             self.logger.warning("No specific context provided. Using default context.")
         for attempt in range(self.max_retries):
             try:
-                result = await asyncio.wait_for(self.gpt.chat_with_ollama(system_prompt, prompt), timeout=timeout)
+                result = await self.gpt.chat_with_ollama(system_prompt, prompt)
                 if isinstance(result, str):
                     try:
                         response_data = json.loads(result)
