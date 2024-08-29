@@ -381,7 +381,7 @@ async def main():
         error_types = error_handler.classify_errors(e)
         logger.info(f"Error types classified: {error_types}")
         # Implement fallback strategies based on error types
-        fallback_strategy = error_handler.get_fallback_strategy(e)
+        fallback_strategy = error_handler.suggest_recovery_strategy(type(e).__name__)
         logger.info(f"Applying fallback strategy: {fallback_strategy}")
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
