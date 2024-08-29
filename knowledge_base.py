@@ -144,7 +144,8 @@ class KnowledgeBase:
     def _find_node(tx, entry_name):
         query = f"MATCH (n) WHERE n.name = $entry_name RETURN n"
         result = tx.run(query, entry_name=entry_name)
-        return result.single()[0] if result.single() else None
+        single_result = result.single()
+        return single_result[0] if single_result else None
 
     async def update_entry(self, entry_name, data):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I update this entry: {entry_name} with data: {data}", task="knowledge_base")
