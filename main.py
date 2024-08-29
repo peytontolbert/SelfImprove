@@ -61,7 +61,7 @@ class SelfImprovement:
             if validation.get('is_valid', False):
                 validated.append(improvement)
             else:
-                print(f"Invalid improvement suggestion: {improvement}")
+                logger.info(f"Invalid improvement suggestion: {improvement}")
         return validated
 
     async def apply_improvements(self, improvements):
@@ -79,19 +79,32 @@ class SelfImprovement:
     async def apply_code_change(self, code_change):
         # Here you would apply the code change
         # This is a placeholder for the actual implementation
-        print(f"Applying code change: {code_change}")
+        logger.info(f"Applying code change: {code_change}")
         return {"status": "success", "message": "Code change applied"}
 
     async def apply_system_update(self, system_update):
         # Here you would update system parameters or configurations
         # This is a placeholder for the actual implementation
-        print(f"Updating system: {system_update}")
+        logger.info(f"Updating system: {system_update}")
         return {"status": "success", "message": "System update applied"}
 
     async def learn_from_experience(self, experience_data):
         learning = await self.ollama.learn_from_experience(experience_data)
         await self.knowledge_base.add_entry("system_learnings", learning)
         return learning
+
+    async def continuous_improvement(self):
+        while True:
+            system_state = await self.ollama.evaluate_system_state({"metrics": await self.get_system_metrics()})
+            improvements = await self.analyze_performance(system_state)
+            if improvements:
+                results = await self.apply_improvements(improvements)
+                await self.learn_from_experience({"improvements": improvements, "results": results})
+            await asyncio.sleep(3600)  # Run every hour
+
+    async def get_system_metrics(self):
+        # Placeholder for getting actual system metrics
+        return {"performance": 0.8, "error_rate": 0.02, "task_completion_rate": 0.95}
 
 async def main():
     ui = UserInterface()
@@ -178,6 +191,14 @@ async def main():
         except Exception as e:
             recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
+            if recovery.get('critical', False):
+                logger.critical(f"Critical error occurred: {str(e)}")
+                break  # Exit the main loop if it's a critical error
+            elif recovery.get('retry', False):
+                logger.warning(f"Retrying after error: {str(e)}")
+                continue  # Retry the current iteration
+            else:
+                logger.error(f"Non-critical error occurred: {str(e)}")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -21,9 +21,10 @@ class OllamaInterface:
         await self.session.close()
 
     async def query_ollama(self, system_prompt: str, prompt: str) -> Dict[str, Any]:
+        refined_prompt = await self.refine_prompt(prompt, system_prompt)
         for attempt in range(self.max_retries):
             try:
-                result = self.gpt.chat_with_ollama(system_prompt, prompt)
+                result = self.gpt.chat_with_ollama(system_prompt, refined_prompt)
                 if isinstance(result, str):
                     try:
                         return json.loads(result)
@@ -37,6 +38,11 @@ class OllamaInterface:
                 self.logger.error(f"Error querying Ollama (attempt {attempt + 1}/{self.max_retries}): {str(e)}")
                 if attempt == self.max_retries - 1:
                     raise
+
+    async def refine_prompt(self, prompt: str, task: str) -> str:
+        refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
+        response = await self.query_ollama("prompt_refinement", refinement_prompt)
+        return response.get("refined_prompt", prompt)
 
     async def analyze_code(self, code: str) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
