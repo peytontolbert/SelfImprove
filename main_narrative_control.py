@@ -434,14 +434,7 @@ async def main():
     except Exception as e:
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
-    finally:
-        await narrative.log_state("Shutting down system components")
-        # Perform any necessary cleanup or shutdown procedures here
-        if ollama.session and not ollama.session.closed:
-            await ollama.__aexit__(None, None, None)
-        logger.info("System components shut down successfully")
-        if ollama.session and not ollama.session.closed:
-            await ollama.__aexit__(None, None, None)
+    # Removed shutdown logic to keep the system running indefinitely
 
 def load_configuration():
     return {
