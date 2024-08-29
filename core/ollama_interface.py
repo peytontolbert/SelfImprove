@@ -23,7 +23,7 @@ class OllamaInterface:
     async def query_ollama(self, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         for attempt in range(self.max_retries):
             try:
-                result = self.gpt.chat_with_ollama(self.system_prompt, prompt)
+                result = self.gpt.chat_with_ollama(f"{self.system_prompt}\n\n{prompt}")
                 return result
             except Exception as e:
                 self.logger.error(f"Error querying Ollama (attempt {attempt + 1}/{self.max_retries}): {str(e)}")
