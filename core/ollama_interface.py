@@ -102,7 +102,8 @@ class OllamaInterface:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
         if context is None:
             context = {}
-        context.update({"spec": spec})
+        # Include spec length for context-aware generation
+        context.update({"spec": spec, "spec_length": len(spec)})
         response = await self.query_ollama("code_generation", prompt, context=context)
         return response.get("code", "") if response else ""
 
