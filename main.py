@@ -104,7 +104,7 @@ async def main():
     # Manage task orchestration
     task_queue.manage_orchestration()
     user_input = ui.get_input()
-        if user_input.lower() == "exit":
+    if user_input.lower() == "exit":
             break
         
         # Monitor system performance
