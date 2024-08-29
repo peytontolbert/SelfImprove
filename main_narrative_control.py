@@ -363,7 +363,7 @@ async def main():
     scaling_decisions = await ollama.query_ollama("scalability_optimization", "Provide guidance on scaling and resource allocation based on current system load.")
     logger.info(f"Scalability and resource optimization decisions: {scaling_decisions}")
     error_handler = ErrorHandler()
-    error_types = error_handler.classify_errors()
+    error_types = error_handler.classify_errors(Exception("Sample error for classification"))
     logger.info(f"Error types classified: {error_types}")
     # Implement fallback strategies based on error types
     try:
