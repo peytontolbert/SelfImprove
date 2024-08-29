@@ -20,6 +20,7 @@ class SystemNarrative:
     async def generate_thoughts(self, context=None):
         """Generate detailed thoughts or insights about the current state and tasks."""
         longterm_memory = await self.knowledge_base.get_longterm_memory()
+        self.logger.info(f"Using long-term memory: {json.dumps(longterm_memory, indent=2)}")
         prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
         if context:
             prompt += f" | Context: {context}"
