@@ -12,9 +12,12 @@ class ErrorHandler:
         self.log_error(error)
         recovery_suggestion = await ollama_interface.handle_error(error)
         
-        if recovery_suggestion.get('decompose_task', False):
+        if recovery_suggestion and recovery_suggestion.get('decompose_task', False):
             subtasks = await self.decompose_task(ollama_interface, recovery_suggestion.get('original_task'))
             recovery_suggestion['subtasks'] = subtasks
+        else:
+            self.logger.error("No valid recovery suggestion received from Ollama.")
+            recovery_suggestion = {"error": "No valid recovery suggestion"}
         
         self.logger.info(f"Recovery suggestion: {recovery_suggestion}")
         return recovery_suggestion
