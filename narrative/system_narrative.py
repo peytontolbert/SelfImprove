@@ -136,4 +136,11 @@ class SystemNarrative:
                     subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
                     self.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
 
+            # Check for reset command
+            reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed")
+            if reset_command.get('reset', False):
+                await self.log_state("Resetting system state as per command")
+                # Implement reset logic here
+                continue
+
             await asyncio.sleep(3600)  # Wait for an hour
