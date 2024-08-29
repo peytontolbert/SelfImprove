@@ -83,7 +83,7 @@ async def main():
     tf = TestingFramework()
     dm = DeploymentManager()
     si = SelfImprovement()
-    eh = ErrorHandling()
+    eh = ErrorHandler()
 
     # System startup and initialization logic
     # Initialize components
@@ -99,7 +99,8 @@ async def main():
     eh = ErrorHandling()
     pm = PromptManager()
     
-    # Example interaction loop
+    # Initialize PromptManager
+    pm = PromptManager()
     while True:
         user_input = ui.get_input()
         if user_input.lower() == "exit":
