@@ -32,10 +32,13 @@ class OllamaInterface:
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
         if context:
+            # Ensure context is comprehensive and relevant
+            context = {k: v for k, v in context.items() if v is not None}
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
         else:
-            context = {"default": "No specific context provided"}
+            # Provide a more informative default context
+            context = {"default": "No specific context provided. Please ensure to include relevant details for better results."}
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
             self.logger.warning("No specific context provided. Using default context.")
@@ -78,7 +81,8 @@ class OllamaInterface:
             )
         else:
             refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
-        context = {"task": task}
+        # Include task-specific details in the context
+        context = {"task": task, "prompt_length": len(prompt)}
         response = await self.query_ollama("prompt_refinement", refinement_prompt, context=context, refine=False)
         return response.get("refined_prompt", prompt).strip()
 
@@ -184,7 +188,8 @@ class OllamaInterface:
     async def suggest_error_recovery(self, error: Exception) -> str:
         """Suggest a recovery strategy for a given error."""
         error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
-        context = {"error": str(error)}
+        # Add error type to context for more precise handling
+        context = {"error": str(error), "error_type": type(error).__name__}
         recovery_suggestion = await self.query_ollama(self.system_prompt, error_prompt, context=context)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
 
