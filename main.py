@@ -53,13 +53,14 @@ class DeploymentManager:
         logger.info(f"Rollback plan generated: {rollback_plan}")
 
 class SelfImprovement:
-    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase):
+    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
         self.ollama = ollama
         self.knowledge_base = knowledge_base
+        self.improvement_manager = improvement_manager
 
     async def analyze_performance(self, metrics):
-        improvements = await self.ollama.improve_system(metrics)
-        validated_improvements = await self.validate_improvements(improvements)
+        improvements = await self.improvement_manager.suggest_improvements(metrics)
+        validated_improvements = await self.improvement_manager.validate_improvements(improvements)
         return validated_improvements
 
     async def validate_improvements(self, improvements):
@@ -74,14 +75,7 @@ class SelfImprovement:
 
     async def apply_improvements(self, improvements):
         results = []
-        for improvement in improvements:
-            implementation = await self.ollama.implement_improvement(improvement)
-            if implementation.get('code_change'):
-                result = await self.apply_code_change(implementation['code_change'])
-                results.append(result)
-            if implementation.get('system_update'):
-                result = await self.apply_system_update(implementation['system_update'])
-                results.append(result)
+        results = await self.improvement_manager.apply_improvements(improvements)
         return results
 
     async def apply_code_change(self, code_change):
