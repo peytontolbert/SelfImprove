@@ -129,10 +129,10 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
         try:
             narrative.log_state("Analyzing current system state")
             system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
-            
+
             narrative.log_state("Generating improvement suggestions")
             improvements = await si.analyze_performance(system_state)
-            
+
             if improvements:
                 for improvement in improvements:
                     # Validate the improvement
@@ -140,7 +140,7 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
                     if validation:
                         narrative.log_decision(f"Applying improvement: {improvement}")
                         result = await si.apply_improvements([improvement])
-                        
+
                         # Learn from the experience
                         experience_data = {
                             "improvement": improvement,
@@ -148,13 +148,16 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
                             "system_state": system_state
                         }
                         learning = await si.learn_from_experience(experience_data)
-                        
+
                         # Update knowledge base
                         await kb.add_entry(f"improvement_{int(time.time())}", {
                             "improvement": improvement,
                             "result": result,
                             "learning": learning
                         })
+
+                        # Log the learning process
+                        narrative.log_state("Learning from experience", experience_data)
 
             narrative.log_state("Performing additional system improvement tasks")
             await task_queue.manage_orchestration()
@@ -182,6 +185,7 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
             fs.write_to_file("system_state.log", str(system_state))
 
             # Prompt management
+            narrative.log_state("Managing prompts")
             new_prompts = await pm.generate_new_prompts(ollama)
             for prompt_name, prompt_content in new_prompts.items():
                 pm.save_prompt(prompt_name, prompt_content)
@@ -191,6 +195,9 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
             if system_errors:
                 for error in system_errors:
                     await eh.handle_error(ollama, error)
+
+            # Log completion of the improvement cycle
+            narrative.log_state("Completed improvement cycle")
 
         except Exception as e:
             narrative.log_error(f"Error in improve_system_capabilities: {str(e)}")
