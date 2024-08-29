@@ -355,14 +355,6 @@ async def main():
     # Initialize configuration settings
     config = load_configuration()
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
-
-async def main():
-    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh = initialize_components()
-    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
-
-    # Initialize configuration settings
-    config = load_configuration()
-    logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
     await narrative.log_state("System components initialized successfully")
     
