@@ -166,7 +166,7 @@ class KnowledgeBase:
     async def get_longterm_memory(self):
         """Retrieve long-term memory entries."""
         if not self.longterm_memory:
-            entries = await self.list_entries()
+            entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
             for entry in entries:
                 if isinstance(entry, dict):
                     entry_name = entry.get('entry', str(entry))
