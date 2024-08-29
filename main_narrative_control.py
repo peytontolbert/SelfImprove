@@ -290,8 +290,17 @@ class SelfImprovement:
         return {"status": "success", "message": "Code change applied"}
 
     async def apply_system_update(self, system_update):
-        logger.info(f"System update applied: {system_update}")
-        return {"status": "success", "message": "System update applied"}
+        try:
+            logger.info(f"Applying system update: {system_update}")
+            # Execute the update command or script
+            result = subprocess.run(system_update, shell=True, check=True, capture_output=True, text=True)
+            logger.info(f"System update executed successfully: {system_update}")
+            logger.debug(f"Update output: {result.stdout}")
+            return {"status": "success", "message": "System update applied successfully"}
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to apply system update: {str(e)}")
+            logger.debug(f"Update error output: {e.stderr}")
+            return {"status": "failure", "message": f"System update failed: {str(e)}"}
 
     async def learn_from_experience(self, experience_data):
         learning = await self.ollama.learn_from_experience(experience_data)
