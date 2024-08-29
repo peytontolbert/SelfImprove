@@ -349,10 +349,13 @@ async def main():
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
 
-    # Implement continuous improvement loops
-    improvement_data = await si.get_improvement_data()
-    spreadsheet_manager.write_data((40, 1), [["Improvement", "Outcome"]] + improvement_data)
-    logger.info("Logged improvement data to spreadsheet")
+    # Implement additional golden rules
+    golden_rules = await ollama.query_ollama("golden_rules", "Review and update the golden rules based on current system performance and insights.")
+    logger.info(f"Updated golden rules: {golden_rules}")
+    # Implement continuous system evaluation and iteration
+    system_evaluation = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+    logger.info(f"System evaluation: {system_evaluation}")
+    await si.learn_from_experience(system_evaluation)
     error_handler = ErrorHandler()
     error_types = error_handler.classify_errors()
     logger.info(f"Error types classified: {error_types}")
