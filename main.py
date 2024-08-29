@@ -135,16 +135,16 @@ class SelfImprovement:
 
                 await narrative.log_state("Generating improvement suggestions")
                 logger.info("Generating improvement suggestions")
-                improvements = await self.improvement_manager.suggest_improvements(system_state)
+                improvements = await self.retry_ollama_call(self.improvement_manager.suggest_improvements, system_state)
 
                 if improvements:
                     for improvement in improvements:
                         # Validate the improvement
-                        validation = await self.improvement_manager.validate_improvements([improvement])
+                        validation = await self.retry_ollama_call(self.improvement_manager.validate_improvements, [improvement])
                         if validation:
                             await narrative.log_decision(f"Applying improvement: {improvement}")
                             logger.info(f"Applying improvement: {improvement}")
-                            result = await self.improvement_manager.apply_improvements([improvement])
+                            result = await self.retry_ollama_call(self.improvement_manager.apply_improvements, [improvement])
 
                             # Learn from the experience
                             experience_data = {
@@ -152,7 +152,7 @@ class SelfImprovement:
                                 "result": result,
                                 "system_state": system_state
                             }
-                            learning = await si.learn_from_experience(experience_data)
+                            learning = await self.retry_ollama_call(si.learn_from_experience, experience_data)
 
                             # Update knowledge base
                             await kb.add_entry(f"improvement_{int(time.time())}", {
@@ -167,7 +167,7 @@ class SelfImprovement:
 
                 await narrative.log_state("Performing additional system improvement tasks")
                 await task_queue.manage_orchestration()
-                code_analysis = await ca.analyze_code(ollama, "current_system_code")
+                code_analysis = await self.retry_ollama_call(ca.analyze_code, ollama, "current_system_code")
                 if code_analysis.get('improvements'):
                     for code_improvement in code_analysis['improvements']:
                         await si.apply_code_change(code_improvement)
@@ -175,10 +175,10 @@ class SelfImprovement:
                 test_results = await tf.run_tests(ollama, "current_test_suite")
                 if test_results.get('failed_tests'):
                     for failed_test in test_results['failed_tests']:
-                        fix = await ollama.query_ollama("test_fixing", f"Fix this failed test: {failed_test}")
+                        fix = await self.retry_ollama_call(ollama.query_ollama, "test_fixing", f"Fix this failed test: {failed_test}")
                         await si.apply_code_change(fix['code_change'])
 
-                deployment_decision = await dm.deploy_code(ollama)
+                deployment_decision = await self.retry_ollama_call(dm.deploy_code, ollama)
                 if deployment_decision.get('deploy', True):
                     # Perform deployment
                     pass
@@ -197,10 +197,10 @@ class SelfImprovement:
                     pm.save_prompt(prompt_name, prompt_content)
 
                 await narrative.log_state("Checking for system errors")
-                system_errors = await eh.check_for_errors(ollama)
+                system_errors = await self.retry_ollama_call(eh.check_for_errors, ollama)
                 if system_errors:
                     for error in system_errors:
-                        await eh.handle_error(ollama, error)
+                        await self.retry_ollama_call(eh.handle_error, ollama, error)
 
                 # Log completion of the improvement cycle
                 await narrative.log_state("Completed improvement cycle")
@@ -215,7 +215,15 @@ class SelfImprovement:
             # Wait before the next improvement cycle
             await asyncio.sleep(3600)  # Wait for an hour
 
-async def main():
+    async def retry_ollama_call(self, func, *args, max_retries=2, **kwargs):
+        """Retry a function call with Ollama if the result is None."""
+        for attempt in range(max_retries):
+            result = await func(*args, **kwargs)
+            if result is not None:
+                return result
+            logger.warning(f"Attempt {attempt + 1} failed, retrying...")
+        logger.error("All attempts failed, returning None")
+        return None
     narrative = SystemNarrative()
     await narrative.log_state("Initializing system components")
     ollama = OllamaInterface()
