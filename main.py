@@ -106,26 +106,33 @@ async def main():
             task_details = {"task_name": "example_task", "priority": "high"}
             task_queue.create_task(task_details)
 
-            # Load and refine prompt
-            prompt = pm.load_prompt("example_task")
-            refined_prompt = await ollama.refine_prompt(prompt, "example_task")
+            try:
+                # Load and refine prompt
+                prompt = pm.load_prompt("example_task")
+                refined_prompt = await ollama.refine_prompt(prompt, "example_task")
 
-            # Query Ollama with refined prompt
-            response = await ollama.query_ollama(ollama.system_prompt, refined_prompt)
-            ui.display_output(response)
+                # Query Ollama with refined prompt
+                response = await ollama.query_ollama(ollama.system_prompt, refined_prompt)
+                ui.display_output(response)
 
-            # Implement feedback loop for system improvement
-            performance_metrics = {"task_count": len(task_queue)}
-            improvements = await ollama.improve_system(performance_metrics)
-            ui.display_output(f"Suggested improvements: {improvements}")
+                # Implement feedback loop for system improvement
+                performance_metrics = {"task_count": len(task_queue)}
+                improvements = await ollama.improve_system(performance_metrics)
+                ui.display_output(f"Suggested improvements: {improvements}")
 
-            # Check if tasks are completed and handle them
-            if task_queue.is_task_completed(task_details):
-                ui.display_output("Task completed successfully.")
-                task_queue.remove_task(task_details)
+                # Check if tasks are completed and handle them
+                if task_queue.is_task_completed(task_details):
+                    ui.display_output("Task completed successfully.")
+                    task_queue.remove_task(task_details)
+
+            except AttributeError as e:
+                if "'str' object has no attribute 'get'" in str(e):
+                    ui.display_output("Error: Expected a dictionary but got a string. Please check the data source.")
+                else:
+                    raise
 
         except Exception as e:
-            # Handle errors using ErrorHandler
+            # Handle other errors using ErrorHandler
             recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
 
