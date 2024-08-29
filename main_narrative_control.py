@@ -15,7 +15,7 @@ Classes:
 Functions:
 - main: Initializes system components and starts the narrative-controlled improvement process.
 """
-
+import subprocess
 import logging
 import asyncio
 import os
