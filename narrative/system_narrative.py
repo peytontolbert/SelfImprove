@@ -2,6 +2,8 @@ import logging
 from core.ollama_interface import OllamaInterface
 import asyncio
 import time
+import subprocess
+
 class SystemNarrative:
     def __init__(self, ollama_interface=None):
         self.logger = logging.getLogger("SystemNarrative")
@@ -67,12 +69,7 @@ class SystemNarrative:
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
         await self.log_with_ollama(recovery_action, {"success": success})
 
-    async def calculate_improvement_cycle_frequency(self, system_state):
-        """Calculate the optimal frequency for the improvement cycle based on system state."""
-        # Example logic: Increase frequency if critical issues are detected
-        if system_state.get('critical_issues', 0) > 0:
-            return 1800  # 30 minutes
-        return 3600  # 1 hour
+    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         while True:
             try:
                 await self.log_state("Analyzing current system state")
@@ -159,9 +156,9 @@ class SystemNarrative:
                 # Assuming a simple reset command or script
                 try:
                     subprocess.run(["./reset.sh"], check=True)
-                    logger.info("System reset executed successfully.")
+                    self.logger.info("System reset executed successfully.")
                 except subprocess.CalledProcessError as e:
-                    logger.error(f"System reset failed: {e}")
+                    self.logger.error(f"System reset failed: {e}")
                 continue
 
             await asyncio.sleep(3600)  # Wait for an hour
