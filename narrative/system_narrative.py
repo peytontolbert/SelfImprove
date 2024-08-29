@@ -119,7 +119,7 @@ class SystemNarrative:
         while True:
             improvement_cycle_count += 1
             try:
-                async with asyncio.timeout(300):  # 5-minute timeout for the entire cycle
+                await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh), timeout=300)  # 5-minute timeout for the entire cycle
                     await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
                     
                     # System state analysis
