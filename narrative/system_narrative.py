@@ -39,7 +39,7 @@ class SystemNarrative:
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
         await self.knowledge_base.save_longterm_memory(longterm_memory)
         # Log thoughts to spreadsheet
-        self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]])
+        self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
         return thoughts
 
     def track_request(self, task, prompt, expected_response):
@@ -61,7 +61,7 @@ class SystemNarrative:
             "longterm_memory": await self.knowledge_base.get_longterm_memory()
         })
         self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
-        self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
+        self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
         await self.log_with_ollama(message, context)
         # Log state to spreadsheet

@@ -18,7 +18,12 @@ class SpreadsheetManager:
             data.append([cell.value for cell in row])
         return data
 
-    def write_data(self, start_cell, data):
+    def write_data(self, start_cell, data, sheet_name=None):
+        """Write data to the spreadsheet starting from a specified cell."""
+        if sheet_name:
+            if sheet_name not in self.workbook.sheetnames:
+                self.add_sheet(sheet_name)
+            self.sheet = self.workbook[sheet_name]
         """Write data to the spreadsheet starting from a specified cell."""
         for row_idx, row_data in enumerate(data, start=start_cell[0]):
             for col_idx, value in enumerate(row_data, start=start_cell[1]):
