@@ -309,6 +309,13 @@ async def main():
     logger.info("Initializing system components with detailed logging and context management")
     await narrative.log_state("System components initialized successfully")
     ollama = OllamaInterface()
+    # Ensure specific context is provided for each task
+    default_context = {
+        "longterm_memory": "Details about long-term memory usage and optimization",
+        "current_tasks": "List of current tasks",
+        "system_status": "Current system status"
+    }
+    ollama.manage_conversation_context("default", default_context)
     task_queue = TaskQueue(ollama)
     kb = KnowledgeBase(ollama_interface=ollama)
     vcs = VersionControlSystem()
@@ -323,7 +330,14 @@ async def main():
     
     # Start the narrative-controlled improvement process
     try:
-        await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
+        # Use specific context for improvement process
+        context_id = "improvement_process"
+        context = {
+            "task": "self_improvement",
+            "description": "Improving system based on long-term memory analysis"
+        }
+        ollama.manage_conversation_context(context_id, context)
+        await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, context_id=context_id)
     except Exception as e:
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
