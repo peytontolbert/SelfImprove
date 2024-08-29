@@ -35,7 +35,10 @@ class OllamaInterface:
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
         else:
-            self.logger.warning("No context provided for the task. Consider adding context for better response accuracy.")
+            context = {"default": "No specific context provided"}
+            context_str = json.dumps(context, indent=2)
+            prompt = f"Context: {context_str}\n\n{prompt}"
+            self.logger.warning("No specific context provided. Using default context.")
         for attempt in range(self.max_retries):
             try:
                 result = self.gpt.chat_with_ollama(system_prompt, prompt)

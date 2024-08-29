@@ -29,7 +29,11 @@ class ErrorHandler:
 
     async def decompose_task(self, ollama_interface, task):
         decomposition_prompt = f"Decompose this task into smaller, manageable subtasks: {task}"
-        context = {"task": task}
+        context = {
+            "task": task,
+            "error_details": "Detailed error information",
+            "previous_attempts": "Number of previous attempts"
+        }
         decomposition_result = await ollama_interface.query_ollama("task_decomposition", decomposition_prompt, context=context)
         subtasks = decomposition_result.get('subtasks', [])
         all_subtasks = subtasks.copy()
