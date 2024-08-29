@@ -37,13 +37,22 @@ class OllamaInterface:
                 result = self.gpt.chat_with_ollama(system_prompt, prompt)
                 if isinstance(result, str):
                     try:
-                        return json.loads(result)
+                        response_data = json.loads(result)
+                        if not response_data:
+                            self.logger.error("Empty response data received from Ollama.")
+                            return {"error": "Empty response data"}
+                        return response_data
                     except json.JSONDecodeError:
-                        return {"response": result}
+                        self.logger.error("Failed to decode JSON response from Ollama.")
+                        return {"error": "Invalid JSON response", "response": result}
                 elif isinstance(result, dict):
+                    if not result:
+                        self.logger.error("Empty response data received from Ollama.")
+                        return {"error": "Empty response data"}
                     return result
                 else:
-                    return {"response": str(result)}
+                    self.logger.error("Unexpected response type from Ollama.")
+                    return {"error": "Unexpected response type", "response": str(result)}
             except Exception as e:
                 self.logger.error(f"Error querying Ollama (attempt {attempt + 1}/{self.max_retries}): {str(e)}")
                 if attempt == self.max_retries - 1:
