@@ -190,16 +190,24 @@ class SystemNarrative:
                     context=context
                 )
                 self.logger.info(f"Alignment considerations: {alignment_considerations}")
-                for implication in alignment_considerations.get('alignment_implications', []):
-                    status = implication.get('alignment_status', 'unknown')
-                    impact_areas = implication.get('impact_areas', [])
-                    if status == 'partially_aligned':
-                        self.logger.warning(f"Partial alignment detected in areas: {impact_areas}. Further analysis required.")
-                        # Implement logic to handle partial alignment
-                    elif status == 'fully_aligned':
-                        self.logger.info("System is fully aligned. No immediate action required.")
+                for implication in alignment_considerations.get('assessed_implications', []):
+                    category = implication.get('category', 'unknown')
+                    description = implication.get('description', 'No description provided.')
+                    urgency = implication.get('level_of_urgency', 'unknown')
+                    
+                    self.logger.info(f"Implication Category: {category} | Description: {description} | Urgency: {urgency}")
+                    
+                    if urgency == 'high':
+                        self.logger.warning(f"High urgency implication detected in category: {category}. Immediate action required.")
+                        # Implement logic to handle high urgency implications
+                    elif urgency == 'medium-high':
+                        self.logger.info(f"Medium-high urgency implication detected in category: {category}. Prioritize for review.")
+                        # Implement logic to handle medium-high urgency implications
+                    elif urgency == 'low-medium':
+                        self.logger.info(f"Low-medium urgency implication detected in category: {category}. Monitor and review as needed.")
+                        # Implement logic to handle low-medium urgency implications
                     else:
-                        self.logger.error(f"Unknown alignment status: {status}.")
+                        self.logger.error(f"Unknown urgency level: {urgency}.")
 
             except Exception as e:
                 await self.log_error(f"Error in control_improvement_process: {str(e)}")
