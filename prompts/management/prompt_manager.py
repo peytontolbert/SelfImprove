@@ -25,5 +25,9 @@ class PromptManager:
         if version is None:
             version = self.get_next_version(prompt_name) - 1
         file_path = os.path.join(self.prompt_directory, f"{prompt_name}_v{version}.json")
-        with open(file_path, 'r') as file:
-            return json.load(file)["content"]
+        try:
+            with open(file_path, 'r') as file:
+                return json.load(file)["content"]
+        except FileNotFoundError:
+            # Handle the case where the prompt file does not exist
+            return "Default prompt content"
