@@ -217,6 +217,11 @@ class SystemNarrative:
         system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
 
+        # Generate hypotheses for potential improvements
+        hypotheses = await si.generate_hypotheses(system_state)
+        tested_hypotheses = await si.test_hypotheses(hypotheses)
+        self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
+
         # Generate and apply improvements in parallel
         await self.log_state("Generating improvement suggestions")
         improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
@@ -225,6 +230,10 @@ class SystemNarrative:
         if improvements:
             tasks = [self.apply_and_log_improvement(si, kb, improvement, system_state) for improvement in improvements]
             await asyncio.gather(*tasks)
+
+        # Add capabilities to the knowledge base
+        for improvement in improvements:
+            await kb.add_capability(improvement, {"status": "suggested"})
 
         # Perform additional tasks in parallel
         await asyncio.gather(
@@ -321,23 +330,27 @@ class SystemNarrative:
         await self.log_state("Performing additional system improvement tasks")
         await task_queue.manage_orchestration()
         
+        # Analyze code and suggest improvements
         code_analysis = await si.retry_ollama_call(ca.analyze_code, ollama, "current_system_code")
         if code_analysis.get('improvements'):
             for code_improvement in code_analysis['improvements']:
                 await si.apply_code_change(code_improvement)
 
+        # Run tests and handle failures
         test_results = await tf.run_tests(ollama, "current_test_suite")
         if test_results.get('failed_tests'):
             for failed_test in test_results['failed_tests']:
                 fix = await ollama.query_ollama("test_fixing", f"Fix this failed test: {failed_test}")
                 await si.apply_code_change(fix['code_change'])
 
+        # Deploy code if approved
         deployment_decision = await si.retry_ollama_call(dm.deploy_code, ollama)
         if deployment_decision and deployment_decision.get('deploy', False):
             await self.log_state("Deployment approved by Ollama")
         else:
             await self.log_state("Deployment deferred based on Ollama's decision")
 
+        # Perform version control operations
         await self.log_state("Performing version control operations")
         changes = "Recent system changes"
         await vcs.commit_changes(ollama, changes)
