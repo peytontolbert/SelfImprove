@@ -5,11 +5,13 @@ import asyncio
 import time
 import subprocess
 import json
+from spreadsheet_manager import SpreadsheetManager
 class SystemNarrative:
     def __init__(self, ollama_interface=None, knowledge_base=None):
         self.logger = logging.getLogger("SystemNarrative")
         self.ollama = ollama_interface or OllamaInterface()
         self.knowledge_base = knowledge_base or KnowledgeBase()
+        self.spreadsheet_manager = SpreadsheetManager("narrative_data.xlsx")
         logging.basicConfig(level=logging.INFO)
 
     async def generate_thoughts(self, context=None):
@@ -29,6 +31,8 @@ class SystemNarrative:
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
         await self.knowledge_base.save_longterm_memory(longterm_memory)
+        # Log thoughts to spreadsheet
+        self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]])
         return thoughts
 
     async def log_state(self, message, context=None):
@@ -37,6 +41,8 @@ class SystemNarrative:
         else:
             self.logger.info(f"System State: {message}")
         await self.log_with_ollama(message, context)
+        # Log state to spreadsheet
+        self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
         # Analyze feedback and suggest improvements
@@ -51,6 +57,8 @@ class SystemNarrative:
         else:
             self.logger.info(f"System Decision: {decision}")
         await self.log_with_ollama(decision, rationale)
+        # Log decision to spreadsheet
+        self.spreadsheet_manager.write_data((10, 1), [["Decision", "Rationale"], [decision, rationale or ""]])
         # Generate and log thoughts about the decision
         await self.generate_thoughts({"decision": decision, "rationale": rationale})
 
@@ -61,6 +69,8 @@ class SystemNarrative:
         else:
             self.logger.error(f"System Error: {error}")
         await self.log_with_ollama(error, context)
+        # Log error to spreadsheet
+        self.spreadsheet_manager.write_data((15, 1), [["Error", "Context"], [str(error), json.dumps(context or {})]])
         # Suggest and log recovery strategies
         if context is None:
             context = {}
