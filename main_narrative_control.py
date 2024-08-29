@@ -342,7 +342,10 @@ async def main():
     # Manage prompt versions and A/B testing
     prompt_versions = prompt_manager.get_next_version("system_prompts")
     logger.info(f"Current prompt version: {prompt_versions}")
-    # Implement A/B testing logic here
+    # Implement dynamic prompt evolution
+    refined_prompts = await ollama.query_ollama("prompt_refinement", f"Refine prompts based on effectiveness: {prompt_versions}")
+    prompt_manager.save_prompt("refined_prompts", refined_prompts)
+    logger.info(f"Refined prompts: {refined_prompts}")
     improvements = await si.analyze_performance({"metric": "value"}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
@@ -351,10 +354,17 @@ async def main():
     metrics = await si.get_system_metrics()
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
+    # Ollama-centric performance optimization
+    performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}")
+    logger.info(f"Performance optimizations: {performance_optimizations}")
 
     # Implement adaptive learning and evolution
     learning_data = await si.learn_from_experience({"interaction_data": "recent_interactions"})
     logger.info(f"Adaptive learning data: {learning_data}")
+    # Use Ollama for task decomposition
+    complex_task = "Optimize system architecture"
+    subtasks = await ollama.query_ollama("task_decomposition", f"Decompose the task: {complex_task}")
+    logger.info(f"Decomposed subtasks: {subtasks}")
     # Enhanced error recovery
     error_recovery_strategies = await ollama.query_ollama("adaptive_error_recovery", "Suggest adaptive recovery strategies for recent errors.")
     logger.info(f"Adaptive error recovery strategies: {error_recovery_strategies}")
