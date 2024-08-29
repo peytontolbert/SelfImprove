@@ -349,7 +349,10 @@ async def main():
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
 
-    # Implement error classification and fallback strategies
+    # Implement feedback loop optimization
+    feedback_data = await narrative.get_feedback_data()
+    spreadsheet_manager.write_data((30, 1), [["Feedback", "Analysis"]] + feedback_data)
+    logger.info("Logged feedback data to spreadsheet")
     error_handler = ErrorHandler()
     error_types = error_handler.classify_errors()
     logger.info(f"Error types classified: {error_types}")
@@ -364,7 +367,11 @@ async def main():
         ollama.manage_conversation_context(context_id, context)
         await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, context_id=context_id)
     except Exception as e:
-        # Implement multilevel fallback strategies
+        # Implement error classification and fallback strategies
+        error_handler = ErrorHandler()
+        error_types = error_handler.classify_errors()
+        logger.info(f"Error types classified: {error_types}")
+        # Implement fallback strategies based on error types
         fallback_strategy = error_handler.get_fallback_strategy(e)
         logger.info(f"Applying fallback strategy: {fallback_strategy}")
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
