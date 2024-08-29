@@ -124,6 +124,12 @@ async def main():
                 improvements = await ollama.improve_system(performance_metrics)
                 ui.display_output(f"Suggested improvements: {improvements}")
 
+                # Automate code refinement and generation
+                for improvement in improvements:
+                    new_code = await ollama.generate_code(improvement)
+                    ui.display_output(f"Generated code for improvement: {new_code}")
+                    # Here you could add logic to apply the new code if appropriate
+
                 # Check if tasks are completed and handle them
                 if task_queue.is_task_completed(task_details):
                     ui.display_output("Task completed successfully.")
