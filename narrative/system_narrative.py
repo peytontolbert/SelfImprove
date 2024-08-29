@@ -1,7 +1,7 @@
 import logging
 from core.ollama_interface import OllamaInterface
 import asyncio
-
+import time
 class SystemNarrative:
     def __init__(self, ollama_interface=None):
         self.logger = logging.getLogger("SystemNarrative")
@@ -29,6 +29,7 @@ class SystemNarrative:
         await self.log_with_ollama(message, context)
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
+        await self.generate_thoughts(context)
 
     async def log_decision(self, decision, rationale=None):
         """Log decisions with detailed rationale."""
@@ -39,6 +40,7 @@ class SystemNarrative:
         await self.log_with_ollama(decision, rationale)
         # Generate and log thoughts about the decision
         await self.generate_thoughts({"decision": decision, "rationale": rationale})
+        await self.generate_thoughts({"decision": decision, "rationale": rationale})
 
     async def log_error(self, error, context=None):
         """Log errors with context and recovery strategies."""
@@ -48,6 +50,9 @@ class SystemNarrative:
             self.logger.error(f"System Error: {error}")
         await self.log_with_ollama(error, context)
         # Suggest and log recovery strategies
+        recovery_strategy = await self.ollama.suggest_error_recovery(error)
+        self.logger.info(f"Recovery Strategy: {recovery_strategy}")
+        await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
         recovery_strategy = await self.ollama.suggest_error_recovery(error)
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
@@ -64,7 +69,12 @@ class SystemNarrative:
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
         await self.log_with_ollama(recovery_action, {"success": success})
 
-    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+    async def calculate_improvement_cycle_frequency(self, system_state):
+        """Calculate the optimal frequency for the improvement cycle based on system state."""
+        # Example logic: Increase frequency if critical issues are detected
+        if system_state.get('critical_issues', 0) > 0:
+            return 1800  # 30 minutes
+        return 3600  # 1 hour
         """Control the process of improving system capabilities."""
         while True:
             try:
@@ -110,8 +120,10 @@ class SystemNarrative:
                         await si.apply_code_change(fix['code_change'])
 
                 deployment_decision = await dm.deploy_code(ollama)
-                if deployment_decision.get('deploy', True):
-                    pass
+                if deployment_decision and deployment_decision.get('deploy', False):
+                    await self.log_state("Deployment approved by Ollama")
+                else:
+                    await self.log_state("Deployment deferred based on Ollama's decision")
 
                 await self.log_state("Performing version control operations")
                 changes = "Recent system changes"
@@ -135,15 +147,24 @@ class SystemNarrative:
             except Exception as e:
                 await self.log_error(f"Error in control_improvement_process: {str(e)}")
                 recovery_suggestion = await eh.handle_error(ollama, e)
-                if recovery_suggestion.get('decompose_task', False):
+                if recovery_suggestion and recovery_suggestion.get('decompose_task', False):
                     subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
-                    self.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
+                    await self.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
+                else:
+                    await self.log_error("No valid recovery suggestion received from Ollama.", {"error": str(e)})
 
             # Check for reset command
             reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed")
             if reset_command.get('reset', False):
                 await self.log_state("Resetting system state as per command")
-                # Implement reset logic here
+                # Example reset logic
+                # This is a placeholder for actual reset logic
+                # Assuming a simple reset command or script
+                try:
+                    subprocess.run(["./reset.sh"], check=True)
+                    logger.info("System reset executed successfully.")
+                except subprocess.CalledProcessError as e:
+                    logger.error(f"System reset failed: {e}")
                 continue
 
             await asyncio.sleep(3600)  # Wait for an hour
