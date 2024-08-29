@@ -13,7 +13,7 @@ class SystemNarrative:
         self.ollama = ollama_interface or OllamaInterface()
         self.knowledge_base = knowledge_base or KnowledgeBase()
         self.spreadsheet_manager = SpreadsheetManager("narrative_data.xlsx")
-        self.rl_module = ReinforcementLearningModule()
+        self.rl_module = ReinforcementLearningModule(ollama_interface)
         logging.basicConfig(level=logging.INFO)
 
     async def generate_thoughts(self, context=None):
