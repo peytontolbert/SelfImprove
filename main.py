@@ -77,7 +77,7 @@ async def main():
     ui = UserInterface()
     ollama = OllamaInterface()
     task_queue = TaskQueue()
-    kb = KnowledgeBase()
+    kb = KnowledgeBase(ollama_interface=ollama)
     vcs = VersionControlSystem()
     ca = CodeAnalysis()
     tf = TestingFramework()
@@ -114,10 +114,17 @@ async def main():
             if action_decision.get('kb_operation', False):
                 kb_op = action_decision['kb_operation']
                 if kb_op == 'update':
-                    kb.update_information(action_decision['new_info'])
+                    success = await kb.update_entry(action_decision['entry_name'], action_decision['new_info'])
+                    ui.display_output(f"Knowledge Base update {'successful' if success else 'failed'}")
                 elif kb_op == 'query':
-                    info = kb.query_information(action_decision['query'])
+                    info = await kb.get_entry(action_decision['entry_name'])
                     ui.display_output(f"Knowledge Base info: {info}")
+                elif kb_op == 'analyze':
+                    analysis = await kb.analyze_knowledge_base()
+                    ui.display_output(f"Knowledge Base analysis: {analysis}")
+                elif kb_op == 'improve':
+                    suggestions = await kb.suggest_improvements()
+                    ui.display_output(f"Improvement suggestions: {suggestions}")
 
             # Continuous improvement loop
             performance_metrics = {"task_count": len(task_queue.tasks)}
