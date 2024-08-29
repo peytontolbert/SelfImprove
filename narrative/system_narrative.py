@@ -120,6 +120,8 @@ class SystemNarrative:
         await self.log_with_ollama(decision, rationale)
         # Log decision and rationale in the knowledge base
         await self.knowledge_base.add_entry("system_decision", {"decision": decision, "rationale": rationale, "timestamp": time.time()})
+        # Log decision and rationale in the knowledge base
+        await self.knowledge_base.add_entry("system_decision", {"decision": decision, "rationale": rationale, "timestamp": time.time()})
         # Log decision to spreadsheet
         self.spreadsheet_manager.write_data((10, 1), [["Decision", "Rationale"], [decision, rationale or ""]])
         # Generate and log thoughts about the decision
@@ -204,6 +206,8 @@ class SystemNarrative:
             await self.knowledge_base.add_entry("adaptive_learning", learning_data)
             # Track the evolution of system capabilities
             await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
+            # Track the evolution of system capabilities
+            await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
 
 
     async def dynamic_goal_setting(self, ollama, system_state):
@@ -215,6 +219,8 @@ class SystemNarrative:
 
     async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
         await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
+        # Log the start of an improvement cycle in the knowledge base
+        await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the start of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         
@@ -230,6 +236,9 @@ class SystemNarrative:
 
         # Generate and apply improvements in parallel
         await self.log_state("Generating improvement suggestions")
+        # Retrieve insights from the knowledge base for generating improvements
+        insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
+        self.logger.info(f"Retrieved insights for improvement: {insights}")
         # Retrieve insights from the knowledge base for generating improvements
         insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
         self.logger.info(f"Retrieved insights for improvement: {insights}")
@@ -296,6 +305,8 @@ class SystemNarrative:
             longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
             self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
         await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
+        # Log the completion of an improvement cycle in the knowledge base
+        await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the completion of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
 
