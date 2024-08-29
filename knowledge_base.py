@@ -176,7 +176,6 @@ class KnowledgeBase:
                     data = json.load(file)
                 self.longterm_memory[entry_name] = data
             self.logger.info(f"Retrieved long-term memory: {self.longterm_memory}")
-            await self.save_longterm_memory(self.longterm_memory)
         return self.longterm_memory
 
     async def save_longterm_memory(self, longterm_memory):
