@@ -6,7 +6,7 @@ class SpreadsheetManager:
         self.file_path = file_path
         try:
             self.workbook = openpyxl.load_workbook(file_path)
-        except FileNotFoundError:
+        except (FileNotFoundError, openpyxl.utils.exceptions.InvalidFileException):
             self.workbook = openpyxl.Workbook()
             self.workbook.save(file_path)
         self.sheet = self.workbook.active
