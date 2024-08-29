@@ -1,4 +1,5 @@
 import logging
+import aiohttp
 from typing import List, Dict, Any
 
 class RAGRetrieval:
