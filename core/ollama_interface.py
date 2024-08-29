@@ -29,12 +29,18 @@ class OllamaInterface:
         if self.session:
             await self.session.close()
 
-    async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, timeout: int = 30, use_contextual_memory: bool = True) -> Dict[str, Any]:
+    def simplify_context_memory(self, context_memory):
+        """Simplify the context memory structure to avoid excessive nesting."""
+        if isinstance(context_memory, dict):
+            return {k: self.simplify_context_memory(v) for k, v in context_memory.items() if v}
+        return context_memory
         if context is None:
             context = {}
         if use_contextual_memory:
             context_memory = await self.knowledge_base.get_longterm_memory()
-            context.update({"context_memory": context_memory})
+            # Simplify context memory structure
+            simplified_context_memory = self.simplify_context_memory(context_memory)
+            context.update({"context_memory": simplified_context_memory})
         if refine and task not in ["logging", "categorization"]:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
