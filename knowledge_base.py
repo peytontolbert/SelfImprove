@@ -13,19 +13,21 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface or OllamaInterface()
 
-    async def add_entry(self, entry_name, data):
+    async def add_entry(self, entry_name, data, version=None):
         decision = await self.ollama.query_ollama("knowledge_base", f"Should I add this entry: {entry_name} with data: {data}")
         if decision.get('add_entry', False):
-            file_path = os.path.join(self.base_directory, f"{entry_name}.json")
+            version = version or self.get_next_version(entry_name)
+            file_path = os.path.join(self.base_directory, f"{entry_name}_v{version}.json")
             with open(file_path, 'w') as file:
                 json.dump(data, file)
-            self.logger.info(f"Entry added: {entry_name}")
+            self.logger.info(f"Entry added: {entry_name} | Version: {version}")
             return True
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
 
     async def get_entry(self, entry_name):
-        file_path = os.path.join(self.base_directory, f"{entry_name}.json")
+        version = version or self.get_latest_version(entry_name)
+        file_path = os.path.join(self.base_directory, f"{entry_name}_v{version}.json")
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
                 data = json.load(file)
@@ -44,21 +46,49 @@ class KnowledgeBase:
             return update_result
         return False
 
-    async def list_entries(self):
-        entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
+    async def list_entries(self, include_versions=False):
+        entries = [f.split('_v')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
+        if include_versions:
+            entries = [f.replace('.json', '') for f in os.listdir(self.base_directory) if f.endswith('.json')]
         categorization = await self.ollama.query_ollama("knowledge_base", f"Categorize these entries: {entries}")
         categorized_entries = categorization.get('categorized_entries', entries)
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
 
-    async def analyze_knowledge_base(self):
+    async def search_entries(self, keyword):
+        """Search for entries containing the given keyword."""
+        matching_entries = []
+        for entry in os.listdir(self.base_directory):
+            if entry.endswith('.json'):
+                with open(os.path.join(self.base_directory, entry), 'r') as file:
+                    data = json.load(file)
+                    if keyword.lower() in json.dumps(data).lower():
+                        matching_entries.append(entry)
+        self.logger.info(f"Entries matching '{keyword}': {matching_entries}")
+        return matching_entries
         entries = await self.list_entries()
         analysis = await self.ollama.query_ollama("knowledge_base", f"Analyze the current state of the knowledge base with these entries: {entries}")
         analysis_result = analysis.get('analysis', "No analysis available")
         self.logger.info(f"Knowledge base analysis: {analysis_result}")
         return analysis_result
 
-    async def suggest_improvements(self):
+    async def get_next_version(self, entry_name):
+        """Get the next version number for an entry."""
+        existing_versions = [
+            int(f.split('_v')[-1].split('.json')[0])
+            for f in os.listdir(self.base_directory)
+            if f.startswith(entry_name)
+        ]
+        return max(existing_versions, default=0) + 1
+
+    async def get_latest_version(self, entry_name):
+        """Get the latest version number for an entry."""
+        existing_versions = [
+            int(f.split('_v')[-1].split('.json')[0])
+            for f in os.listdir(self.base_directory)
+            if f.startswith(entry_name)
+        ]
+        return max(existing_versions, default=0)
         analysis = await self.analyze_knowledge_base()
         suggestions = await self.ollama.query_ollama("knowledge_base", f"Suggest improvements based on this analysis: {analysis}")
         improvement_suggestions = suggestions.get('improvements', [])
