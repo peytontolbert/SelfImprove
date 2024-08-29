@@ -29,10 +29,12 @@ class OllamaInterface:
         if self.session:
             await self.session.close()
 
-    def simplify_context_memory(self, context_memory):
+    def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""
+        if current_depth >= max_depth:
+            return "..."
         if isinstance(context_memory, dict):
-            return {k: self.simplify_context_memory(v) for k, v in context_memory.items() if v}
+            return {k: self.simplify_context_memory(v, max_depth, current_depth + 1) for k, v in context_memory.items() if v}
         return context_memory
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
         if context is None:
