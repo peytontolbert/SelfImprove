@@ -119,22 +119,22 @@ class SelfImprovement:
             await self.ollama.update_system_prompt(refinements.get("new_system_prompt", "Default system prompt"))
         return refinements
 
-    async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative):
+    async def improve_system_capabilities(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative):
         while True:
             try:
                 narrative.log_state("Analyzing current system state")
                 system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
                 narrative.log_state("Generating improvement suggestions")
-                improvements = await improvement_manager.suggest_improvements(system_state)
+                improvements = await self.improvement_manager.suggest_improvements(system_state)
 
                 if improvements:
                     for improvement in improvements:
                         # Validate the improvement
-                        validation = await improvement_manager.validate_improvements([improvement])
+                        validation = await self.improvement_manager.validate_improvements([improvement])
                         if validation:
                             narrative.log_decision(f"Applying improvement: {improvement}")
-                            result = await improvement_manager.apply_improvements([improvement])
+                            result = await self.improvement_manager.apply_improvements([improvement])
 
                             # Learn from the experience
                             experience_data = {
