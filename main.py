@@ -18,6 +18,8 @@ class VersionControlSystem:
     async def commit_changes(self, ollama, changes):
         commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}")
         # Implement actual commit logic here
+        # For demonstration, we'll log the commit action
+        logger.info(f"Committing changes: {changes}")
         logger.info(f"Committed changes with message: {commit_message}")
 
     async def suggest_branching_strategy(self, ollama, current_state):
@@ -81,12 +83,16 @@ class SelfImprovement:
     async def apply_code_change(self, code_change):
         # Here you would apply the code change
         # This is a placeholder for the actual implementation
+        # Log the code change application
+        logger.info(f"Code change applied: {code_change}")
         logger.info(f"Applying code change: {code_change}")
         return {"status": "success", "message": "Code change applied"}
 
     async def apply_system_update(self, system_update):
         # Here you would update system parameters or configurations
         # This is a placeholder for the actual implementation
+        # Log the system update
+        logger.info(f"System update applied: {system_update}")
         logger.info(f"Updating system: {system_update}")
         return {"status": "success", "message": "System update applied"}
 
@@ -124,9 +130,11 @@ class SelfImprovement:
         while True:
             try:
                 await narrative.log_state("Analyzing current system state")
+                logger.info("Analyzing current system state")
                 system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
                 await narrative.log_state("Generating improvement suggestions")
+                logger.info("Generating improvement suggestions")
                 improvements = await self.improvement_manager.suggest_improvements(system_state)
 
                 if improvements:
@@ -135,6 +143,7 @@ class SelfImprovement:
                         validation = await self.improvement_manager.validate_improvements([improvement])
                         if validation:
                             await narrative.log_decision(f"Applying improvement: {improvement}")
+                            logger.info(f"Applying improvement: {improvement}")
                             result = await self.improvement_manager.apply_improvements([improvement])
 
                             # Learn from the experience
@@ -154,6 +163,7 @@ class SelfImprovement:
 
                             # Log the learning process
                             await narrative.log_state("Learning from experience", experience_data)
+                            logger.info(f"Learning from experience: {experience_data}")
 
                 await narrative.log_state("Performing additional system improvement tasks")
                 await task_queue.manage_orchestration()
