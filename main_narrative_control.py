@@ -26,6 +26,7 @@ from utils.error_handler import ErrorHandler
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
 import time
+from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative
 from core.improvement_manager import ImprovementManager
 
@@ -328,6 +329,12 @@ async def main():
     pm = PromptManager()
     eh = ErrorHandler()
     
+    # Initialize spreadsheet manager
+    spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
+    # Example: Read data from the spreadsheet
+    data = spreadsheet_manager.read_data("A1:C10")
+    logger.info(f"Data read from spreadsheet: {data}")
+
     # Start the narrative-controlled improvement process
     try:
         # Use specific context for improvement process
