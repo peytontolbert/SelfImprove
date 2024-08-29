@@ -34,6 +34,7 @@ class OllamaInterface:
         if isinstance(context_memory, dict):
             return {k: self.simplify_context_memory(v) for k, v in context_memory.items() if v}
         return context_memory
+    async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
         if context is None:
             context = {}
         if use_contextual_memory:
@@ -45,14 +46,13 @@ class OllamaInterface:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
-        if context is None:
-            context = {"default": "No specific context provided. Please ensure to include relevant details for better results."}
+        if not context:
+            self.logger.warning("No specific context provided. Using default context.")
         self.logger.info(f"Querying Ollama with context: {json.dumps(context, indent=2)}")
         context.update({"timestamp": time.time()})
         context_str = json.dumps(context, indent=2)
         prompt = f"Context: {context_str}\n\n{prompt}"
-        if not context:
-            self.logger.warning("No specific context provided. Using default context.")
+
         async def attempt_query():
             try:
                 return await self.gpt.chat_with_ollama(system_prompt, prompt)
