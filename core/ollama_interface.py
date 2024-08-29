@@ -13,7 +13,7 @@ class OllamaInterface:
         self.gpt = ChatGPT()
         self.max_retries = max_retries
         self.session = None
-        self.knowledge_base = knowledge_base or KnowledgeBase()
+        self.knowledge_base = knowledge_base or KnowledgeBase(ollama_interface=self)
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
         self.system_prompt = "Default system prompt"

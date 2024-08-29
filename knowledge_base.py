@@ -2,10 +2,9 @@ import logging
 import os
 import json
 import asyncio
-from core.ollama_interface import OllamaInterface
 import time
 class KnowledgeBase:
-    def __init__(self, base_directory="knowledge_base", ollama_interface=None):
+    def __init__(self, base_directory="knowledge_base"):
         self.base_directory = base_directory
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
