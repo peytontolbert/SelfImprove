@@ -26,6 +26,7 @@ class KnowledgeBase:
             with open(file_path, 'w') as file:
                 json.dump(entry_data, file)
             self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
+            await self.save_longterm_memory({entry_name: entry_data})
             return True
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
@@ -51,6 +52,8 @@ class KnowledgeBase:
         if decision.get('update_entry', False):
             update_result = await self.add_entry(entry_name, data)
             self.logger.info(f"Entry updated: {entry_name}")
+            if update_result:
+                await self.save_longterm_memory({entry_name: data})
             return update_result
         return False
 
