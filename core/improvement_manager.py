@@ -8,7 +8,11 @@ class ImprovementManager:
 
     async def suggest_improvements(self, system_state: Dict[str, Any]) -> List[str]:
         try:
-            prompt = f"Suggest improvements based on the current system state: {system_state}"
+            prompt = (
+                f"Suggest improvements based on the current system state: {system_state}. "
+                f"Consider alignment with business objectives, data quality, regulatory compliance, "
+                f"and information security as per the golden rules."
+            )
             response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="improvement_suggestion")
             suggestions = response.get("suggestions", [])
             self.logger.info(f"Suggested improvements: {suggestions}")
@@ -19,15 +23,19 @@ class ImprovementManager:
 
     async def validate_improvements(self, improvements: List[str]) -> List[str]:
         try:
-            validated = []
-            for improvement in improvements:
-                validation = await self.ollama.validate_improvement(improvement)
-                if validation.get('is_valid', False):
-                    validated.append(improvement)
-                else:
-                    self.logger.info(f"Invalid improvement suggestion: {improvement}")
-            self.logger.info(f"Validated improvements: {validated}")
-            return validated
+            try:
+                validated = []
+                for improvement in improvements:
+                    validation = await self.ollama.validate_improvement(improvement)
+                    if validation.get('is_valid', False):
+                        validated.append(improvement)
+                    else:
+                        self.logger.info(f"Invalid improvement suggestion: {improvement}")
+                self.logger.info(f"Validated improvements: {validated}")
+                return validated
+            except Exception as e:
+                self.logger.error(f"Error validating improvements: {str(e)}")
+                return []
         except Exception as e:
             self.logger.error(f"Error validating improvements: {str(e)}")
             return []
