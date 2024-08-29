@@ -21,20 +21,17 @@ class SystemNarrative:
         """Generate detailed thoughts or insights about the current state and tasks."""
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         self.logger.info(f"Using long-term memory: {json.dumps(longterm_memory, indent=2)}")
-        context.update({"longterm_memory": longterm_memory})
+        context["longterm_memory"] = longterm_memory
         prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
         if context:
             prompt += f" | Context: {context}"
         if longterm_memory:
             prompt += f" | Long-term Memory: {longterm_memory}"
         context = context or {}
-        context.update({
-            "longterm_memory": longterm_memory,
-            "current_tasks": "List of current tasks",
-            "system_status": "Current system status"
-        })
+        context["current_tasks"] = "List of current tasks"
+        context["system_status"] = "Current system status"
         self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
-        self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+        await self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
         self.track_request("thought_generation", prompt, "thoughts")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
