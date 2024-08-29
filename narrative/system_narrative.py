@@ -184,6 +184,16 @@ class SystemNarrative:
                     context=context
                 )
                 self.logger.info(f"Alignment considerations: {alignment_considerations}")
+                for implication in alignment_considerations.get('alignment_implications', []):
+                    status = implication.get('alignment_status', 'unknown')
+                    impact_areas = implication.get('impact_areas', [])
+                    if status == 'partially_aligned':
+                        self.logger.warning(f"Partial alignment detected in areas: {impact_areas}. Further analysis required.")
+                        # Implement logic to handle partial alignment
+                    elif status == 'fully_aligned':
+                        self.logger.info("System is fully aligned. No immediate action required.")
+                    else:
+                        self.logger.error(f"Unknown alignment status: {status}.")
 
             except Exception as e:
                 await self.log_error(f"Error in control_improvement_process: {str(e)}")
