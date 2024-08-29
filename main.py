@@ -4,6 +4,7 @@ from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
 import asyncio
 from file_system import FileSystem
+from knowledge_base import KnowledgeBase
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -95,7 +96,8 @@ async def main():
     
     # Initialize FileSystem
     fs = FileSystem()
-    # Initialize PromptManager and ErrorHandler
+    # Initialize KnowledgeBase
+    kb = KnowledgeBase()
     pm = PromptManager()
     eh = ErrorHandler()
 
