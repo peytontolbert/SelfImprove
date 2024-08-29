@@ -36,7 +36,30 @@ class KnowledgeBase:
         )
         tx.run(query, from_node=from_node, to_node=to_node, properties=properties or {})
 
-    async def add_entry(self, entry_name, data, metadata=None, narrative_context=None):
+    def add_capability(self, capability_name, properties):
+        """Add a new capability node to the graph."""
+        with self.driver.session() as session:
+            session.write_transaction(self._create_node, "Capability", {"name": capability_name, **properties})
+
+    def add_capability_relationship(self, from_capability, to_capability, relationship_type, properties=None):
+        """Add a relationship between two capabilities."""
+        with self.driver.session() as session:
+            session.write_transaction(self._create_relationship, from_capability, to_capability, relationship_type, properties)
+
+    def get_capability_evolution(self, capability_name):
+        """Retrieve the evolution of a specific capability."""
+        with self.driver.session() as session:
+            result = session.read_transaction(self._find_capability_evolution, capability_name)
+            return result
+
+    @staticmethod
+    def _find_capability_evolution(tx, capability_name):
+        query = (
+            "MATCH (c:Capability {name: $capability_name})-[r]->(next:Capability) "
+            "RETURN c.name AS current, r, next.name AS next"
+        )
+        result = tx.run(query, capability_name=capability_name)
+        return [{"current": record["current"], "relationship": record["r"], "next": record["next"]} for record in result]
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
             properties = {
@@ -117,7 +140,15 @@ class KnowledgeBase:
         self.logger.info(f"Knowledge base analysis: {analysis_result}")
         return analysis_result
 
-    async def suggest_improvements(self):
+    async def analyze_capability_evolution(self):
+        """Analyze the evolution of system capabilities."""
+        capabilities = await self.list_entries()
+        analysis = []
+        for capability in capabilities:
+            evolution = self.get_capability_evolution(capability)
+            analysis.append({"capability": capability, "evolution": evolution})
+        self.logger.info(f"Capability evolution analysis: {analysis}")
+        return analysis
         analysis = await self.analyze_knowledge_base()
         suggestions = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest improvements based on this analysis: {analysis}", task="knowledge_base")
         improvement_suggestions = suggestions.get('improvements', [])
