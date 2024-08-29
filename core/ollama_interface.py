@@ -53,12 +53,16 @@ class OllamaInterface:
     async def refine_prompt(self, prompt: str, task: str) -> str:
         refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
         response = await self.query_ollama("prompt_refinement", refinement_prompt, refine=False)
-        return response.get("refined_prompt", prompt)
+        return response.get("refined_prompt", prompt).strip()
 
     async def analyze_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
         response = await self.query_ollama("code_analysis", prompt, context)
-        return response if response else {"error": "No response from Ollama"}
+        if response:
+            return response
+        else:
+            self.logger.error("No response from Ollama")
+            return {"error": "No response from Ollama"}
 
     async def generate_code(self, spec: str, context: Dict[str, Any] = None) -> str:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
