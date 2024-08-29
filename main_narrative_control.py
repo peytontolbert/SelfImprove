@@ -325,6 +325,7 @@ async def main():
     ca = CodeAnalysis()
     tf = TestingFramework()
     dm = DeploymentManager()
+    kb = KnowledgeBase(ollama_interface=ollama)
     improvement_manager = ImprovementManager(ollama)
     si = SelfImprovement(ollama, kb, improvement_manager)
     fs = FileSystem()
