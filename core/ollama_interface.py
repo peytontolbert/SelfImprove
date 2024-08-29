@@ -34,6 +34,8 @@ class OllamaInterface:
         if context:
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
+        else:
+            self.logger.warning("No context provided for the task. Consider adding context for better response accuracy.")
         for attempt in range(self.max_retries):
             try:
                 result = self.gpt.chat_with_ollama(system_prompt, prompt)
@@ -46,11 +48,14 @@ class OllamaInterface:
                         return response_data
                     except json.JSONDecodeError:
                         self.logger.error("Failed to decode JSON response from Ollama.")
+                        self.logger.error(f"Invalid JSON response received: {result}")
                         return {"error": "Invalid JSON response", "response": result}
                 elif isinstance(result, dict):
                     if not result:
                         self.logger.error("Empty response data received from Ollama.")
+                        self.logger.error("Received empty response data from Ollama.")
                         return {"error": "Empty response data"}
+                    self.logger.info(f"Received response from Ollama: {result}")
                     return result
                 else:
                     self.logger.error("Unexpected response type from Ollama.")
