@@ -16,8 +16,6 @@ class RAGRetrieval:
         # Log the retrieved documents for debugging
         self.logger.debug(f"Retrieved documents: {documents}")
         # Implement feedback loop for continuous improvement
-        feedback = await self.collect_feedback(documents)
-        self.logger.info(f"Feedback collected: {feedback}")
         return documents
 
     async def augment_prompt_with_retrieval(self, prompt: str, task: str) -> str:
