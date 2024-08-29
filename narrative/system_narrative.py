@@ -127,6 +127,17 @@ class SystemNarrative:
                             })
 
                             await self.log_state("Learning from experience", experience_data)
+                            # Log the results of the improvement
+                            self.logger.info(f"Improvement result: {result}")
+                            # Compare system metrics before and after the improvement
+                            new_metrics = await si.get_system_metrics()
+                            self.logger.info(f"System metrics before improvement: {system_state.get('metrics', {})}")
+                            self.logger.info(f"System metrics after improvement: {new_metrics}")
+                            # Store metrics for trend analysis
+                            await kb.add_entry(f"metrics_{int(time.time())}", {
+                                "before": system_state.get('metrics', {}),
+                                "after": new_metrics
+                            })
 
                 await self.log_state("Performing additional system improvement tasks")
                 await task_queue.manage_orchestration()
