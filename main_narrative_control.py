@@ -246,7 +246,30 @@ class SelfImprovement:
         rl_feedback = await rl_module.get_feedback(metrics)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
         performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
-        return validated_improvements + performance_optimization_suggestions + rl_feedback
+        
+        # Generate and test hypotheses for self-improvement
+        hypotheses = await self.generate_hypotheses(metrics)
+        tested_hypotheses = await self.test_hypotheses(hypotheses)
+        self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
+        
+        return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
+
+    async def generate_hypotheses(self, metrics):
+        """Generate hypotheses for potential improvements."""
+        prompt = f"Generate hypotheses for potential improvements based on these metrics: {metrics}"
+        hypotheses = await self.ollama.query_ollama("hypothesis_generation", prompt, context={"metrics": metrics})
+        self.logger.info(f"Generated hypotheses: {hypotheses}")
+        return hypotheses.get("hypotheses", [])
+
+    async def test_hypotheses(self, hypotheses):
+        """Test hypotheses in a controlled environment."""
+        results = []
+        for hypothesis in hypotheses:
+            self.logger.info(f"Testing hypothesis: {hypothesis}")
+            # Simulate testing in a sandbox environment
+            result = await self.ollama.query_ollama("hypothesis_testing", f"Test this hypothesis: {hypothesis}", context={"hypothesis": hypothesis})
+            results.append(result.get("result", "No result"))
+        return results
 
     async def validate_improvements(self, improvements):
         validated = []
