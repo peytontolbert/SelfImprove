@@ -166,7 +166,12 @@ class SystemNarrative:
 
                 await self.log_state("Completed improvement cycle")
                 # Consult Ollama on alignment implications
-                alignment_considerations = await ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes")
+                context = {"recent_changes": "recent_system_changes_placeholder"}
+                alignment_considerations = await ollama.query_ollama(
+                    "alignment_consideration",
+                    "Assess the alignment implications of recent system changes. Consider user behavior nuances and organizational goals.",
+                    context=context
+                )
                 self.logger.info(f"Alignment considerations: {alignment_considerations}")
 
             except Exception as e:
