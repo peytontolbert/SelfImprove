@@ -70,15 +70,19 @@ class KnowledgeBase:
         if not self.longterm_memory:
             entries = await self.list_entries()
             for entry in entries:
-                data = await self.get_entry(entry)
-                self.longterm_memory[entry] = data
+                if isinstance(entry, dict):
+                    entry_name = entry.get('entry', str(entry))
+                else:
+                    entry_name = str(entry)
+                data = await self.get_entry(entry_name)
+                self.longterm_memory[entry_name] = data
             self.logger.info(f"Retrieved long-term memory: {self.longterm_memory}")
             await self.save_longterm_memory(self.longterm_memory)
         return self.longterm_memory
 
     async def save_longterm_memory(self, longterm_memory):
         """Save long-term memory to a file."""
-        self.longterm_memory.update(longterm_memory)
+        self.longterm_memory.update({str(k): v for k, v in longterm_memory.items()})
         file_path = os.path.join(self.base_directory, "longterm_memory.json")
         with open(file_path, 'w') as file:
             json.dump(self.longterm_memory, file)
