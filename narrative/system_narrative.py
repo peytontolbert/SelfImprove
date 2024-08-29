@@ -57,7 +57,9 @@ class SystemNarrative:
             self.logger.error(f"System Error: {error}")
         await self.log_with_ollama(error, context)
         # Suggest and log recovery strategies
-        context = {"error": str(error)}
+        if context is None:
+            context = {}
+        context.update({"error": str(error)})
         recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery", context=context)
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)

@@ -74,7 +74,9 @@ class OllamaInterface:
 
     async def analyze_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
-        context = {"code": code}
+        if context is None:
+            context = {}
+        context.update({"code": code})
         response = await self.query_ollama("code_analysis", prompt, context=context)
         if response:
             return response
@@ -84,19 +86,25 @@ class OllamaInterface:
 
     async def generate_code(self, spec: str, context: Dict[str, Any] = None) -> str:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
-        context = {"spec": spec}
+        if context is None:
+            context = {}
+        context.update({"spec": spec})
         response = await self.query_ollama("code_generation", prompt, context=context)
         return response.get("code", "") if response else ""
 
     async def handle_error(self, error: Exception, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
-        context = {"error": str(error)}
+        if context is None:
+            context = {}
+        context.update({"error": str(error)})
         response = await self.query_ollama("error_handling", prompt, context=context)
         return response if response else {"error": "No response from Ollama"}
 
     async def improve_system(self, performance_metrics: Dict[str, Any], context: Dict[str, Any] = None) -> List[str]:
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"
-        context = {"performance_metrics": performance_metrics}
+        if context is None:
+            context = {}
+        context.update({"performance_metrics": performance_metrics})
         response = await self.query_ollama("system_improvement", prompt, context=context)
         # Suggest resource allocation and scaling strategies
         context = {"performance_metrics": performance_metrics}
