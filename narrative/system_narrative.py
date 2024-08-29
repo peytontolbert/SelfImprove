@@ -84,7 +84,17 @@ class SystemNarrative:
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
         await self.log_with_ollama(recovery_action, {"success": success})
 
-    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+    def calculate_improvement_cycle_frequency(self, system_state):
+        """Calculate the sleep duration between improvement cycles based on system performance."""
+        # Example logic: Adjust sleep duration based on a simple metric
+        # This can be replaced with more sophisticated logic as needed
+        performance_metric = system_state.get("performance_metric", 1)
+        if performance_metric > 0.8:
+            return 1800  # 30 minutes
+        elif performance_metric > 0.5:
+            return 3600  # 1 hour
+        else:
+            return 7200  # 2 hours
         while True:
             try:
                 await self.log_state("Analyzing current system state")
@@ -186,5 +196,7 @@ class SystemNarrative:
             self.logger.info(f"Alignment considerations: {alignment_considerations}")
 
             # Dynamically adjust the sleep duration based on system performance
+            sleep_duration = self.calculate_improvement_cycle_frequency(system_state)
+            await asyncio.sleep(sleep_duration)
             sleep_duration = self.calculate_improvement_cycle_frequency(system_state)
             await asyncio.sleep(sleep_duration)
