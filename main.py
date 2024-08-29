@@ -126,15 +126,15 @@ class SelfImprovement:
                 system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
                 narrative.log_state("Generating improvement suggestions")
-                improvements = await improvement_manager.suggest_improvements(system_state)
+                improvements = await self.improvement_manager.suggest_improvements(system_state)
 
                 if improvements:
                     for improvement in improvements:
                         # Validate the improvement
-                        validation = await improvement_manager.validate_improvements([improvement])
+                        validation = await self.improvement_manager.validate_improvements([improvement])
                         if validation:
                             narrative.log_decision(f"Applying improvement: {improvement}")
-                            result = await improvement_manager.apply_improvements([improvement])
+                            result = await self.improvement_manager.apply_improvements([improvement])
 
                             # Learn from the experience
                             experience_data = {
