@@ -4,14 +4,14 @@ import json
 import asyncio
 import time
 class KnowledgeBase:
-    def __init__(self, base_directory="knowledge_base"):
+    def __init__(self, base_directory="knowledge_base", ollama_interface=None):
         self.base_directory = base_directory
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
         self.longterm_memory = {}
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
-        self.ollama = ollama_interface or OllamaInterface()
+        self.ollama = ollama_interface
 
     async def add_entry(self, entry_name, data, metadata=None, narrative_context=None):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
