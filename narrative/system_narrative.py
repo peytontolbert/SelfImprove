@@ -10,7 +10,6 @@ from spreadsheet_manager import SpreadsheetManager
 class SystemNarrative:
     def __init__(self, ollama_interface=None, knowledge_base=None):
         self.request_log = []  # Initialize a log to track requests and expected responses
-    def __init__(self, ollama_interface=None, knowledge_base=None):
         self.logger = logging.getLogger("SystemNarrative")
         self.ollama = ollama_interface or OllamaInterface()
         self.knowledge_base = knowledge_base or KnowledgeBase()
