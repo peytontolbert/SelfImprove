@@ -42,35 +42,49 @@ class OllamaInterface:
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
             self.logger.warning("No specific context provided. Using default context.")
-        for attempt in range(self.max_retries):
+        async def attempt_query():
             try:
-                result = await self.gpt.chat_with_ollama(system_prompt, prompt)
-                if isinstance(result, str):
-                    try:
-                        response_data = json.loads(result)
-                        if not response_data:
-                            self.logger.error("Empty response data received from Ollama.")
-                            return {"error": "Empty response data"}
-                        return response_data
-                    except json.JSONDecodeError:
-                        self.logger.error("Failed to decode JSON response from Ollama.")
-                        self.logger.error(f"Invalid JSON response received: {result}")
-                        return {"error": "Invalid JSON response", "response": result}
-                elif isinstance(result, dict):
-                    if not result:
-                        self.logger.error("Empty response data received from Ollama.")
-                        self.logger.error("Received empty response data from Ollama.")
-                        return {"error": "Empty response data"}
-                    self.logger.info(f"Received response from Ollama: {result}")
-                    return result
-                else:
-                    self.logger.error("Unexpected response type from Ollama.")
-                    return {"error": "Unexpected response type", "response": str(result)}
+                return await self.gpt.chat_with_ollama(system_prompt, prompt)
             except Exception as e:
-                self.logger.error(f"Error querying Ollama (attempt {attempt + 1}/{self.max_retries}): {str(e)}")
-                if attempt == self.max_retries - 1:
-                    recovery_suggestion = await self.suggest_error_recovery(e)
-                    raise Exception(f"Max retries reached. Error: {str(e)}. Recovery suggestion: {recovery_suggestion}")
+                self.logger.error(f"Error querying Ollama: {str(e)}")
+                return None
+
+        result = await self.retry_with_backoff(attempt_query)
+        if result is None:
+            recovery_suggestion = await self.suggest_error_recovery(Exception("Max retries reached"))
+            raise Exception(f"Max retries reached. Recovery suggestion: {recovery_suggestion}")
+
+        if isinstance(result, str):
+            try:
+                response_data = json.loads(result)
+                if not response_data:
+                    self.logger.error("Empty response data received from Ollama.")
+                    return {"error": "Empty response data"}
+                return response_data
+            except json.JSONDecodeError:
+                self.logger.error("Failed to decode JSON response from Ollama.")
+                self.logger.error(f"Invalid JSON response received: {result}")
+                return {"error": "Invalid JSON response", "response": result}
+        elif isinstance(result, dict):
+            if not result:
+                self.logger.error("Empty response data received from Ollama.")
+                self.logger.error("Received empty response data from Ollama.")
+                return {"error": "Empty response data"}
+            self.logger.info(f"Received response from Ollama: {result}")
+            return result
+        else:
+            self.logger.error("Unexpected response type from Ollama.")
+            return {"error": "Unexpected response type", "response": str(result)}
+
+    async def retry_with_backoff(self, func, max_retries=3, initial_delay=1):
+        delay = initial_delay
+        for attempt in range(max_retries):
+            result = await func()
+            if result is not None:
+                return result
+            await asyncio.sleep(delay)
+            delay *= 2
+        return None
 
     async def refine_prompt(self, prompt: str, task: str) -> str:
         if task == "general":
@@ -152,7 +166,11 @@ class OllamaInterface:
 
     async def evaluate_system_state(self, system_state: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"Evaluate the current system state: {json.dumps(system_state)}. Identify potential issues, bottlenecks, and areas for optimization."
-        context = {"system_state": system_state}
+        context = {
+            "system_state": system_state,
+            "recent_changes": "recent_system_changes_placeholder",
+            "longterm_memory": await self.knowledge_base.get_longterm_memory()
+        }
         return await self.query_ollama(prompt, {"task": "system_evaluation"}, context=context)
 
     async def update_system_prompt(self, new_prompt: str) -> None:

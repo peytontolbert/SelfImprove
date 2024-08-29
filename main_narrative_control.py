@@ -344,7 +344,7 @@ async def main():
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
     # Read existing tasks and their statuses
     tasks_data = spreadsheet_manager.read_data("A1:B10")
-    logger.info(f"Existing tasks and statuses: {tasks_data}")
+    logger.info(f"Existing tasks and statuses: {json.dumps(tasks_data, indent=2)}")
 
     # Manage prompt versions and A/B testing
     prompt_versions = prompt_manager.get_next_version("system_prompts")

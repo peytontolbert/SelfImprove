@@ -72,7 +72,7 @@ class SystemNarrative:
         if context:
             self.logger.error(f"System Error: {error} | Context: {context}")
         else:
-            self.logger.error(f"System Error: {error}")
+            self.logger.error(f"System Error: {error} | Context: {json.dumps(context or {})}")
         await self.log_with_ollama(error, context)
         # Log error to spreadsheet
         self.spreadsheet_manager.write_data((15, 1), [["Error", "Context"], [str(error), json.dumps(context or {})]])
@@ -149,6 +149,12 @@ class SystemNarrative:
                     await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
                     self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
                     await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
+                    await self.integrate_feedback_loop(rl_feedback)
+
+                async def integrate_feedback_loop(self, rl_feedback):
+                    for feedback in rl_feedback:
+                        self.logger.info(f"Integrating feedback: {feedback}")
+                        # Implement logic to integrate feedback into decision-making processes
 
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
@@ -276,6 +282,9 @@ class SystemNarrative:
 
     async def handle_general_error(self, e, eh, ollama):
         await self.log_error(f"Error in control_improvement_process: {str(e)}")
+        await self.process_recovery_suggestion(eh, ollama, e)
+
+    async def process_recovery_suggestion(self, eh, ollama, e):
         recovery_suggestion = await eh.handle_error(ollama, e)
         if recovery_suggestion and recovery_suggestion.get('decompose_task', False):
             subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
