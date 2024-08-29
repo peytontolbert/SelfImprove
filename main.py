@@ -75,8 +75,7 @@ class ErrorHandling:
 # main.py
 async def main():
     ui = UserInterface()
-    api_endpoint = "https://api.ollama.com"  # Replace with your actual API endpoint
-    ollama = OllamaInterface(api_endpoint)
+    ollama = OllamaInterface()
     task_queue = TaskQueue()
     kb = KnowledgeBase()
     vcs = VersionControlSystem()
@@ -86,10 +85,10 @@ async def main():
     si = SelfImprovement()
     eh = ErrorHandler()
 
+    # System startup and initialization logic
     # Initialize components
-    api_endpoint = "https://api.ollama.com"  # Replace with your actual API endpoint
-    ollama = OllamaInterface(api_endpoint)
     ui = UserInterface()
+    ollama = OllamaInterface()
     task_queue = TaskQueue()
     kb = KnowledgeBase()
     vcs = VersionControlSystem()
@@ -97,8 +96,12 @@ async def main():
     tf = TestingFramework()
     dm = DeploymentManager()
     si = SelfImprovement()
-    eh = ErrorHandler()
+    eh = ErrorHandling()
     pm = PromptManager()
+    
+    # Initialize PromptManager and ErrorHandler
+    pm = PromptManager()
+    eh = ErrorHandler()
 
     # Manage task orchestration
     task_queue.manage_orchestration()
