@@ -25,6 +25,7 @@ class SystemNarrative:
             prompt += f" | Context: {context}"
         if longterm_memory:
             prompt += f" | Long-term Memory: {longterm_memory}"
+        context = context or {}
         context.update({
             "longterm_memory": longterm_memory,
             "current_tasks": "List of current tasks",

@@ -52,7 +52,8 @@ class OllamaInterface:
         result = await self.retry_with_backoff(attempt_query)
         if result is None:
             recovery_suggestion = await self.suggest_error_recovery(Exception("Max retries reached"))
-            raise Exception(f"Max retries reached. Recovery suggestion: {recovery_suggestion}")
+            self.logger.warning("Max retries reached. Implementing fallback strategy.")
+            return {"recoveryStrategy": "Fallback strategy: Restart the system and contact support if the issue persists."}
 
         self.logger.debug(f"Request payload: {prompt}")
 
@@ -70,7 +71,7 @@ class OllamaInterface:
                 return {"error": "Invalid JSON response", "response": result}
         elif isinstance(result, dict):
             if not result:
-                self.logger.error("Empty response data received from Ollama.")
+                self.logger.error("Empty response data received from Ollama. This may indicate a network issue or a problem with the Ollama service.")
                 self.logger.debug(f"Raw response: {result}")
                 return {"error": "Empty response data"}
             self.logger.info(f"Received response from Ollama: {result}")
