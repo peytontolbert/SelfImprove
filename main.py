@@ -115,7 +115,12 @@ async def main():
                 # Implement feedback loop for system improvement
                 performance_metrics = {"task_count": len(task_queue)}
                 improvements = await ollama.improve_system(performance_metrics)
-                ui.display_output(f"Suggested improvements: {improvements}")
+                if improvements:
+                    ui.display_output(f"Suggested improvements: {improvements}")
+                    # Apply improvements to the system
+                    for improvement in improvements:
+                        # Example: Log improvements or take action based on suggestions
+                        self.logger.info(f"Applying improvement: {improvement}")
 
                 # Check if tasks are completed and handle them
                 if task_queue.is_task_completed(task_details):
