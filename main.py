@@ -218,13 +218,14 @@ async def main():
     tf = TestingFramework()
     dm = DeploymentManager()
     improvement_manager = ImprovementManager(ollama)
+    si = SelfImprovement(ollama, kb)
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
     
     # Start continuous improvement
     narrative.log_state("Starting continuous improvement process")
-    await improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
+    await improve_system_capabilities(ollama, improvement_manager, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
 
 if __name__ == "__main__":
     asyncio.run(main())
