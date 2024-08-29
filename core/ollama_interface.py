@@ -4,6 +4,8 @@ import json
 from typing import Dict, Any, List
 import logging
 from chat_with_ollama import ChatGPT
+from functools import lru_cache
+
 class OllamaInterface:
     def __init__(self, max_retries: int = 3):
         self.gpt = ChatGPT()
@@ -12,6 +14,7 @@ class OllamaInterface:
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
         self.system_prompt = "Default system prompt"  # Define a default system prompt
+        self.prompt_cache = {}
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -37,7 +40,8 @@ class OllamaInterface:
             except Exception as e:
                 self.logger.error(f"Error querying Ollama (attempt {attempt + 1}/{self.max_retries}): {str(e)}")
                 if attempt == self.max_retries - 1:
-                    raise
+                    recovery_suggestion = await self.suggest_error_recovery(e)
+                    raise Exception(f"Max retries reached. Error: {str(e)}. Recovery suggestion: {recovery_suggestion}")
 
     async def refine_prompt(self, prompt: str, task: str) -> str:
         refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
@@ -85,4 +89,36 @@ class OllamaInterface:
     async def evaluate_system_state(self, system_state: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"Evaluate the current system state: {json.dumps(system_state)}. Identify potential issues, bottlenecks, and areas for optimization."
         return await self.query_ollama(prompt, {"task": "system_evaluation"})
+
+    async def update_system_prompt(self, new_prompt: str) -> None:
+        """Update the system prompt dynamically."""
+        self.system_prompt = new_prompt
+        self.logger.info(f"System prompt updated: {new_prompt}")
+
+    @lru_cache(maxsize=100)
+    async def cached_query(self, prompt: str, task: str) -> Dict[str, Any]:
+        """Cache frequently used prompts to reduce API calls."""
+        return await self.query_ollama(self.system_prompt, prompt)
+
+    async def generate_context_aware_prompt(self, task: str, context: Dict[str, Any]) -> str:
+        """Generate a prompt based on the current context and task."""
+        context_str = json.dumps(context)
+        prompt = f"Generate a prompt for the task '{task}' with the following context: {context_str}"
+        response = await self.query_ollama(self.system_prompt, prompt)
+        return response.get("generated_prompt", "")
+
+    async def handle_multi_step_task(self, task: str, steps: List[str]) -> List[Dict[str, Any]]:
+        """Handle a multi-step task by breaking it down and processing each step."""
+        results = []
+        for step in steps:
+            step_prompt = f"Complete the following step for task '{task}': {step}"
+            step_result = await self.query_ollama(self.system_prompt, step_prompt)
+            results.append(step_result)
+        return results
+
+    async def suggest_error_recovery(self, error: Exception) -> str:
+        """Suggest a recovery strategy for a given error."""
+        error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
+        recovery_suggestion = await self.query_ollama(self.system_prompt, error_prompt)
+        return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
 
