@@ -349,17 +349,15 @@ async def main():
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
 
-    # Implement dynamic prompt management
-    dynamic_prompts = await ollama.query_ollama("dynamic_prompt_management", "Evolve prompts based on their effectiveness and current system capabilities.")
-    logger.info(f"Dynamic prompts updated: {dynamic_prompts}")
-    # Enhance feedback loop optimization
-    feedback_data = await narrative.get_feedback_data()
-    spreadsheet_manager.write_data((30, 1), [["Feedback", "Analysis"]] + feedback_data)
-    logger.info("Logged feedback data to spreadsheet")
-    # Ollama-driven architecture evolution
-    architecture_suggestions = await ollama.query_ollama("architecture_evolution", "Suggest improvements for the current system architecture.")
-    logger.info(f"Architecture suggestions: {architecture_suggestions}")
-    await si.learn_from_experience(architecture_suggestions)
+    # Implement adaptive learning and evolution
+    learning_data = await si.learn_from_experience({"interaction_data": "recent_interactions"})
+    logger.info(f"Adaptive learning data: {learning_data}")
+    # Enhanced error recovery
+    error_recovery_strategies = await ollama.query_ollama("adaptive_error_recovery", "Suggest adaptive recovery strategies for recent errors.")
+    logger.info(f"Adaptive error recovery strategies: {error_recovery_strategies}")
+    # Scalability and resource optimization
+    scaling_decisions = await ollama.query_ollama("scalability_optimization", "Provide guidance on scaling and resource allocation based on current system load.")
+    logger.info(f"Scalability and resource optimization decisions: {scaling_decisions}")
     error_handler = ErrorHandler()
     error_types = error_handler.classify_errors()
     logger.info(f"Error types classified: {error_types}")
