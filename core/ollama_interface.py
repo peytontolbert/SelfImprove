@@ -22,12 +22,14 @@ class OllamaInterface:
         self.conversation_contexts = {}
 
     async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
+        if not self.session:
+            self.session = aiohttp.ClientSession()
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
         if self.session:
             await self.session.close()
+            self.session = None
 
     def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""
