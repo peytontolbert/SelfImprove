@@ -36,9 +36,23 @@ class TestingFramework:
         test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}")
         return test_results
 
-    async def generate_tests(self, ollama, code):
+    async def generate_tests(self, ollama, code, fs):
         generated_tests = await ollama.query_ollama("testing", f"Generate unit tests for this code: {code}")
+        test_code = generated_tests.get("test_code", "")
+        if test_code:
+            # Save the generated test code using the FileSystem
+            fs.write_to_file("generated_tests.py", test_code)
+            # Run the generated tests
+            await self.run_generated_tests()
         return generated_tests
+
+    async def run_generated_tests(self):
+        # Execute the generated test file
+        import subprocess
+        result = subprocess.run(["python", "system_data/generated_tests.py"], capture_output=True, text=True)
+        logger.info(f"Generated tests output: {result.stdout}")
+        if result.stderr:
+            logger.error(f"Generated tests errors: {result.stderr}")
 
 class DeploymentManager:
     async def deploy_code(self, ollama):
