@@ -168,12 +168,10 @@ class KnowledgeBase:
         """Retrieve long-term memory entries."""
         if not self.longterm_memory:
             entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
-            for entry in entries:
-                if isinstance(entry, dict):
-                    entry_name = entry.get('entry', str(entry))
-                else:
-                    entry_name = str(entry)
-                data = await self.get_entry(entry_name)
+            for entry_name in entries:
+                file_path = os.path.join(self.base_directory, f"{entry_name}.json")
+                with open(file_path, 'r') as file:
+                    data = json.load(file)
                 self.longterm_memory[entry_name] = data
             self.logger.info(f"Retrieved long-term memory: {self.longterm_memory}")
             await self.save_longterm_memory(self.longterm_memory)
