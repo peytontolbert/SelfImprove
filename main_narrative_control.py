@@ -29,8 +29,6 @@ class VersionControlSystem:
         )
         readiness_assessment = await ollama.query_ollama("codebase_readiness", readiness_prompt)
         return readiness_assessment
-        strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy based on the current state: {current_state}")
-        return strategy
 
 class CodeAnalysis:
     async def analyze_code(self, ollama, code):
