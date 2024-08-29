@@ -71,8 +71,12 @@ async def main():
             # Use Ollama to interpret user input and decide on action
             action_decision = await ollama.query_ollama("user_input", f"Interpret this user input and decide on action: {user_input}")
             
+            # Ensure action_decision is a dictionary
+            if isinstance(action_decision, str):
+                action_decision = json.loads(action_decision)
+            
             if action_decision.get('create_task', False):
-                await task_queue.create_task(action_decision['task_details'])
+                await task_queue.create_task(action_decision.get('task_details', ''))
             
             await task_queue.manage_orchestration()
 

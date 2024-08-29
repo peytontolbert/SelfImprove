@@ -24,7 +24,15 @@ class OllamaInterface:
         for attempt in range(self.max_retries):
             try:
                 result = self.gpt.chat_with_ollama(system_prompt, prompt)
-                return result
+                if isinstance(result, str):
+                    try:
+                        return json.loads(result)
+                    except json.JSONDecodeError:
+                        return {"response": result}
+                elif isinstance(result, dict):
+                    return result
+                else:
+                    return {"response": str(result)}
             except Exception as e:
                 self.logger.error(f"Error querying Ollama (attempt {attempt + 1}/{self.max_retries}): {str(e)}")
                 if attempt == self.max_retries - 1:
