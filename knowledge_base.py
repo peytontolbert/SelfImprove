@@ -16,7 +16,15 @@ class KnowledgeBase:
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
 
-    def close(self):
+    def log_interaction(self, component_name, action, details=None):
+        """Log interactions with other components."""
+        self.logger.info(f"Interaction logged: {component_name} performed {action}. Details: {details or 'None'}")
+        self.add_entry("interaction_log", {
+            "component": component_name,
+            "action": action,
+            "details": details or {},
+            "timestamp": time.time()
+        })
         self.driver.close()
 
     def add_node(self, label, properties):

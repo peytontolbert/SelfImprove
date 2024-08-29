@@ -31,6 +31,7 @@ class SystemNarrative:
             "system_status": "Current system status"
         })
         self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+        self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context})
         self.track_request("thought_generation", prompt, "thoughts")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
@@ -205,6 +206,7 @@ class SystemNarrative:
         await self.log_decision(f"Applying improvement: {improvement}")
         result = await si.retry_ollama_call(si.apply_improvements, [improvement])
         experience_data = {"improvement": improvement, "result": result, "system_state": system_state}
+        kb.log_interaction("SelfImprovement", "apply_and_log_improvement", {"improvement": improvement, "result": result})
         learning = await si.learn_from_experience(experience_data)
         await kb.add_entry(f"improvement_{int(time.time())}", {
             "improvement": improvement,
