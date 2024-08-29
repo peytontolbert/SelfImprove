@@ -115,7 +115,13 @@ class OllamaInterface:
         response = await self.query_ollama("error_handling", prompt, context=context)
         return response if response else {"error": "No response from Ollama"}
 
-    async def improve_system(self, performance_metrics: Dict[str, Any], context: Dict[str, Any] = None) -> List[str]:
+    async def get_reinforcement_feedback(self, metrics: Dict[str, Any], context: Dict[str, Any] = None) -> Dict[str, Any]:
+        prompt = f"Provide reinforcement learning feedback based on these metrics: {json.dumps(metrics, indent=2)}"
+        if context is None:
+            context = {}
+        context.update({"metrics": metrics})
+        response = await self.query_ollama("reinforcement_learning", prompt, context=context)
+        return response if response else {"feedback": []}
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"
         if context is None:
             context = {}

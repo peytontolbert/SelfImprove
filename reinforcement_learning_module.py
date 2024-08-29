@@ -21,7 +21,10 @@ class ReinforcementLearningModule:
         Returns:
             list: Feedback and suggestions for improvement.
         """
-        # Placeholder for reinforcement learning logic
-        feedback = ["Optimize resource allocation", "Improve task prioritization"]
+        # Use Ollama to get more sophisticated feedback
+        feedback_prompt = f"Analyze these metrics and provide reinforcement learning feedback: {metrics}"
+        context = {"metrics": metrics}
+        feedback_response = await self.ollama.query_ollama("reinforcement_learning", feedback_prompt, context=context)
+        feedback = feedback_response.get("feedback", ["Optimize resource allocation", "Improve task prioritization"])
         self.logger.info(f"Reinforcement learning feedback generated: {feedback}")
         return feedback

@@ -5,6 +5,7 @@ import asyncio
 import time
 import subprocess
 import json
+from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
 class SystemNarrative:
     def __init__(self, ollama_interface=None, knowledge_base=None):
@@ -12,6 +13,7 @@ class SystemNarrative:
         self.ollama = ollama_interface or OllamaInterface()
         self.knowledge_base = knowledge_base or KnowledgeBase()
         self.spreadsheet_manager = SpreadsheetManager("narrative_data.xlsx")
+        self.rl_module = ReinforcementLearningModule()
         logging.basicConfig(level=logging.INFO)
 
     async def generate_thoughts(self, context=None):
@@ -138,6 +140,11 @@ class SystemNarrative:
                     # Assess alignment implications
                     await self.assess_alignment_implications(ollama)
 
+                    # Use reinforcement learning feedback
+                    rl_feedback = await self.rl_module.get_feedback(system_state)
+                    self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+                    await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
+                    self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
                     await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
 
             except asyncio.TimeoutError:
