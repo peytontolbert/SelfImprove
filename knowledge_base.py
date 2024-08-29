@@ -60,6 +60,7 @@ class KnowledgeBase:
         )
         result = tx.run(query, capability_name=capability_name)
         return [{"current": record["current"], "relationship": record["r"], "next": record["next"]} for record in result]
+    async def add_entry(self, entry_name, data, metadata=None, narrative_context=None):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
             properties = {
