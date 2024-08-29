@@ -249,10 +249,20 @@ class SystemNarrative:
                     self.logger.error(f"System reset failed: {e}")
                 continue
 
-            # Consult Ollama on alignment implications
+            # Consult Ollama on alignment implications with timeout and error handling
             context = {"recent_changes": "recent_system_changes_placeholder"}
-            alignment_considerations = await ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes", context=context)
-            self.logger.info(f"Alignment considerations: {alignment_considerations}")
+            try:
+                alignment_considerations = await asyncio.wait_for(
+                    ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes", context=context),
+                    timeout=30  # 30 seconds timeout
+                )
+                self.logger.info(f"Alignment considerations: {alignment_considerations}")
+            except asyncio.TimeoutError:
+                self.logger.error("Timeout occurred while assessing alignment implications")
+                alignment_considerations = {"error": "Timeout occurred"}
+            except Exception as e:
+                self.logger.error(f"Error occurred while assessing alignment implications: {str(e)}")
+                alignment_considerations = {"error": str(e)}
 
             # Dynamically adjust the sleep duration based on system performance
             sleep_duration = self.calculate_improvement_cycle_frequency(system_state)

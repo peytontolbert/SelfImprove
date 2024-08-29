@@ -26,7 +26,7 @@ class OllamaInterface:
     async def __aexit__(self, exc_type, exc, tb):
         await self.session.close()
 
-    async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True) -> Dict[str, Any]:
+    async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, timeout: int = 30) -> Dict[str, Any]:
         if refine and task not in ["logging", "categorization"]:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
@@ -44,7 +44,7 @@ class OllamaInterface:
             self.logger.warning("No specific context provided. Using default context.")
         for attempt in range(self.max_retries):
             try:
-                result = self.gpt.chat_with_ollama(system_prompt, prompt)
+                result = await asyncio.wait_for(self.gpt.chat_with_ollama(system_prompt, prompt), timeout=timeout)
                 if isinstance(result, str):
                     try:
                         response_data = json.loads(result)
