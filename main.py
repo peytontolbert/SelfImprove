@@ -72,7 +72,7 @@ class ErrorHandling:
         pass
 
 # main.py
-def main():
+async def main():
     ui = UserInterface()
     ollama = OllamaInterface()
     task_queue = TaskQueue()
@@ -114,4 +114,4 @@ def main():
             ui.display_output(f"Error handled: {recovery}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -55,26 +55,3 @@ class OllamaInterface:
     def get_conversation_history(self) -> List[Dict[str, Any]]:
         return self.conversation_history
 
-# Example usage
-async def main():
-    async with OllamaInterface("http://localhost:11434") as ollama:
-        code = "def add(a, b):\n    return a + b"
-        analysis = await ollama.analyze_code(code)
-        print("Code analysis:", analysis)
-
-        spec = "Create a function that calculates the factorial of a number"
-        generated_code = await ollama.generate_code(spec)
-        print("Generated code:", generated_code)
-
-        try:
-            result = 1 / 0
-        except Exception as e:
-            recovery = await ollama.handle_error(e)
-            print("Error recovery strategy:", recovery)
-
-        metrics = {"response_time": 1.5, "error_rate": 0.02}
-        improvements = await ollama.improve_system(metrics)
-        print("Suggested improvements:", improvements)
-
-if __name__ == "__main__":
-    asyncio.run(main())
