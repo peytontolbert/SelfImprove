@@ -51,7 +51,7 @@ class KnowledgeBase:
 
     @staticmethod
     def _create_node(tx, label, properties):
-        query = f"CREATE (n:{label} {{properties}})"
+        query = f"CREATE (n:{label} $properties)"
         tx.run(query, properties=properties)
 
     def add_relationship(self, from_node, to_node, relationship_type, properties=None):
