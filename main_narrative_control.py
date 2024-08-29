@@ -19,6 +19,7 @@ Functions:
 import logging
 import asyncio
 from core.ollama_interface import OllamaInterface
+from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
 from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
@@ -39,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 class VersionControlSystem:
     """
+    - ReinforcementLearningModule: Manages reinforcement learning tasks and feedback.
     Handles version control operations such as committing changes and assessing codebase readiness.
 
     Methods:
@@ -232,13 +234,16 @@ class SelfImprovement:
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
 
-    async def analyze_performance(self, metrics):
+    async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
         validated_improvements = await self.improvement_manager.validate_improvements(improvements)
         # Analyze code for potential performance bottlenecks
         performance_optimizations = await self.ollama.query_ollama("performance_optimization", f"Suggest performance optimizations for these metrics: {metrics}", context={"metrics": metrics})
         self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
-        return validated_improvements + performance_optimizations
+        # Use reinforcement learning feedback to adapt improvements
+        rl_feedback = await rl_module.get_feedback(metrics)
+        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+        return validated_improvements + performance_optimizations + rl_feedback
 
     async def validate_improvements(self, improvements):
         validated = []
@@ -299,13 +304,8 @@ async def main():
     KnowledgeBase, and others. It then initiates the improvement process controlled by the
     SystemNarrative. The narrative can reset, change actions, and influence decisions dynamically.
     """
-    # Initialize configuration settings
-    config = {
-        "retry_attempts": 3,
-        "timeout": 30,
-        "log_level": logging.INFO
-    }
-    logging.getLogger().setLevel(config["log_level"])
+    # Initialize reinforcement learning module
+    rl_module = ReinforcementLearningModule()
 
     # Initialize configuration settings
     config = {
@@ -349,7 +349,7 @@ async def main():
     prompt_versions = prompt_manager.get_next_version("system_prompts")
     logger.info(f"Current prompt version: {prompt_versions}")
     # Implement A/B testing logic here
-    improvements = await si.analyze_performance({"metric": "value"})
+    improvements = await si.analyze_performance({"metric": "value"}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
 
