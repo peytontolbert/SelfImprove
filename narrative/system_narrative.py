@@ -1,18 +1,20 @@
 import logging
+from knowledge_base import KnowledgeBase
 from core.ollama_interface import OllamaInterface
 import asyncio
 import time
 import subprocess
 
 class SystemNarrative:
-    def __init__(self, ollama_interface=None):
+    def __init__(self, ollama_interface=None, knowledge_base=None):
         self.logger = logging.getLogger("SystemNarrative")
         self.ollama = ollama_interface or OllamaInterface()
+        self.knowledge_base = knowledge_base or KnowledgeBase()
         logging.basicConfig(level=logging.INFO)
 
     async def generate_thoughts(self, context=None):
         """Generate detailed thoughts or insights about the current state and tasks."""
-        longterm_memory = await self.ollama.knowledge_base.get_longterm_memory()
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
         prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
         if context:
             prompt += f" | Context: {context}"
