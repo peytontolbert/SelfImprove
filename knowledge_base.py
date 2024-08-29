@@ -14,6 +14,7 @@ class KnowledgeBase:
         user = user or os.getenv("NEO4J_USER", "neo4j")
         password = password or os.getenv("NEO4J_PASSWORD")
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
+        self.initialize_database()
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface
@@ -22,7 +23,15 @@ class KnowledgeBase:
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
 
-    def log_interaction(self, component_name, action, details=None):
+    def initialize_database(self):
+        """Initialize the database with necessary nodes and relationships."""
+        with self.driver.session() as session:
+            session.write_transaction(self._create_initial_nodes)
+
+    @staticmethod
+    def _create_initial_nodes(tx):
+        # Create initial nodes or constraints if needed
+        tx.run("CREATE CONSTRAINT IF NOT EXISTS ON (n:Node) ASSERT n.name IS UNIQUE")
         """Log interactions with other components."""
         self.logger.info(f"Interaction logged: {component_name} performed {action}. Details: {details or 'None'}")
         self.add_entry("interaction_log", {
