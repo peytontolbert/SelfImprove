@@ -40,12 +40,22 @@ class VersionControlSystem:
     Methods:
     - commit_changes: Commits changes to the version control system with a generated commit message.
     - assess_codebase_readiness: Evaluates the readiness of the current codebase for production deployment.
+    - create_branch: Creates a new branch for feature development or bug fixes.
+    - merge_branch: Merges a branch into the main codebase.
     """
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
     async def commit_changes(self, ollama, changes):
         context = {"changes": changes}
         commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}", context=context)
-        logger.info(f"Committing changes: {changes}")
-        logger.info(f"Committed changes with message: {commit_message}")
+        self.logger.info(f"Committing changes: {changes}")
+        self.logger.info(f"Committed changes with message: {commit_message}")
+        # Here you would typically use a VCS library to actually commit the changes
+        # For example, with GitPython:
+        # repo = git.Repo('.')
+        # repo.git.add(A=True)
+        # repo.index.commit(commit_message)
 
     async def assess_codebase_readiness(self, ollama, codebase_state):
         """Assess if the current codebase is ready for production."""
@@ -58,18 +68,52 @@ class VersionControlSystem:
         self.logger.info(f"Codebase readiness assessment: {readiness_assessment}")
         return readiness_assessment
 
+    async def create_branch(self, ollama, branch_name, purpose):
+        context = {"branch_name": branch_name, "purpose": purpose}
+        branch_strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy for: {purpose}", context=context)
+        self.logger.info(f"Creating branch: {branch_name} for purpose: {purpose}")
+        self.logger.info(f"Branching strategy: {branch_strategy}")
+        # Implement branch creation logic here
+        # For example: repo.git.checkout('-b', branch_name)
+
+    async def merge_branch(self, ollama, source_branch, target_branch):
+        context = {"source_branch": source_branch, "target_branch": target_branch}
+        merge_strategy = await ollama.query_ollama("version_control", f"Suggest a merge strategy for merging {source_branch} into {target_branch}", context=context)
+        self.logger.info(f"Merging branch {source_branch} into {target_branch}")
+        self.logger.info(f"Merge strategy: {merge_strategy}")
+        # Implement merge logic here
+        # For example: repo.git.checkout(target_branch)
+        #              repo.git.merge(source_branch)
+
 class CodeAnalysis:
     """
-    Analyzes code to provide suggestions for improvements.
+    Analyzes code to provide suggestions for improvements and ensure code quality.
 
     Methods:
     - analyze_code: Analyzes the given code and returns improvement suggestions.
+    - check_code_quality: Checks the code against predefined quality standards.
+    - suggest_refactoring: Suggests refactoring opportunities in the code.
     """
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
     async def analyze_code(self, ollama, code):
         context = {"code": code}
         analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}", context=context)
         self.logger.info(f"Code analysis result: {analysis}")
         return analysis
+
+    async def check_code_quality(self, ollama, code):
+        context = {"code": code}
+        quality_check = await ollama.query_ollama("code_quality", f"Check the quality of this code against best practices and coding standards: {code}", context=context)
+        self.logger.info(f"Code quality check result: {quality_check}")
+        return quality_check
+
+    async def suggest_refactoring(self, ollama, code):
+        context = {"code": code}
+        refactoring_suggestions = await ollama.query_ollama("code_refactoring", f"Suggest refactoring opportunities for this code: {code}", context=context)
+        self.logger.info(f"Refactoring suggestions: {refactoring_suggestions}")
+        return refactoring_suggestions
 
 class TestingFramework:
     """
@@ -78,7 +122,12 @@ class TestingFramework:
     Methods:
     - run_tests: Executes and analyzes the provided test cases.
     - generate_tests: Generates unit tests for the given code.
+    - analyze_test_coverage: Analyzes the test coverage of the codebase.
+    - suggest_test_improvements: Suggests improvements for existing tests.
     """
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
     async def run_tests(self, ollama, test_cases):
         context = {"test_cases": test_cases}
         test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}", context=context)
@@ -91,6 +140,18 @@ class TestingFramework:
         self.logger.info(f"Generated tests: {generated_tests}")
         return generated_tests
 
+    async def analyze_test_coverage(self, ollama, codebase, test_suite):
+        context = {"codebase": codebase, "test_suite": test_suite}
+        coverage_analysis = await ollama.query_ollama("test_coverage", f"Analyze the test coverage for this codebase and test suite: {codebase}, {test_suite}", context=context)
+        self.logger.info(f"Test coverage analysis: {coverage_analysis}")
+        return coverage_analysis
+
+    async def suggest_test_improvements(self, ollama, existing_tests):
+        context = {"existing_tests": existing_tests}
+        improvement_suggestions = await ollama.query_ollama("test_improvement", f"Suggest improvements for these existing tests: {existing_tests}", context=context)
+        self.logger.info(f"Test improvement suggestions: {improvement_suggestions}")
+        return improvement_suggestions
+
 class DeploymentManager:
     """
     Manages code deployment and rollback operations.
@@ -98,21 +159,43 @@ class DeploymentManager:
     Methods:
     - deploy_code: Decides whether to deploy the current code based on Ollama's decision.
     - rollback: Generates a rollback plan for a specified version.
+    - monitor_deployment: Monitors the deployment process and reports on its status.
+    - perform_canary_release: Implements a canary release strategy for gradual deployment.
     """
-    async def deploy_code(self, ollama):
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
+    async def deploy_code(self, ollama, narrative):
         context = {"current_code": "current_code_placeholder"}
         deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?", context=context)
         if deployment_decision.get('deploy', False):
-            logger.info("Code deployed successfully")
-            await self.narrative.log_state("Deployment approved by Ollama")
+            self.logger.info("Code deployed successfully")
+            await narrative.log_state("Deployment approved by Ollama")
+            # Implement actual deployment logic here
+            # For example: subprocess.run(["./deploy_script.sh"])
         else:
-            await self.narrative.log_state("Deployment deferred based on Ollama's decision")
-            logger.info("Deployment deferred based on Ollama's decision")
+            await narrative.log_state("Deployment deferred based on Ollama's decision")
+            self.logger.info("Deployment deferred based on Ollama's decision")
 
     async def rollback(self, ollama, version):
         context = {"version": version}
         rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}", context=context)
-        logger.info(f"Rollback plan generated: {rollback_plan}")
+        self.logger.info(f"Rollback plan generated: {rollback_plan}")
+        # Implement rollback logic here
+        # For example: subprocess.run(["./rollback_script.sh", version])
+
+    async def monitor_deployment(self, ollama):
+        context = {"deployment_status": "ongoing"}
+        monitoring_result = await ollama.query_ollama("deployment_monitoring", "Monitor the ongoing deployment and report on its status", context=context)
+        self.logger.info(f"Deployment monitoring result: {monitoring_result}")
+        return monitoring_result
+
+    async def perform_canary_release(self, ollama, new_version, canary_percentage):
+        context = {"new_version": new_version, "canary_percentage": canary_percentage}
+        canary_strategy = await ollama.query_ollama("canary_release", f"Implement a canary release strategy for version {new_version} with {canary_percentage}% of traffic", context=context)
+        self.logger.info(f"Canary release strategy: {canary_strategy}")
+        # Implement canary release logic here
+        # For example: subprocess.run(["./canary_release.sh", new_version, str(canary_percentage)])
 
 class SelfImprovement:
     """
@@ -219,7 +302,15 @@ async def main():
     eh = ErrorHandler()
     
     # Start the narrative-controlled improvement process
-    await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
+    try:
+        await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
+    except Exception as e:
+        await eh.handle_error(ollama, e)
+        await narrative.log_error(f"An error occurred during the improvement process: {str(e)}")
+    finally:
+        await narrative.log_state("Shutting down system components")
+        # Perform any necessary cleanup or shutdown procedures here
+        await ollama.__aexit__(None, None, None)
 
 if __name__ == "__main__":
     asyncio.run(main())
