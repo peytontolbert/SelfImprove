@@ -1,4 +1,6 @@
 from core.ollama_interface import OllamaInterface
+from prompts.management.prompt_manager import PromptManager
+from utils.error_handler import ErrorHandler
 # user_interface.py
 class UserInterface:
     def get_input(self):
@@ -83,7 +85,33 @@ def main():
     eh = ErrorHandling()
 
     # System startup and initialization logic
-    pass
+    # Initialize components
+    ui = UserInterface()
+    ollama = OllamaInterface(api_endpoint="http://localhost:11434")
+    task_queue = TaskQueue()
+    kb = KnowledgeBase()
+    vcs = VersionControlSystem()
+    ca = CodeAnalysis()
+    tf = TestingFramework()
+    dm = DeploymentManager()
+    si = SelfImprovement()
+    eh = ErrorHandling()
+    pm = PromptManager()
+    
+    # Example interaction loop
+    while True:
+        user_input = ui.get_input()
+        if user_input.lower() == "exit":
+            break
+        
+        # Process input and interact with Ollama
+        try:
+            prompt = pm.load_prompt("example_task")
+            response = ollama.query_ollama(prompt)
+            ui.display_output(response)
+        except Exception as e:
+            recovery = eh.handle_error(e)
+            ui.display_output(f"Error handled: {recovery}")
 
 if __name__ == "__main__":
     main()
