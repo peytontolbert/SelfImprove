@@ -7,31 +7,47 @@ class ImprovementManager:
         self.logger = logging.getLogger(__name__)
 
     async def suggest_improvements(self, system_state: Dict[str, Any]) -> List[str]:
-        prompt = f"Suggest improvements based on the current system state: {system_state}"
-        response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="improvement_suggestion")
-        return response.get("suggestions", [])
+        try:
+            prompt = f"Suggest improvements based on the current system state: {system_state}"
+            response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="improvement_suggestion")
+            suggestions = response.get("suggestions", [])
+            self.logger.info(f"Suggested improvements: {suggestions}")
+            return suggestions
+        except Exception as e:
+            self.logger.error(f"Error suggesting improvements: {str(e)}")
+            return []
 
     async def validate_improvements(self, improvements: List[str]) -> List[str]:
-        validated = []
-        for improvement in improvements:
-            validation = await self.ollama.validate_improvement(improvement)
-            if validation.get('is_valid', False):
-                validated.append(improvement)
-            else:
-                self.logger.info(f"Invalid improvement suggestion: {improvement}")
-        return validated
+        try:
+            validated = []
+            for improvement in improvements:
+                validation = await self.ollama.validate_improvement(improvement)
+                if validation.get('is_valid', False):
+                    validated.append(improvement)
+                else:
+                    self.logger.info(f"Invalid improvement suggestion: {improvement}")
+            self.logger.info(f"Validated improvements: {validated}")
+            return validated
+        except Exception as e:
+            self.logger.error(f"Error validating improvements: {str(e)}")
+            return []
 
     async def apply_improvements(self, improvements: List[str]) -> List[Dict[str, Any]]:
         results = []
-        for improvement in improvements:
-            implementation = await self.ollama.implement_improvement(improvement)
-            if implementation.get('code_change'):
-                result = await self.apply_code_change(implementation['code_change'])
-                results.append(result)
-            if implementation.get('system_update'):
-                result = await self.apply_system_update(implementation['system_update'])
-                results.append(result)
-        return results
+        try:
+            for improvement in improvements:
+                implementation = await self.ollama.implement_improvement(improvement)
+                if implementation.get('code_change'):
+                    result = await self.apply_code_change(implementation['code_change'])
+                    results.append(result)
+                if implementation.get('system_update'):
+                    result = await self.apply_system_update(implementation['system_update'])
+                    results.append(result)
+            self.logger.info(f"Applied improvements: {results}")
+            return results
+        except Exception as e:
+            self.logger.error(f"Error applying improvements: {str(e)}")
+            return []
 
     async def apply_code_change(self, code_change: str) -> Dict[str, Any]:
         self.logger.info(f"Applying code change: {code_change}")
