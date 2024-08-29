@@ -10,7 +10,7 @@ class TaskQueue:
 
     async def create_task(self, task_details):
         # Use Ollama to decide on task creation and management
-        decision = await self.ollama.query_ollama("task_management", f"Should I create this task: {task_details}")
+        decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I create this task: {task_details}", task="task_management")
         if decision.get('create_task', False):
             self.tasks.append(task_details)
             logger.info(f"Task created: {task_details}")
@@ -19,7 +19,7 @@ class TaskQueue:
 
     async def manage_orchestration(self):
         if self.tasks:
-            orchestration_decision = await self.ollama.query_ollama("task_orchestration", f"How should I orchestrate these tasks: {self.tasks}")
+            orchestration_decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"How should I orchestrate these tasks: {self.tasks}", task="task_orchestration")
             # Implement orchestration logic based on Ollama's decision
             logger.info(f"Task orchestration: {orchestration_decision}")
 

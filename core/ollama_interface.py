@@ -77,15 +77,15 @@ class OllamaInterface:
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
         prompt = f"Implement this improvement: {improvement}. Consider the system's current architecture and capabilities. Provide a detailed plan for implementation."
-        return await self.query_ollama(prompt, {"task": "improvement_implementation"})
+        return await self.query_ollama(self.system_prompt, prompt, task="improvement_implementation")
 
     async def validate_improvement(self, improvement: str) -> Dict[str, Any]:
         prompt = f"Validate the following improvement suggestion: {improvement}. Consider potential risks, conflicts with existing system architecture, and alignment with project goals."
-        return await self.query_ollama(prompt, {"task": "improvement_validation"})
+        return await self.query_ollama(self.system_prompt, prompt, task="improvement_validation")
 
     async def learn_from_experience(self, experience_data: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"Analyze this experience data and extract learnings: {json.dumps(experience_data)}. Focus on patterns, successful strategies, and areas for improvement."
-        return await self.query_ollama(prompt, {"task": "experience_learning"})
+        return await self.query_ollama(self.system_prompt, prompt, task="experience_learning")
 
     def get_conversation_history(self) -> List[Dict[str, Any]]:
         return self.conversation_history

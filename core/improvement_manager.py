@@ -8,7 +8,7 @@ class ImprovementManager:
 
     async def suggest_improvements(self, system_state: Dict[str, Any]) -> List[str]:
         prompt = f"Suggest improvements based on the current system state: {system_state}"
-        response = await self.ollama.query_ollama("improvement_suggestion", prompt)
+        response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="improvement_suggestion")
         return response.get("suggestions", [])
 
     async def validate_improvements(self, improvements: List[str]) -> List[str]:

@@ -20,7 +20,7 @@ class SystemNarrative:
             prompt += f" | Context: {context}"
         if longterm_memory:
             prompt += f" | Long-term Memory: {longterm_memory}"
-        ollama_response = await self.ollama.query_ollama("thought_generation", prompt)
+        ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation")
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
         return thoughts
@@ -52,10 +52,10 @@ class SystemNarrative:
             self.logger.error(f"System Error: {error}")
         await self.log_with_ollama(error, context)
         # Suggest and log recovery strategies
-        recovery_strategy = await self.ollama.suggest_error_recovery(error)
+        recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery")
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
-        recovery_strategy = await self.ollama.suggest_error_recovery(error)
+        recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery")
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
 

@@ -14,7 +14,7 @@ class KnowledgeBase:
         self.ollama = ollama_interface or OllamaInterface()
 
     async def add_entry(self, entry_name, data):
-        decision = await self.ollama.query_ollama("knowledge_base", f"Should I add this entry: {entry_name} with data: {data}")
+        decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
             with open(file_path, 'w') as file:
@@ -29,7 +29,7 @@ class KnowledgeBase:
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
                 data = json.load(file)
-            interpretation = await self.ollama.query_ollama("knowledge_base", f"Interpret this data: {data}")
+            interpretation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Interpret this data: {data}", task="knowledge_base")
             interpretation_result = interpretation.get('interpretation', data)
             self.logger.info(f"Entry retrieved: {entry_name} | Interpretation: {interpretation_result}")
             return interpretation_result
@@ -37,7 +37,7 @@ class KnowledgeBase:
             return None
 
     async def update_entry(self, entry_name, data):
-        decision = await self.ollama.query_ollama("knowledge_base", f"Should I update this entry: {entry_name} with data: {data}")
+        decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I update this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('update_entry', False):
             update_result = await self.add_entry(entry_name, data)
             self.logger.info(f"Entry updated: {entry_name}")
@@ -46,7 +46,7 @@ class KnowledgeBase:
 
     async def list_entries(self):
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
-        categorization = await self.ollama.query_ollama("knowledge_base", f"Categorize these entries: {entries}")
+        categorization = await self.ollama.query_ollama(self.ollama.system_prompt, f"Categorize these entries: {entries}", task="knowledge_base")
         categorized_entries = categorization.get('categorized_entries', entries)
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
@@ -61,20 +61,20 @@ class KnowledgeBase:
         self.logger.info(f"Retrieved long-term memory: {longterm_memory}")
         return longterm_memory
         entries = await self.list_entries()
-        analysis = await self.ollama.query_ollama("knowledge_base", f"Analyze the current state of the knowledge base with these entries: {entries}")
+        analysis = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze the current state of the knowledge base with these entries: {entries}", task="knowledge_base")
         analysis_result = analysis.get('analysis', "No analysis available")
         self.logger.info(f"Knowledge base analysis: {analysis_result}")
         return analysis_result
 
     async def suggest_improvements(self):
         analysis = await self.analyze_knowledge_base()
-        suggestions = await self.ollama.query_ollama("knowledge_base", f"Suggest improvements based on this analysis: {analysis}")
+        suggestions = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest improvements based on this analysis: {analysis}", task="knowledge_base")
         improvement_suggestions = suggestions.get('improvements', [])
         self.logger.info(f"Improvement suggestions: {improvement_suggestions}")
         return improvement_suggestions
 
     async def apply_improvement(self, improvement):
-        implementation = await self.ollama.implement_improvement(improvement)
+        implementation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Implement this improvement: {improvement}", task="improvement_implementation")
         if implementation.get('knowledge_base_update'):
             await self.add_entry(f"improvement_{len(self.list_entries()) + 1}", implementation['knowledge_base_update'])
             self.logger.info(f"Improvement applied: {improvement}")
