@@ -331,14 +331,19 @@ async def main():
     
     # Initialize spreadsheet manager
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
-    # Example: Read data from the spreadsheet and log it
-    data = spreadsheet_manager.read_data("A1:C10")
-    logger.info(f"Data read from spreadsheet: {data}")
+    # Read existing tasks and their statuses
+    tasks_data = spreadsheet_manager.read_data("A1:B10")
+    logger.info(f"Existing tasks and statuses: {tasks_data}")
 
-    # Example: Write data to the spreadsheet
-    new_data = [["Task", "Status"], ["Improve logging", "Completed"], ["Refactor code", "In Progress"]]
-    spreadsheet_manager.write_data((5, 1), new_data)
-    logger.info("New data written to spreadsheet")
+    # Log improvements and their outcomes
+    improvements = await si.analyze_performance({"metric": "value"})
+    spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
+    logger.info("Logged improvements to spreadsheet")
+
+    # Store performance metrics
+    metrics = await si.get_system_metrics()
+    spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
+    logger.info("Stored performance metrics in spreadsheet")
 
     # Start the narrative-controlled improvement process
     try:
