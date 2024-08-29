@@ -30,7 +30,7 @@ class SystemNarrative:
             "current_tasks": "List of current tasks",
             "system_status": "Current system status"
         })
-        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}", extra={"context": context})
+        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
         self.track_request("thought_generation", prompt, "thoughts")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')

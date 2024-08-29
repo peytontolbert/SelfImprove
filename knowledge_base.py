@@ -154,14 +154,6 @@ class KnowledgeBase:
             analysis.append({"capability": capability, "evolution": evolution})
         self.logger.info(f"Capability evolution analysis: {analysis}")
         return analysis
-        analysis = await self.analyze_knowledge_base()
-        suggestions = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest improvements based on this analysis: {analysis}", task="knowledge_base")
-        improvement_suggestions = suggestions.get('improvements', [])
-        self.logger.info(f"Improvement suggestions: {improvement_suggestions}")
-        # Automatically apply suggested improvements
-        for improvement in improvement_suggestions:
-            await self.apply_improvement(improvement)
-        return improvement_suggestions
 
     async def apply_improvement(self, improvement):
         implementation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Implement this improvement: {improvement}", task="improvement_implementation")

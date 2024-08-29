@@ -24,13 +24,6 @@ class ErrorHandler:
             "generic": "generic_error"
         }
         self.logger.info(f"Classified error '{str(error)}' as '{error_types.get(type(error).__name__, 'generic_error')}'")
-        error_types = {
-            "ValueError": "value_error",
-            "TypeError": "type_error",
-            "KeyError": "key_error",
-            "AttributeError": "attribute_error",
-            "generic": "generic_error"
-        }
         return {"error_type": error_types.get(type(error).__name__, "generic_error")}
 
     async def handle_error(self, ollama_interface, error):
