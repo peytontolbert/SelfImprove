@@ -119,7 +119,7 @@ class SystemNarrative:
         while True:
             improvement_cycle_count += 1
             try:
-                await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh), timeout=300)  # 5-minute timeout for the entire cycle
+                await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count), timeout=300)  # 5-minute timeout for the entire cycle
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
             except Exception as e:
@@ -128,7 +128,7 @@ class SystemNarrative:
             # Check for reset command and adjust sleep duration
             await self.check_reset_and_sleep(ollama, system_state)
 
-    async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+    async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
         await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
         
         # System state analysis
