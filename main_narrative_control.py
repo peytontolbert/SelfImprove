@@ -329,13 +329,17 @@ async def main():
     pm = PromptManager()
     eh = ErrorHandler()
     
-    # Initialize spreadsheet manager
+    # Initialize prompt manager for versioning and A/B testing
+    prompt_manager = PromptManager()
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
     # Read existing tasks and their statuses
     tasks_data = spreadsheet_manager.read_data("A1:B10")
     logger.info(f"Existing tasks and statuses: {tasks_data}")
 
-    # Log improvements and their outcomes
+    # Manage prompt versions and A/B testing
+    prompt_versions = prompt_manager.get_next_version("system_prompts")
+    logger.info(f"Current prompt version: {prompt_versions}")
+    # Implement A/B testing logic here
     improvements = await si.analyze_performance({"metric": "value"})
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
@@ -345,7 +349,11 @@ async def main():
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
 
-    # Start the narrative-controlled improvement process
+    # Implement error classification and fallback strategies
+    error_handler = ErrorHandler()
+    error_types = error_handler.classify_errors()
+    logger.info(f"Error types classified: {error_types}")
+    # Implement fallback strategies based on error types
     try:
         # Use specific context for improvement process
         context_id = "improvement_process"
@@ -356,6 +364,9 @@ async def main():
         ollama.manage_conversation_context(context_id, context)
         await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, context_id=context_id)
     except Exception as e:
+        # Implement multilevel fallback strategies
+        fallback_strategy = error_handler.get_fallback_strategy(e)
+        logger.info(f"Applying fallback strategy: {fallback_strategy}")
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
         await narrative.log_error(f"An error occurred: {str(e)}", {"error": str(e)})
