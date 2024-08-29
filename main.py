@@ -102,11 +102,15 @@ class SelfImprovement:
 
     async def continuous_improvement(self):
         while True:
-            system_state = await self.ollama.evaluate_system_state({"metrics": await self.get_system_metrics()})
-            improvements = await self.analyze_performance(system_state)
-            if improvements:
-                results = await self.apply_improvements(improvements)
-                await self.learn_from_experience({"improvements": improvements, "results": results})
+            try:
+                system_state = await self.ollama.evaluate_system_state({"metrics": await self.get_system_metrics()})
+                improvements = await self.analyze_performance(system_state)
+                if improvements:
+                    results = await self.apply_improvements(improvements)
+                    await self.learn_from_experience({"improvements": improvements, "results": results})
+            except Exception as e:
+                logger.error(f"Error during continuous improvement: {str(e)}")
+                await self.ollama.adaptive_error_handling(e, {"context": "continuous_improvement"})
             await asyncio.sleep(3600)  # Run every hour
 
     async def get_system_metrics(self):
@@ -116,6 +120,8 @@ class SelfImprovement:
     async def suggest_prompt_refinements(self):
         current_prompts = await self.knowledge_base.get_entry("system_prompts")
         refinements = await self.ollama.query_ollama("prompt_refinement", f"Suggest refinements for these prompts: {current_prompts}")
+        if refinements:
+            await self.ollama.update_system_prompt(refinements.get("new_system_prompt", "Default system prompt"))
         return refinements
 
 async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative):
