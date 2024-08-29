@@ -297,26 +297,9 @@ class SelfImprovement:
         await self.narrative.log_error("All attempts failed", {"function": func.__name__, "args": args, "kwargs": kwargs})
         return None
 
-async def main():
-    """
-    Initializes system components and starts the narrative-controlled improvement process.
-
-    This function sets up instances of various components such as OllamaInterface, TaskQueue,
-    KnowledgeBase, and others. It then initiates the improvement process controlled by the
-    SystemNarrative. The narrative can reset, change actions, and influence decisions dynamically.
-    """
+def initialize_components():
     ollama = OllamaInterface()
-    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
     rl_module = ReinforcementLearningModule(ollama)
-
-    # Initialize configuration settings
-    config = {
-        "retry_attempts": 3,
-        "timeout": 30,
-        "log_level": logging.INFO
-    }
-    logging.getLogger().setLevel(config["log_level"])
-
     task_queue = TaskQueue(ollama)
     vcs = VersionControlSystem()
     ca = CodeAnalysis()
@@ -324,13 +307,30 @@ async def main():
     dm = DeploymentManager()
     kb = KnowledgeBase(ollama_interface=ollama)
     narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb)
-    logger.info("Initializing system components with detailed logging and context management")
-    await narrative.log_state("System components initialized successfully")
     improvement_manager = ImprovementManager(ollama)
     si = SelfImprovement(ollama, kb, improvement_manager)
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
+    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh
+
+async def main():
+    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh = initialize_components()
+    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
+
+    # Initialize configuration settings
+    config = load_configuration()
+    logging.getLogger().setLevel(config.get("log_level", logging.INFO))
+
+def load_configuration():
+    return {
+        "retry_attempts": int(os.getenv("RETRY_ATTEMPTS", 3)),
+        "timeout": int(os.getenv("TIMEOUT", 30)),
+        "log_level": logging.INFO
+    }
+
+    logger.info("System components initialized with detailed logging and context management")
+    await narrative.log_state("System components initialized successfully")
     
     # Initialize prompt manager for versioning and A/B testing
     prompt_manager = PromptManager()
@@ -368,8 +368,10 @@ async def main():
     logger.info(f"Adaptive learning data: {learning_data}")
     # Ollama-driven task decomposition
     complex_tasks = ["Optimize system architecture", "Enhance user experience"]
-    for task in complex_tasks:
-        subtasks = await ollama.query_ollama("task_decomposition", f"Decompose the task: {task}")
+    subtasks_results = await asyncio.gather(
+        *[ollama.query_ollama("task_decomposition", f"Decompose the task: {task}") for task in complex_tasks]
+    )
+    for task, subtasks in zip(complex_tasks, subtasks_results):
         logger.info(f"Decomposed subtasks for {task}: {subtasks}")
     # Enhanced error recovery
     error_recovery_strategies = await ollama.query_ollama("adaptive_error_recovery", "Suggest adaptive recovery strategies for recent errors.")
@@ -390,17 +392,12 @@ async def main():
         }
         await ollama.manage_conversation_context(context_id, context)
         await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
+    except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+        logger.error("Network-related error occurred", exc_info=True)
+        await eh.handle_error(ollama, e)
     except Exception as e:
-        # Implement error classification and fallback strategies
-        error_handler = ErrorHandler()
-        error_types = error_handler.classify_errors(e)
-        logger.info(f"Error types classified: {error_types}")
-        # Implement fallback strategies based on error types
-        fallback_strategy = error_handler.suggest_recovery_strategy(type(e).__name__)
-        logger.info(f"Applying fallback strategy: {fallback_strategy}")
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
-        await narrative.log_error(f"An error occurred: {str(e)}", {"error": str(e)})
     finally:
         await narrative.log_state("Shutting down system components")
         # Perform any necessary cleanup or shutdown procedures here
