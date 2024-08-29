@@ -32,15 +32,6 @@ class KnowledgeBase:
     def _create_initial_nodes(tx):
         # Create initial nodes or constraints if needed
         tx.run("CREATE CONSTRAINT IF NOT EXISTS ON (n:Node) ASSERT n.name IS UNIQUE")
-        """Log interactions with other components."""
-        self.logger.info(f"Interaction logged: {component_name} performed {action}. Details: {details or 'None'}")
-        self.add_entry("interaction_log", {
-            "component": component_name,
-            "action": action,
-            "details": details or {},
-            "timestamp": time.time()
-        })
-        self.driver.close()
 
     def add_node(self, label, properties):
         with self.driver.session() as session:
