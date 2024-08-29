@@ -1,4 +1,5 @@
 import openpyxl
+import json
 
 class SpreadsheetManager:
     def __init__(self, file_path):
