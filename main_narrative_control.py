@@ -18,6 +18,8 @@ Functions:
 
 import logging
 import asyncio
+import os
+import aiohttp
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
