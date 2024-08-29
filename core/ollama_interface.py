@@ -32,7 +32,9 @@ class OllamaInterface:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
-        context = context or {"default": "No specific context provided. Please ensure to include relevant details for better results."}
+        if context is None:
+            context = {"default": "No specific context provided. Please ensure to include relevant details for better results."}
+        self.logger.info(f"Querying Ollama with context: {json.dumps(context, indent=2)}")
         context.update({"timestamp": time.time()})
         context_str = json.dumps(context, indent=2)
         prompt = f"Context: {context_str}\n\n{prompt}"

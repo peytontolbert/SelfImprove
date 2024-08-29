@@ -24,11 +24,12 @@ class SystemNarrative:
             prompt += f" | Context: {context}"
         if longterm_memory:
             prompt += f" | Long-term Memory: {longterm_memory}"
-        context = {
+        context.update({
             "longterm_memory": longterm_memory,
             "current_tasks": "List of current tasks",
             "system_status": "Current system status"
-        }
+        })
+        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
