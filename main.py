@@ -45,20 +45,53 @@ class DeploymentManager:
             logger.info("Deployment deferred based on Ollama's decision")
 
 class SelfImprovement:
-    async def analyze_performance(self, ollama, metrics):
-        improvements = await ollama.improve_system(metrics)
-        return improvements
+    def __init__(self, ollama, knowledge_base):
+        self.ollama = ollama
+        self.knowledge_base = knowledge_base
 
-    async def apply_improvements(self, ollama, improvements):
+    async def analyze_performance(self, metrics):
+        improvements = await self.ollama.improve_system(metrics)
+        validated_improvements = await self.validate_improvements(improvements)
+        return validated_improvements
+
+    async def validate_improvements(self, improvements):
+        validated = []
         for improvement in improvements:
-            implementation = await ollama.query_ollama("improvement_implementation", f"Implement this improvement: {improvement}")
+            validation = await self.ollama.validate_improvement(improvement)
+            if validation.get('is_valid', False):
+                validated.append(improvement)
+            else:
+                print(f"Invalid improvement suggestion: {improvement}")
+        return validated
+
+    async def apply_improvements(self, improvements):
+        results = []
+        for improvement in improvements:
+            implementation = await self.ollama.implement_improvement(improvement)
             if implementation.get('code_change'):
-                # Here you would apply the code change
-                print(f"Applying code change: {implementation['code_change']}")
+                result = await self.apply_code_change(implementation['code_change'])
+                results.append(result)
             if implementation.get('system_update'):
-                # Here you would update system parameters or configurations
-                print(f"Updating system: {implementation['system_update']}")
-        return "Improvements applied"
+                result = await self.apply_system_update(implementation['system_update'])
+                results.append(result)
+        return results
+
+    async def apply_code_change(self, code_change):
+        # Here you would apply the code change
+        # This is a placeholder for the actual implementation
+        print(f"Applying code change: {code_change}")
+        return {"status": "success", "message": "Code change applied"}
+
+    async def apply_system_update(self, system_update):
+        # Here you would update system parameters or configurations
+        # This is a placeholder for the actual implementation
+        print(f"Updating system: {system_update}")
+        return {"status": "success", "message": "System update applied"}
+
+    async def learn_from_experience(self, experience_data):
+        learning = await self.ollama.learn_from_experience(experience_data)
+        await self.knowledge_base.add_entry("system_learnings", learning)
+        return learning
 
 async def main():
     ui = UserInterface()
@@ -119,11 +152,25 @@ async def main():
 
             # Continuous improvement loop
             performance_metrics = {"task_count": task_queue.get_task_count()}
-            improvements = await si.analyze_performance(ollama, performance_metrics)
+            system_state = {"metrics": performance_metrics, "task_queue": task_queue.tasks}
+            
+            state_evaluation = await ollama.evaluate_system_state(system_state)
+            ui.display_output(f"System state evaluation: {state_evaluation}")
+
+            improvements = await si.analyze_performance(performance_metrics)
             if improvements:
                 ui.display_output(f"Suggested improvements: {improvements}")
-                result = await si.apply_improvements(ollama, improvements)
-                ui.display_output(f"Improvement application result: {result}")
+                results = await si.apply_improvements(improvements)
+                ui.display_output(f"Improvement application results: {results}")
+
+                # Learn from the experience
+                experience_data = {
+                    "improvements": improvements,
+                    "results": results,
+                    "system_state": system_state
+                }
+                learning = await si.learn_from_experience(experience_data)
+                ui.display_output(f"System learning: {learning}")
 
         except Exception as e:
             recovery = await eh.handle_error(ollama, e)
