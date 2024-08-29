@@ -130,6 +130,7 @@ class SystemNarrative:
         else:
             return 7200  # 2 hours
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        await self.self_optimization(ollama, kb)
         system_state = {}
         improvement_cycle_count = 0
         while True:
@@ -141,8 +142,44 @@ class SystemNarrative:
             except Exception as e:
                 await self.handle_general_error(e, eh, ollama)
 
+            # Dynamic goal setting based on system performance
+            await self.dynamic_goal_setting(ollama, system_state)
+
+            # Advanced predictive analysis for future challenges
+            future_challenges = await self.ollama.query_ollama("future_challenges", "Predict future challenges and suggest preparation strategies.", context={"system_state": system_state})
+            self.logger.info(f"Future challenges and strategies: {future_challenges}")
+            await self.knowledge_base.add_entry("future_challenges", future_challenges)
+
+            # Feedback loop optimization
+            feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
+            self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
+            await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
+
+            # Self-reflection mechanism
+            if improvement_cycle_count % 5 == 0:  # Every 5 cycles
+                self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
+                self.logger.info(f"Self-reflection insights: {self_reflection}")
+                await self.knowledge_base.add_entry("self_reflection", self_reflection)
+
+            # Resource allocation optimization
+            resource_optimization = await self.ollama.query_ollama("resource_optimization", "Optimize resource allocation based on current and predicted demands.", context={"system_state": system_state})
+            self.logger.info(f"Resource allocation optimization: {resource_optimization}")
+            await self.knowledge_base.add_entry("resource_optimization", resource_optimization)
+
+            # Adaptive learning and evolution
+            learning_data = await self.ollama.query_ollama("adaptive_learning", "Analyze recent interactions and adapt strategies for future improvements.", context={"system_state": system_state})
+            self.logger.info(f"Adaptive learning data: {learning_data}")
+            await self.knowledge_base.add_entry("adaptive_learning", learning_data)
+
             # Check for reset command and adjust sleep duration
             await self.check_reset_and_sleep(ollama, system_state)
+
+    async def dynamic_goal_setting(self, ollama, system_state):
+        """Set and adjust system goals dynamically based on performance metrics."""
+        current_goals = await self.knowledge_base.get_entry("current_goals")
+        goal_adjustments = await ollama.query_ollama("goal_setting", f"Adjust current goals based on system performance: {system_state}", context={"current_goals": current_goals})
+        self.logger.info(f"Goal adjustments: {goal_adjustments}")
+        await self.knowledge_base.add_entry("goal_adjustments", goal_adjustments)
 
     async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
         await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
@@ -178,6 +215,7 @@ class SystemNarrative:
         rl_feedback = await self.rl_module.get_feedback(system_state)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
         await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
+        self.logger.info("Long-term memory updated with reinforcement learning feedback.")
         self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
 
         # Integrate predictive analysis
@@ -187,11 +225,32 @@ class SystemNarrative:
         predictive_insights = await self.ollama.query_ollama("predictive_analysis", "Provide predictive insights based on current and historical system metrics.", context=predictive_context)
         self.logger.info(f"Enhanced Predictive insights: {predictive_insights}")
         await self.knowledge_base.add_entry("predictive_insights", {"insights": predictive_insights})
+        self.logger.info("Long-term memory updated with predictive insights.")
         self.spreadsheet_manager.write_data((30, 1), [["Enhanced Predictive Insights"], [predictive_insights]])
+
+        # Advanced predictive analysis for future challenges
+        future_challenges = await self.ollama.query_ollama("future_challenges", "Predict future challenges and suggest preparation strategies.", context=predictive_context)
+        self.logger.info(f"Future challenges and strategies: {future_challenges}")
+        await self.knowledge_base.add_entry("future_challenges", future_challenges)
 
         # Evolve feedback loop for long-term evolution
         await self.evolve_feedback_loop(rl_feedback, predictive_insights)
+
+        # Optimize feedback loop for rapid learning
+        feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+        self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
+        await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
+        # Periodically analyze long-term memory for insights
+        if improvement_cycle_count % 10 == 0:  # Every 10 cycles
+            longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
+            self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
         await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
+
+        # Self-reflection mechanism
+        if improvement_cycle_count % 5 == 0:  # Every 5 cycles
+            self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
+            self.logger.info(f"Self-reflection insights: {self_reflection}")
+            await self.knowledge_base.add_entry("self_reflection", self_reflection)
 
     async def evolve_feedback_loop(self, rl_feedback, predictive_insights):
         """Evolve the feedback loop by integrating reinforcement learning feedback and predictive insights."""
@@ -200,6 +259,7 @@ class SystemNarrative:
         combined_feedback = rl_feedback + predictive_insights.get("suggestions", []) + historical_feedback.get("feedback", [])
         self.logger.info(f"Refining feedback loop with adaptive feedback: {combined_feedback}")
         await self.knowledge_base.add_entry("refined_feedback", {"combined_feedback": combined_feedback})
+        self.logger.info("Long-term memory updated with refined feedback.")
         self.spreadsheet_manager.write_data((35, 1), [["Refined Feedback"], [combined_feedback]])
         # Implement further logic to utilize combined feedback for long-term evolution
 
@@ -332,7 +392,17 @@ class SystemNarrative:
         else:
             await self.log_error("No valid recovery suggestion received from Ollama.", {"error": str(e)})
 
-    async def check_reset_and_sleep(self, ollama, system_state):
+    async def self_optimization(self, ollama, kb):
+        """Evaluate and optimize system performance."""
+        performance_metrics = await ollama.query_ollama("performance_evaluation", "Evaluate current system performance and suggest optimizations.")
+        self.logger.info(f"Performance metrics: {performance_metrics}")
+        await kb.add_entry("performance_metrics", performance_metrics)
+        optimizations = performance_metrics.get("optimizations", [])
+        for optimization in optimizations:
+            self.logger.info(f"Applying optimization: {optimization}")
+            # Implement optimization logic here
+            # For example, adjust system parameters or configurations
+        self.logger.info("Self-optimization completed.")
         context = {"system_state": "current_system_state_placeholder"}
         reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed", context=context)
         if reset_command.get('reset', False):
@@ -352,6 +422,7 @@ class SystemNarrative:
         # 1. Save the current state
         current_state = await self.ollama.evaluate_system_state({})
         await self.knowledge_base.add_entry("timeout_state", current_state)
+        self.logger.info("Long-term memory updated with timeout state.")
 
         # 2. Query Ollama for recovery actions
         recovery_actions = await self.ollama.query_ollama("timeout_recovery", "Suggest detailed recovery actions for a timeout in the improvement cycle, including component restarts and resource adjustments.")
