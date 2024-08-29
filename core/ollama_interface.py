@@ -29,7 +29,10 @@ class OllamaInterface:
         if self.session:
             await self.session.close()
 
-    async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, timeout: int = 30) -> Dict[str, Any]:
+    async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, timeout: int = 30, use_contextual_memory: bool = True) -> Dict[str, Any]:
+        if use_contextual_memory:
+            context_memory = await self.knowledge_base.get_longterm_memory()
+            context.update({"context_memory": context_memory})
         if refine and task not in ["logging", "categorization"]:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):

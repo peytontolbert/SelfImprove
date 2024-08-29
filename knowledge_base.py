@@ -90,7 +90,9 @@ class KnowledgeBase:
         )
         result = tx.run(query, capability_name=capability_name)
         return [{"current": record["current"], "relationship": record["r"], "next": record["next"]} for record in result]
-    async def add_entry(self, entry_name, data, metadata=None, narrative_context=None):
+    async def add_entry(self, entry_name, data, metadata=None, narrative_context=None, context=None):
+        if context:
+            data.update({"context": context})
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
             properties = {
@@ -105,7 +107,9 @@ class KnowledgeBase:
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
 
-    async def get_entry(self, entry_name, include_metadata=False):
+    async def get_entry(self, entry_name, include_metadata=False, context=None):
+        if context:
+            self.logger.info(f"Retrieving entry with context: {context}")
         with self.driver.session() as session:
             result = session.read_transaction(self._find_node, entry_name)
             if result:
