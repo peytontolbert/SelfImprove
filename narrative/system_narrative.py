@@ -159,6 +159,7 @@ class SystemNarrative:
                 await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count), timeout=300)  # 5-minute timeout for the entire cycle
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
+                await self.adaptive_error_handling(e, eh, ollama)
             except Exception as e:
                 await self.handle_general_error(e, eh, ollama)
 
@@ -253,6 +254,11 @@ class SystemNarrative:
 
         # Evolve feedback loop for long-term evolution
         await self.evolve_feedback_loop(rl_feedback, predictive_insights)
+
+        # Optimize feedback loop for rapid learning
+        feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+        self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
+        await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
 
         # Optimize feedback loop for rapid learning
         feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
