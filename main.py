@@ -7,6 +7,7 @@ from utils.error_handler import ErrorHandler
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
 import time
+from narrative.system_narrative import SystemNarrative
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -117,13 +118,13 @@ class SelfImprovement:
         refinements = await self.ollama.query_ollama("prompt_refinement", f"Suggest refinements for these prompts: {current_prompts}")
         return refinements
 
-async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative):
     while True:
         try:
-            # Analyze current system state
+            narrative.log_state("Analyzing current system state")
             system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
             
-            # Generate improvement suggestions
+            narrative.log_state("Generating improvement suggestions")
             improvements = await si.analyze_performance(system_state)
             
             if improvements:
@@ -131,7 +132,7 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
                     # Validate the improvement
                     validation = await si.validate_improvements([improvement])
                     if validation:
-                        # Apply the improvement
+                        narrative.log_decision(f"Applying improvement: {improvement}")
                         result = await si.apply_improvements([improvement])
                         
                         # Learn from the experience
@@ -149,7 +150,7 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
                             "learning": learning
                         })
 
-            # Perform additional system improvement tasks
+            narrative.log_state("Performing additional system improvement tasks")
             await task_queue.manage_orchestration()
             code_analysis = await ca.analyze_code(ollama, "current_system_code")
             if code_analysis.get('improvements'):
@@ -167,7 +168,7 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
                 # Perform deployment
                 pass
 
-            # Version control operations
+            narrative.log_state("Performing version control operations")
             changes = "Recent system changes"  # This should be dynamically generated
             await vcs.commit_changes(ollama, changes)
 
@@ -179,20 +180,22 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
             for prompt_name, prompt_content in new_prompts.items():
                 pm.save_prompt(prompt_name, prompt_content)
 
-            # Error handling check
+            narrative.log_state("Checking for system errors")
             system_errors = await eh.check_for_errors(ollama)
             if system_errors:
                 for error in system_errors:
                     await eh.handle_error(ollama, error)
 
         except Exception as e:
-            logger.error(f"Error in improve_system_capabilities: {str(e)}")
+            narrative.log_error(f"Error in improve_system_capabilities: {str(e)}")
             await eh.handle_error(ollama, e)
 
         # Wait before the next improvement cycle
         await asyncio.sleep(3600)  # Wait for an hour
 
 async def main():
+    narrative = SystemNarrative()
+    narrative.log_state("Initializing system components")
     ollama = OllamaInterface()
     task_queue = TaskQueue(ollama)
     kb = KnowledgeBase(ollama_interface=ollama)
@@ -206,7 +209,8 @@ async def main():
     eh = ErrorHandler()
     
     # Start continuous improvement
-    await improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh)
+    narrative.log_state("Starting continuous improvement process")
+    await improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative)
 
 if __name__ == "__main__":
     asyncio.run(main())
