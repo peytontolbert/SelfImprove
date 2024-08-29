@@ -25,6 +25,10 @@ class VersionControlSystem:
         # Implement actual commit logic here
         logger.info(f"Committed changes with message: {commit_message}")
 
+    async def suggest_branching_strategy(self, ollama, current_state):
+        strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy based on the current state: {current_state}")
+        return strategy
+
 class CodeAnalysis:
     async def analyze_code(self, ollama, code):
         analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}")
@@ -35,6 +39,10 @@ class TestingFramework:
         test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}")
         return test_results
 
+    async def generate_tests(self, ollama, code):
+        generated_tests = await ollama.query_ollama("testing", f"Generate unit tests for this code: {code}")
+        return generated_tests
+
 class DeploymentManager:
     async def deploy_code(self, ollama):
         deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?")
@@ -43,6 +51,11 @@ class DeploymentManager:
             logger.info("Code deployed successfully")
         else:
             logger.info("Deployment deferred based on Ollama's decision")
+
+    async def rollback(self, ollama, version):
+        rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}")
+        # Implement rollback logic here
+        logger.info(f"Rollback plan generated: {rollback_plan}")
 
 class SelfImprovement:
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase):
@@ -106,6 +119,23 @@ class SelfImprovement:
         # Placeholder for getting actual system metrics
         return {"performance": 0.8, "error_rate": 0.02, "task_completion_rate": 0.95}
 
+    async def suggest_prompt_refinements(self):
+        current_prompts = await self.knowledge_base.get_entry("system_prompts")
+        refinements = await self.ollama.query_ollama("prompt_refinement", f"Suggest refinements for these prompts: {current_prompts}")
+        return refinements
+
+class EthicalAudit:
+    def __init__(self, ollama: OllamaInterface):
+        self.ollama = ollama
+
+    async def conduct_audit(self, system_behavior):
+        audit_result = await self.ollama.query_ollama("ethical_audit", f"Conduct an ethical audit of this system behavior: {system_behavior}")
+        return audit_result
+
+    async def flag_ethical_concerns(self, action):
+        concerns = await self.ollama.query_ollama("ethical_audit", f"Identify any ethical concerns with this action: {action}")
+        return concerns
+
 async def main():
     ui = UserInterface()
     ollama = OllamaInterface()
@@ -119,6 +149,10 @@ async def main():
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
+    ea = EthicalAudit(ollama)
+
+    # Start continuous improvement in the background
+    asyncio.create_task(si.continuous_improvement())
 
     while True:
         try:
@@ -133,8 +167,17 @@ async def main():
             if isinstance(action_decision, str):
                 action_decision = json.loads(action_decision)
             
+            # Ethical check before proceeding
+            ethical_concerns = await ea.flag_ethical_concerns(action_decision)
+            if ethical_concerns:
+                ui.display_output(f"Ethical concerns flagged: {ethical_concerns}")
+                continue  # Skip this action if there are ethical concerns
+
             if action_decision.get('create_task', False):
-                await task_queue.create_task(action_decision.get('task_details', ''))
+                task_details = action_decision.get('task_details', '')
+                decomposed_tasks = await ollama.handle_parallel_tasks([{"type": "task_decomposition", "prompt": f"Decompose this task: {task_details}"}])
+                for subtask in decomposed_tasks[0].get('subtasks', [task_details]):
+                    await task_queue.create_task(subtask)
             
             await task_queue.manage_orchestration()
 
@@ -184,6 +227,12 @@ async def main():
                 }
                 learning = await si.learn_from_experience(experience_data)
                 ui.display_output(f"System learning: {learning}")
+
+            # Prompt refinement
+            prompt_refinements = await si.suggest_prompt_refinements()
+            if prompt_refinements:
+                ui.display_output(f"Suggested prompt refinements: {prompt_refinements}")
+                # Here you would implement the logic to apply these refinements
 
             # Add a small delay to prevent excessive CPU usage
             await asyncio.sleep(0.1)
