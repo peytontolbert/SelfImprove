@@ -8,7 +8,7 @@ class ErrorHandler:
     def log_error(self, error):
         self.logger.error(f"Error occurred: {str(error)}")
 
-    def classify_errors(self):
+    def classify_errors(self, error):
         """Classify errors into categories."""
         # Implement detailed error classification logic
         error_types = {
