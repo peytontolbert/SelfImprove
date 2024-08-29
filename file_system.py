@@ -21,3 +21,6 @@ class FileSystem:
 
     def list_files(self):
         return os.listdir(self.base_directory)
+
+    def list_directories(self):
+        return [d for d in os.listdir(self.base_directory) if os.path.isdir(os.path.join(self.base_directory, d))]
