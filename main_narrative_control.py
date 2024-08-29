@@ -29,7 +29,6 @@ from knowledge_base import KnowledgeBase
 import time
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative
-from core.improvement_manager import ImprovementManager
 import json
 # Set up logging with a more detailed format
 logging.basicConfig(
