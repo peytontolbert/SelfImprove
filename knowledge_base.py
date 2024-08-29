@@ -172,7 +172,7 @@ class KnowledgeBase:
         return analysis_result
 
 
-    def log_interaction(self, source, action, details, improvement):
+    async def log_interaction(self, source, action, details, improvement):
         """Log interactions with the knowledge base."""
         self.logger.info(f"Interaction logged from {source}: {action} with details: {details}")
         implementation = self.ollama.query_ollama(self.ollama.system_prompt, f"Implement this improvement: {improvement}", task="improvement_implementation")
