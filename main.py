@@ -96,10 +96,14 @@ async def main():
     # Manage task orchestration
     task_queue.manage_orchestration()
 
-    while True:
-        user_input = ui.get_input()
-        if user_input.lower() == "exit":
-            break
+    # Check if the system is ready for expansion
+    system_ready = check_system_readiness()
+
+    if system_ready:
+        while True:
+            user_input = ui.get_input()
+            if user_input.lower() == "exit":
+                break
 
         try:
             # Create and manage tasks
@@ -136,5 +140,8 @@ async def main():
             recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
 
-if __name__ == "__main__":
+def check_system_readiness():
+    # Placeholder function to determine if the system is ready for expansion
+    # This can be replaced with actual logic to assess system capabilities
+    return True
     asyncio.run(main())
