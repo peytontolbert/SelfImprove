@@ -26,5 +26,14 @@ class ErrorHandler:
         decomposition_prompt = f"Decompose this task into smaller, manageable subtasks: {task}"
         decomposition_result = await ollama_interface.query_ollama("task_decomposition", decomposition_prompt)
         subtasks = decomposition_result.get('subtasks', [])
-        self.logger.info(f"Decomposed task into subtasks: {subtasks}")
-        return subtasks
+        all_subtasks = subtasks.copy()
+        
+        # Continue decomposing each subtask until no further subtasks are suggested
+        for subtask in subtasks:
+            further_decomposition = await ollama_interface.query_ollama("task_decomposition", f"Further decompose this subtask: {subtask}")
+            further_subtasks = further_decomposition.get('subtasks', [])
+            all_subtasks.extend(further_subtasks)
+            self.logger.info(f"Further decomposed subtask '{subtask}' into: {further_subtasks}")
+        
+        self.logger.info(f"Maximally decomposed task into subtasks: {all_subtasks}")
+        return all_subtasks
