@@ -253,21 +253,43 @@ class SystemNarrative:
 
     async def handle_timeout(self):
         self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
-        # Implement recovery logic here, such as:
-        # 1. Saving the current state
-        # 2. Restarting specific components
-        # 3. Notifying administrators
-        # 4. Adjusting timeouts or resource allocations
         await self.log_state("Timeout recovery initiated")
-        # Example recovery action:
-        await self.ollama.query_ollama("timeout_recovery", "Suggest recovery actions for a timeout in the improvement cycle")
-    async def handle_timeout(self):
-        self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
-        # Implement recovery logic here, such as:
-        # 1. Saving the current state
-        # 2. Restarting specific components
-        # 3. Notifying administrators
-        # 4. Adjusting timeouts or resource allocations
-        await self.log_state("Timeout recovery initiated")
-        # Example recovery action:
-        await self.ollama.query_ollama("timeout_recovery", "Suggest recovery actions for a timeout in the improvement cycle")
+
+        # 1. Save the current state
+        current_state = await self.ollama.evaluate_system_state({})
+        await self.knowledge_base.add_entry("timeout_state", current_state)
+
+        # 2. Query Ollama for recovery actions
+        recovery_actions = await self.ollama.query_ollama("timeout_recovery", "Suggest detailed recovery actions for a timeout in the improvement cycle, including component restarts and resource adjustments.")
+
+        # 3. Log recovery actions
+        self.logger.info(f"Suggested recovery actions: {recovery_actions}")
+
+        # 4. Implement recovery actions
+        for action in recovery_actions.get('actions', []):
+            if action.get('type') == 'restart_component':
+                component = action.get('component')
+                self.logger.info(f"Restarting component: {component}")
+                # Implement restart logic here
+                # For example: await self.restart_component(component)
+            elif action.get('type') == 'adjust_resource':
+                resource = action.get('resource')
+                new_value = action.get('new_value')
+                self.logger.info(f"Adjusting resource: {resource} to {new_value}")
+                # Implement resource adjustment logic here
+                # For example: await self.adjust_resource(resource, new_value)
+
+        # 5. Notify administrators
+        admin_notification = f"Timeout occurred in improvement cycle. Recovery actions taken: {recovery_actions}"
+        self.logger.critical(admin_notification)
+        # Implement admin notification logic here
+        # For example: await self.notify_admin(admin_notification)
+
+        # 6. Adjust future timeout duration
+        new_timeout = recovery_actions.get('new_timeout', 300)  # Default to 5 minutes if not specified
+        self.logger.info(f"Adjusting future timeout duration to {new_timeout} seconds")
+        # Implement timeout adjustment logic here
+        # For example: self.timeout_duration = new_timeout
+
+        await self.log_state("Timeout recovery completed")
+        return recovery_actions
