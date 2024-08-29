@@ -109,8 +109,22 @@ class SelfImprovement:
             await asyncio.sleep(3600)  # Run every hour
 
     async def get_system_metrics(self):
-        # Placeholder for getting actual system metrics
-        return {"performance": 0.8, "error_rate": 0.02, "task_completion_rate": 0.95}
+        import psutil
+
+        # Gather system metrics
+        cpu_usage = psutil.cpu_percent(interval=1)
+        memory_info = psutil.virtual_memory()
+        disk_usage = psutil.disk_usage('/')
+
+        # Return a dictionary of metrics
+        return {
+            "cpu_usage": cpu_usage,
+            "memory_usage": memory_info.percent,
+            "disk_usage": disk_usage.percent,
+            "performance": 0.8,  # Example static metric
+            "error_rate": 0.02,  # Example static metric
+            "task_completion_rate": 0.95  # Example static metric
+        }
 
     async def suggest_prompt_refinements(self):
         current_prompts = await self.knowledge_base.get_entry("system_prompts")
