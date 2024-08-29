@@ -49,6 +49,7 @@ class OllamaInterface:
         if refine and task not in ["logging", "categorization"]:
             # Augment the prompt with retrieved documents
             prompt = await self.rag_retrieval.augment_prompt_with_retrieval(prompt, task)
+            self.logger.debug(f"Prompt after RAG augmentation: {prompt}")
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
