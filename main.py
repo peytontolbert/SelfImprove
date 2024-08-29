@@ -75,17 +75,6 @@ class ErrorHandling:
 
 # main.py
 async def main():
-    ui = UserInterface()
-    ollama = OllamaInterface()
-    task_queue = TaskQueue()
-    kb = KnowledgeBase()
-    vcs = VersionControlSystem()
-    ca = CodeAnalysis()
-    tf = TestingFramework()
-    dm = DeploymentManager()
-    si = SelfImprovement()
-    eh = ErrorHandler()
-
     # System startup and initialization logic
     # Initialize components
     ui = UserInterface()
