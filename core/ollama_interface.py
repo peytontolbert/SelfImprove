@@ -165,7 +165,12 @@ class OllamaInterface:
         return await self.query_ollama(self.system_prompt, prompt, task="improvement_validation", context=context)
 
     async def learn_from_experience(self, experience_data: Dict[str, Any]) -> Dict[str, Any]:
-        pass
+        """Process experience data and extract learnings."""
+        prompt = f"Analyze this experience data and extract learnings: {json.dumps(experience_data)}. Focus on patterns, successful strategies, and areas for improvement."
+        context = {"experience_data": experience_data}
+        result = await self.query_ollama(self.system_prompt, prompt, task="experience_learning", context=context)
+        self.logger.info(f"Learned from experience: {result}")
+        return result
 
     async def collaborative_learning(self, other_ai_systems: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Learn collaboratively with other AI systems."""
