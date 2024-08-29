@@ -2,6 +2,7 @@ from core.ollama_interface import OllamaInterface
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
 import asyncio
+from file_system import FileSystem
 # user_interface.py
 class UserInterface:
     def get_input(self):
@@ -89,7 +90,8 @@ async def main():
     eh = ErrorHandling()
     pm = PromptManager()
     
-    # Initialize PromptManager and ErrorHandler
+    # Initialize FileSystem
+    fs = FileSystem()
     # Initialize PromptManager and ErrorHandler
     pm = PromptManager()
     eh = ErrorHandler()
