@@ -4,9 +4,10 @@ import json
 import asyncio
 import time
 from neo4j import GraphDatabase
+from core.ollama_interface import OllamaInterface
 
 class KnowledgeBase:
-    def __init__(self, uri="bolt://localhost:7687", user="neo4j", password="password", ollama_interface=None):
+    def __init__(self, uri="bolt://localhost:7687", user="neo4j", password="password", ollama_interface=OllamaInterface):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
