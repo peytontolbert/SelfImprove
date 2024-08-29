@@ -118,6 +118,8 @@ class KnowledgeBase:
             }
             self.add_node(entry_name, properties)
             self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
+            # Log the addition of new capabilities for future analysis
+            await self.log_capability_evolution(entry_name, properties)
             return True
 
         self.logger.info(f"Entry addition declined: {entry_name}")
