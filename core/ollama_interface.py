@@ -5,6 +5,7 @@ from typing import Dict, Any, List
 import logging
 from chat_with_ollama import ChatGPT
 from functools import lru_cache
+import time
 
 class OllamaInterface:
     def __init__(self, max_retries: int = 3):
@@ -13,8 +14,10 @@ class OllamaInterface:
         self.session = None
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
-        self.system_prompt = "Default system prompt"  # Define a default system prompt
+        self.system_prompt = "Default system prompt"
         self.prompt_cache = {}
+        self.prompt_templates = {}
+        self.conversation_contexts = {}
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -78,11 +81,6 @@ class OllamaInterface:
         prompt = f"Analyze this experience data and extract learnings: {json.dumps(experience_data)}. Focus on patterns, successful strategies, and areas for improvement."
         return await self.query_ollama(prompt, {"task": "experience_learning"})
 
-    async def refine_prompt(self, prompt: str, task: str) -> str:
-        refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
-        response = await self.query_ollama(refinement_prompt, {"task": "prompt_refinement"})
-        return response.get("refined_prompt", prompt)
-
     def get_conversation_history(self) -> List[Dict[str, Any]]:
         return self.conversation_history
 
@@ -95,10 +93,17 @@ class OllamaInterface:
         self.system_prompt = new_prompt
         self.logger.info(f"System prompt updated: {new_prompt}")
 
-    @lru_cache(maxsize=100)
     async def cached_query(self, prompt: str, task: str) -> Dict[str, Any]:
         """Cache frequently used prompts to reduce API calls."""
-        return await self.query_ollama(self.system_prompt, prompt)
+        cache_key = f"{task}:{prompt}"
+        if cache_key in self.prompt_cache:
+            cached_result, timestamp = self.prompt_cache[cache_key]
+            if time.time() - timestamp < 3600:  # Cache valid for 1 hour
+                return cached_result
+        
+        result = await self.query_ollama(self.system_prompt, prompt)
+        self.prompt_cache[cache_key] = (result, time.time())
+        return result
 
     async def generate_context_aware_prompt(self, task: str, context: Dict[str, Any]) -> str:
         """Generate a prompt based on the current context and task."""
@@ -121,4 +126,56 @@ class OllamaInterface:
         error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
         recovery_suggestion = await self.query_ollama(self.system_prompt, error_prompt)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
+
+    async def manage_prompt_template(self, template_name: str, template: str) -> None:
+        """Manage prompt templates dynamically."""
+        self.prompt_templates[template_name] = template
+        self.logger.info(f"Prompt template '{template_name}' added/updated")
+
+    async def use_prompt_template(self, template_name: str, **kwargs) -> str:
+        """Use a prompt template with given parameters."""
+        if template_name not in self.prompt_templates:
+            raise ValueError(f"Prompt template '{template_name}' not found")
+        return self.prompt_templates[template_name].format(**kwargs)
+
+    async def manage_conversation_context(self, context_id: str, context: Dict[str, Any]) -> None:
+        """Manage conversation contexts for different tasks or users."""
+        self.conversation_contexts[context_id] = context
+        self.logger.info(f"Conversation context '{context_id}' added/updated")
+
+    async def query_with_context(self, context_id: str, prompt: str) -> Dict[str, Any]:
+        """Query Ollama with a specific conversation context."""
+        if context_id not in self.conversation_contexts:
+            raise ValueError(f"Conversation context '{context_id}' not found")
+        context = self.conversation_contexts[context_id]
+        context_aware_prompt = f"Given the context: {json.dumps(context)}\n\nRespond to: {prompt}"
+        return await self.query_ollama(self.system_prompt, context_aware_prompt)
+
+    async def handle_parallel_tasks(self, tasks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Handle multiple tasks in parallel."""
+        async def process_task(task):
+            prompt = task.get('prompt', '')
+            task_type = task.get('type', 'general')
+            return await self.query_ollama(self.system_prompt, prompt)
+
+        results = await asyncio.gather(*[process_task(task) for task in tasks])
+        return results
+
+    async def adaptive_error_handling(self, error: Exception, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle errors adaptively based on the error type and context."""
+        error_type = type(error).__name__
+        error_prompt = f"An error of type {error_type} occurred: {str(error)}. Context: {json.dumps(context)}. Suggest an adaptive recovery strategy."
+        recovery_strategy = await self.query_ollama(self.system_prompt, error_prompt)
+        
+        if 'retry' in recovery_strategy:
+            # Implement retry logic
+            pass
+        elif 'alternate_approach' in recovery_strategy:
+            # Implement alternate approach
+            pass
+        elif 'human_intervention' in recovery_strategy:
+            # Request human intervention
+            pass
+        
+        return recovery_strategy
 
