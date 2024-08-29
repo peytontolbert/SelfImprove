@@ -3,49 +3,74 @@ import os
 import json
 import asyncio
 import time
+from neo4j import GraphDatabase
+
 class KnowledgeBase:
-    def __init__(self, base_directory="knowledge_base", ollama_interface=None):
-        self.base_directory = base_directory
-        if not os.path.exists(self.base_directory):
-            os.makedirs(self.base_directory)
-        self.longterm_memory = {}
+    def __init__(self, uri="bolt://localhost:7687", user="neo4j", password="password", ollama_interface=None):
+        self.driver = GraphDatabase.driver(uri, auth=(user, password))
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface
 
+    def close(self):
+        self.driver.close()
+
+    def add_node(self, label, properties):
+        with self.driver.session() as session:
+            session.write_transaction(self._create_node, label, properties)
+
+    @staticmethod
+    def _create_node(tx, label, properties):
+        query = f"CREATE (n:{label} {{properties}})"
+        tx.run(query, properties=properties)
+
+    def add_relationship(self, from_node, to_node, relationship_type, properties=None):
+        with self.driver.session() as session:
+            session.write_transaction(self._create_relationship, from_node, to_node, relationship_type, properties)
+
+    @staticmethod
+    def _create_relationship(tx, from_node, to_node, relationship_type, properties):
+        query = (
+            f"MATCH (a), (b) WHERE a.name = $from_node AND b.name = $to_node "
+            f"CREATE (a)-[r:{relationship_type} {{properties}}]->(b)"
+        )
+        tx.run(query, from_node=from_node, to_node=to_node, properties=properties or {})
+
     async def add_entry(self, entry_name, data, metadata=None, narrative_context=None):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
-            entry_data = {
+            properties = {
                 "data": data,
                 "metadata": metadata or {},
                 "narrative_context": narrative_context or {},
                 "timestamp": time.time()
             }
-            file_path = os.path.join(self.base_directory, f"{entry_name}.json")
-            with open(file_path, 'w') as file:
-                json.dump(entry_data, file)
+            self.add_node(entry_name, properties)
             self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
-            await self.save_longterm_memory({entry_name: entry_data})
             return True
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
 
     async def get_entry(self, entry_name, include_metadata=False):
-        file_path = os.path.join(self.base_directory, f"{entry_name}.json")
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                entry_data = json.load(file)
-            data = entry_data.get("data")
-            metadata = entry_data.get("metadata", {})
-            interpretation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Interpret this data: {data}", task="knowledge_base")
-            interpretation_result = interpretation.get('interpretation', data)
-            self.logger.info(f"Entry retrieved: {entry_name} | Interpretation: {interpretation_result}")
-            if include_metadata:
-                return {"data": interpretation_result, "metadata": metadata}
-            return interpretation_result
-        else:
-            return None
+        with self.driver.session() as session:
+            result = session.read_transaction(self._find_node, entry_name)
+            if result:
+                data = result.get("data")
+                metadata = result.get("metadata", {})
+                interpretation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Interpret this data: {data}", task="knowledge_base")
+                interpretation_result = interpretation.get('interpretation', data)
+                self.logger.info(f"Entry retrieved: {entry_name} | Interpretation: {interpretation_result}")
+                if include_metadata:
+                    return {"data": interpretation_result, "metadata": metadata}
+                return interpretation_result
+            else:
+                return None
+
+    @staticmethod
+    def _find_node(tx, entry_name):
+        query = f"MATCH (n) WHERE n.name = $entry_name RETURN n"
+        result = tx.run(query, entry_name=entry_name)
+        return result.single()[0] if result.single() else None
 
     async def update_entry(self, entry_name, data):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I update this entry: {entry_name} with data: {data}", task="knowledge_base")
