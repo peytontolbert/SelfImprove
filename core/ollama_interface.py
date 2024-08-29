@@ -4,14 +4,16 @@ import json
 from typing import Dict, Any, List
 import logging
 from chat_with_ollama import ChatGPT
+from knowledge_base import KnowledgeBase
 from functools import lru_cache
 import time
 
 class OllamaInterface:
-    def __init__(self, max_retries: int = 3):
+    def __init__(self, max_retries: int = 3, knowledge_base: KnowledgeBase = None):
         self.gpt = ChatGPT()
         self.max_retries = max_retries
         self.session = None
+        self.knowledge_base = knowledge_base or KnowledgeBase()
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
         self.system_prompt = "Default system prompt"
