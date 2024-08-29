@@ -306,6 +306,7 @@ async def main():
     SystemNarrative. The narrative can reset, change actions, and influence decisions dynamically.
     """
     ollama = OllamaInterface()
+    ollama = OllamaInterface()
     kb = KnowledgeBase(ollama_interface=ollama)
     rl_module = ReinforcementLearningModule(ollama)
 
