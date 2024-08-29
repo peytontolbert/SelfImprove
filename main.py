@@ -6,7 +6,8 @@ import asyncio
 class UserInterface:
     def get_input(self):
         # Get input from the user
-        pass
+        user_input = input("Enter command: ")
+        return user_input if user_input else ""
 
     def display_output(self, output):
         # Display output to the user
