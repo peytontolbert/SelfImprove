@@ -295,7 +295,7 @@ class OllamaInterface:
         if 'dynamic_recovery' in recovery_strategy:
             self.logger.info("Implementing dynamic recovery strategy as suggested by Ollama.")
             # Example dynamic recovery logic: Adjust system parameters or restart services
-            await self.dynamic_recovery(recovery_strategy['dynamic_recovery'])
+            await self.dynamic_recovery(recovery_strategy['dynamic_recovery'], error)
         
         if 'retry' in recovery_strategy:
             # Implement retry logic

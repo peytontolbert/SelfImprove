@@ -120,7 +120,7 @@ class SystemNarrative:
         """Log errors with context and recovery strategies."""
         error_context = context or {}
         error_context.update({"error": str(error), "timestamp": time.time()})
-        self.logger.error(f"System Error: {error} | Context: {json.dumps(error_context, indent=2)}")
+        self.logger.error(f"System Error: {error} | Context: {json.dumps(error_context, indent=2)} | Potential Recovery: {await self.suggest_recovery_strategy(error)}")
         await self.log_with_ollama(error, context)
         # Log error to spreadsheet
         self.spreadsheet_manager.write_data((15, 1), [["Error", "Context"], [str(error), json.dumps(context or {})]])
@@ -132,7 +132,7 @@ class SystemNarrative:
         self.logger.info(f"Recovery Strategy: {recovery_strategy}", extra={"recovery_strategy": recovery_strategy})
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
         # Feedback loop for error handling
-        feedback = await self.ollama.query_ollama("error_feedback", f"Provide feedback on the recovery strategy: {recovery_strategy}", context=context)
+        feedback = await self.ollama.query_ollama("error_feedback", f"Provide feedback on the recovery strategy: {recovery_strategy}. Consider the error context and suggest improvements.", context=context)
         self.logger.info(f"Error handling feedback: {feedback}")
         await self.knowledge_base.add_entry("error_handling_feedback", feedback)
         context = {"error": str(error)}

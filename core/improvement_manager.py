@@ -90,6 +90,8 @@ class ImprovementManager:
         self.logger.info(f"Proactive monitoring metrics: {metrics}")
         if metrics.get('issues_detected'):
             await self.handle_detected_issues(metrics['issues_detected'])
+        if metrics.get('issues_detected'):
+            await self.handle_detected_issues(metrics['issues_detected'])
 
     async def provide_feedback_on_improvements(self, improvements: List[str], results: List[Dict[str, Any]]):
         """Provide feedback on the applied improvements to refine future suggestions."""
