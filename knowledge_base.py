@@ -25,8 +25,20 @@ class KnowledgeBase:
 
     def initialize_database(self):
         """Initialize the database with necessary nodes and relationships."""
+        try:
+            with self.driver.session() as session:
+                session.write_transaction(self._create_initial_nodes)
+            self.logger.info("Database initialized successfully.")
+        except Exception as e:
+            self.logger.error(f"Failed to initialize database: {str(e)}")
+            self.logger.info("Attempting to create a new database.")
+            self.create_database()
+
+    def create_database(self):
+        """Create a new database if it doesn't exist."""
         with self.driver.session() as session:
             session.write_transaction(self._create_initial_nodes)
+        self.logger.info("New database created and initialized successfully.")
 
     @staticmethod
     def _create_initial_nodes(tx):
