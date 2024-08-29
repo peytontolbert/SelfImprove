@@ -179,7 +179,7 @@ class SystemNarrative:
             "result": result,
             "learning": learning
         }, narrative_context={"system_state": system_state})
-        await self.log_state("Learning from experience", experience_data)
+        await self.log_state("Learning from experience", context=experience_data)
         self.logger.info(f"Improvement result: {result}")
         new_metrics = await si.get_system_metrics()
         self.logger.info(f"Metrics before: {system_state.get('metrics', {})}")
