@@ -102,7 +102,7 @@ class ChatGPT:
                 else:
                     raise e  # re-raise the last exception if all retries fail
 
-    def chat_with_ollama(self, system_prompt: str, prompt: str, retries: int=5, delay: int=5):
+    async def chat_with_ollama(self, system_prompt: str, prompt: str, retries: int=5, delay: int=5):
         url = "http://localhost:11434/api/generate"
         payload = {
             "model": "llama3.1",
