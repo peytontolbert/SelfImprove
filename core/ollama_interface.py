@@ -50,11 +50,14 @@ class OllamaInterface:
             recovery_suggestion = await self.suggest_error_recovery(Exception("Max retries reached"))
             raise Exception(f"Max retries reached. Recovery suggestion: {recovery_suggestion}")
 
+        self.logger.debug(f"Request payload: {prompt}")
+
         if isinstance(result, str):
             try:
                 response_data = json.loads(result)
                 if not response_data:
                     self.logger.error("Empty response data received from Ollama.")
+                    self.logger.debug(f"Raw response: {result}")
                     return {"error": "Empty response data"}
                 return response_data
             except json.JSONDecodeError:
@@ -64,12 +67,13 @@ class OllamaInterface:
         elif isinstance(result, dict):
             if not result:
                 self.logger.error("Empty response data received from Ollama.")
-                self.logger.error("Received empty response data from Ollama.")
+                self.logger.debug(f"Raw response: {result}")
                 return {"error": "Empty response data"}
             self.logger.info(f"Received response from Ollama: {result}")
             return result
         else:
             self.logger.error("Unexpected response type from Ollama.")
+            self.logger.debug(f"Raw response: {result}")
             return {"error": "Unexpected response type", "response": str(result)}
 
     async def retry_with_backoff(self, func, max_retries=3, initial_delay=1):
