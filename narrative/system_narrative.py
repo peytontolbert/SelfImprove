@@ -110,14 +110,16 @@ class SystemNarrative:
                 await self.log_state("Generating improvement suggestions")
                 self.logger.info("Improvement suggestions generation started.")
                 self.logger.info("Generating improvement suggestions.")
-                improvements = await si.analyze_performance(system_state)
+                # Generate improvement suggestions with Ollama's insights
+                improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
 
                 if improvements:
                     for improvement in improvements:
                         validation = await si.validate_improvements([improvement])
                         if validation:
                             await self.log_decision(f"Applying improvement: {improvement}")
-                            result = await si.apply_improvements([improvement])
+                            # Apply validated improvements
+                            result = await si.retry_ollama_call(si.apply_improvements, [improvement])
 
                             experience_data = {
                                 "improvement": improvement,
@@ -150,7 +152,8 @@ class SystemNarrative:
                 self.logger.info("Additional system improvement tasks started.")
                 self.logger.info("Performing additional system improvement tasks.")
                 await task_queue.manage_orchestration()
-                code_analysis = await ca.analyze_code(ollama, "current_system_code")
+                # Analyze code for potential improvements
+                code_analysis = await si.retry_ollama_call(ca.analyze_code, ollama, "current_system_code")
                 if code_analysis.get('improvements'):
                     for code_improvement in code_analysis['improvements']:
                         await si.apply_code_change(code_improvement)
@@ -161,13 +164,15 @@ class SystemNarrative:
                         fix = await ollama.query_ollama("test_fixing", f"Fix this failed test: {failed_test}")
                         await si.apply_code_change(fix['code_change'])
 
-                deployment_decision = await dm.deploy_code(ollama)
+                # Decide on deployment based on Ollama's decision
+                deployment_decision = await si.retry_ollama_call(dm.deploy_code, ollama)
                 if deployment_decision and deployment_decision.get('deploy', False):
                     await self.log_state("Deployment approved by Ollama")
                 else:
                     await self.log_state("Deployment deferred based on Ollama's decision")
 
-                await self.log_state("Performing version control operations")
+                # Log and perform version control operations
+                await self.log_state("Performing version control operations with Ollama's guidance")
                 self.logger.info("Version control operations started.")
                 changes = "Recent system changes"
                 await vcs.commit_changes(ollama, changes)
@@ -193,6 +198,13 @@ class SystemNarrative:
                     "Assess the alignment implications of recent system changes. Consider user behavior nuances and organizational goals.",
                     context=context
                 )
+                if not alignment_considerations or not any(alignment_considerations.values()):
+                    self.logger.warning("Alignment considerations are missing or incomplete. Initiating detailed analysis.")
+                    alignment_considerations = await ollama.query_ollama(
+                        "alignment_consideration",
+                        "Provide a detailed analysis of alignment implications considering user behavior nuances and organizational goals.",
+                        context=context
+                    )
                 self.logger.info(f"Alignment considerations: {alignment_considerations}")
                 for implication in alignment_considerations.get('assessed_implications', []):
                     category = implication.get('category', 'unknown')
