@@ -1,85 +1,39 @@
 Golden Rules for Ollama-Centric Development
 
-Ollama Integration First: Every new mechanism or feature must deeply integrate Ollama into its decision-making process.
-Continuous Ollama Consultation: The system should constantly consult Ollama, not just for major decisions but also for minor optimizations and refinements.
-Error is Opportunity: Treat every error as an opportunity for Ollama to learn and improve the system.
-Prompt Evolution: Continuously evolve and refine prompts based on Ollama's performance and suggestions.
-Ollama-Driven Self-Improvement: Use Ollama to analyze its own outputs and suggest improvements to its decision-making processes.
-Multi-Perspective Problem Solving: For complex issues, consult Ollama multiple times with different contexts or prompts to gain diverse perspectives.
-Transparency in Decision Making: Log and explain (using Ollama) the reasoning behind each significant decision made by the system.
-Adaptive Interaction: Continuously refine the way the system interacts with Ollama based on success rates and efficiency.
-Ollama as Code Reviewer: Use Ollama to review and suggest improvements for every piece of code written, including its own generated code.
-Knowledge Integration: Regularly update the knowledge base with new information and insights gained from Ollama interactions.
-User Interaction Refinement: Use Ollama to continuously improve how the system interprets and responds to user inputs.
-Ollama-Centric Testing: Develop and refine testing strategies using Ollama's insights and suggestions.
-Ethical Consideration: Regularly consult Ollama on ethical implications of system decisions and actions.
-Resource Optimization: Use Ollama to make decisions about resource allocation and system scaling.
-Documentation Generation: Use Ollama to generate, refine, and keep documentation up-to-date.
-Versioning Ollama Interactions: Maintain detailed versions of Ollama interactions to track the evolution of decision-making processes and understand the impact of various changes.
-Cross-Pollination of Insights: Utilize insights gained from one part of the system to improve others, facilitating a comprehensive knowledge transfer facilitated by Ollama.
-Graceful Degradation: Design the system to fall back to simpler processes if more complex ones fail, ensuring stability and reliability.
-Feedback Loop Optimization: Focus on optimizing the feedback loops to ensure that learnings are rapidly integrated and that the system remains dynamic and responsive to changes.
-Ollama-Driven Architecture Evolution: Regularly reassess and refine the system architecture based on suggestions from Ollama, ensuring the system remains cutting-edge and effectively managed.
-Remember: These rules should be regularly reviewed and updated, with Ollama's input, to ensure they continue to serve the project's goals effectively.
-Ollama-Driven Integration:
+1. Ollama Integration First: Every new mechanism or feature must deeply integrate Ollama into its decision-making process.
+2. Continuous Ollama Consultation: The system should constantly consult Ollama, not just for major decisions but also for minor optimizations and refinements.
+3. Error is Opportunity: Treat every error as an opportunity for Ollama to learn and improve the system.
+4. Prompt Evolution: Continuously evolve and refine prompts based on Ollama's performance and suggestions.
+5. Ollama-Driven Self-Improvement: Use Ollama to analyze its own outputs and suggest improvements to its decision-making processes.
+6. Multi-Perspective Problem Solving: For complex issues, consult Ollama multiple times with different contexts or prompts to gain diverse perspectives.
+7. Transparency in Decision Making: Log and explain (using Ollama) the reasoning behind each significant decision made by the system.
+8. Adaptive Interaction: Continuously refine the way the system interacts with Ollama based on success rates and efficiency.
+9. Ollama as Code Reviewer: Use Ollama to review and suggest improvements for every piece of code written, including its own generated code.
+10. Knowledge Integration: Regularly update the knowledge base with new information and insights gained from Ollama interactions.
+11. User Interaction Refinement: Use Ollama to continuously improve how the system interprets and responds to user inputs.
+12. Ollama-Centric Testing: Develop and refine testing strategies using Ollama's insights and suggestions.
+13. Ethical Consideration: Regularly consult Ollama on ethical implications of system decisions and actions.
+14. Resource Optimization: Use Ollama to make decisions about resource allocation and system scaling.
+15. Documentation Generation: Use Ollama to generate, refine, and keep documentation up-to-date.
+16. Versioning Ollama Interactions: Maintain detailed versions of Ollama interactions to track the evolution of decision-making processes and understand the impact of various changes.
+17. Cross-Pollination of Insights: Utilize insights gained from one part of the system to improve others, facilitating a comprehensive knowledge transfer facilitated by Ollama.
+18. Graceful Degradation: Design the system to fall back to simpler processes if more complex ones fail, ensuring stability and reliability.
+19. Feedback Loop Optimization: Focus on optimizing the feedback loops to ensure that learnings are rapidly integrated and that the system remains dynamic and responsive to changes.
+20. Ollama-Driven Architecture Evolution: Regularly reassess and refine the system architecture based on suggestions from Ollama, ensuring the system remains cutting-edge and effectively managed.
+21. Ollama-Driven Integration: Use Ollama to design and refine integration strategies between system components. Consult Ollama when resolving integration conflicts or optimizing inter-component communication.
+22. Feedback Loop Centrality: Implement a continuous feedback loop where system performance and outcomes are analyzed by Ollama. Use Ollama's insights to drive system improvements and optimizations.
+23. Ollama-Centric Version Control: Let Ollama analyze code changes and suggest optimal commit strategies. Use Ollama to review and approve pull requests, considering both code quality and system architecture.
+24. Dynamic Prompt Evolution: Implement a system where prompts evolve based on their effectiveness, as judged by Ollama. Regularly use Ollama to generate new prompts and refine existing ones.
+25. Ollama-Guided Scalability: Consult Ollama for decisions on when and how to scale system components. Use Ollama to predict future scaling needs based on current usage patterns and performance metrics.
+26. Continuous Ollama-Driven Refactoring: Regularly use Ollama to suggest code refactoring for improved efficiency and maintainability. Implement an automated process where Ollama can initiate and oversee refactoring tasks.
+27. Ollama-Centric Security: Use Ollama to continuously analyze the system for potential security vulnerabilities. Consult Ollama for designing and implementing security measures and best practices.
+28. Ollama-Driven Documentation: Use Ollama to generate, update, and maintain system documentation. Implement a process where code changes automatically trigger Ollama to update relevant documentation.
+29. Ollama-Guided User Experience: Use Ollama to analyze user interactions and suggest improvements to the user interface and experience. Implement A/B testing strategies designed and analyzed by Ollama.
+30. Ethical AI Development through Ollama: Regularly consult Ollama on ethical implications of system behaviors and decisions. Use Ollama to develop and refine ethical guidelines for the system's operation and development.
+31. Ollama-Driven Task Decomposition: Use Ollama to break down complex tasks into smaller, manageable subtasks. Let Ollama suggest optimal task execution order and parallelization opportunities.
+32. Continuous Knowledge Base Refinement: Regularly use Ollama to analyze and refine the knowledge base, ensuring it remains up-to-date, relevant, and optimally structured for efficient retrieval and application.
+33. Ollama-Guided Error Recovery: Implement adaptive error handling strategies suggested by Ollama, allowing the system to learn from past errors and improve its recovery mechanisms over time.
+34. Ollama-Centric Performance Optimization: Use Ollama to continuously analyze system performance, identify bottlenecks, and suggest optimizations across all components of the architecture.
+35. Dynamic System Prompt Management: Allow Ollama to dynamically update and refine the system prompt based on evolving system capabilities, current context, and performance metrics.
 
-Use Ollama to design and refine integration strategies between system components.
-Consult Ollama when resolving integration conflicts or optimizing inter-component communication.
-
-
-Feedback Loop Centrality:
-
-Implement a continuous feedback loop where system performance and outcomes are analyzed by Ollama.
-Use Ollama's insights to drive system improvements and optimizations.
-
-
-Ollama-Centric Version Control:
-
-Let Ollama analyze code changes and suggest optimal commit strategies.
-Use Ollama to review and approve pull requests, considering both code quality and system architecture.
-
-
-Dynamic Prompt Evolution:
-
-Implement a system where prompts evolve based on their effectiveness, as judged by Ollama.
-Regularly use Ollama to generate new prompts and refine existing ones.
-
-
-Ollama-Guided Scalability:
-
-Consult Ollama for decisions on when and how to scale system components.
-Use Ollama to predict future scaling needs based on current usage patterns and performance metrics.
-
-
-Continuous Ollama-Driven Refactoring:
-
-Regularly use Ollama to suggest code refactoring for improved efficiency and maintainability.
-Implement an automated process where Ollama can initiate and oversee refactoring tasks.
-
-
-Ollama-Centric Security:
-
-Use Ollama to continuously analyze the system for potential security vulnerabilities.
-Consult Ollama for designing and implementing security measures and best practices.
-
-
-Ollama-Driven Documentation:
-
-Use Ollama to generate, update, and maintain system documentation.
-Implement a process where code changes automatically trigger Ollama to update relevant documentation.
-
-
-Ollama-Guided User Experience:
-
-Use Ollama to analyze user interactions and suggest improvements to the user interface and experience.
-Implement A/B testing strategies designed and analyzed by Ollama.
-
-
-Ethical AI Development through Ollama:
-
-Regularly consult Ollama on ethical implications of system behaviors and decisions.
-Use Ollama to develop and refine ethical guidelines for the system's operation and development.
-
-
-
-These additional rules further emphasize the central role of Ollama in all aspects of the system, from integration and scalability to security and ethics. They should help guide the development process and ensure that Ollama remains at the core of all decision-making and improvement processes.
+Remember: These rules should be regularly reviewed and updated, with Ollama's input, to ensure they continue to serve the project's goals effectively. The central role of Ollama in all aspects of the system, from integration and scalability to security and ethics, should guide the development process and ensure that Ollama remains at the core of all decision-making and improvement processes.
