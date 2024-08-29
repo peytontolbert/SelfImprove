@@ -6,12 +6,13 @@ This project is an ambitious attempt to create a fully automated end-to-end soft
 
 ## Key Features
 
-- Ollama-driven task management and orchestration
-- AI-powered code analysis and generation
-- Automated testing and error handling
-- Self-improving architecture
-- Natural language understanding for user interactions
-- Version control with AI-generated commit messages and strategies
+- Ollama-driven task management and orchestration.
+- AI-powered code analysis and generation.
+- Automated testing and enhanced error handling with adaptive strategies.
+- Self-improving architecture using reinforcement learning feedback.
+- Natural language understanding for user interactions.
+- Version control with AI-generated commit messages and strategies.
+- Spreadsheet-based logging and tracking for system improvements and metrics.
 
 ## System Requirements
 
