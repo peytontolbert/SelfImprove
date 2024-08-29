@@ -124,7 +124,7 @@ class SystemNarrative:
                                 "improvement": improvement,
                                 "result": result,
                                 "learning": learning
-                            })
+                            }, narrative_context={"system_state": system_state})
 
                             await self.log_state("Learning from experience", experience_data)
                             # Log the results of the improvement

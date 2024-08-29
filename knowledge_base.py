@@ -13,18 +13,19 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface or OllamaInterface()
 
-    async def add_entry(self, entry_name, data, metadata=None):
+    async def add_entry(self, entry_name, data, metadata=None, narrative_context=None):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
             entry_data = {
                 "data": data,
                 "metadata": metadata or {},
+                "narrative_context": narrative_context or {},
                 "timestamp": time.time()
             }
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
             with open(file_path, 'w') as file:
                 json.dump(entry_data, file)
-            self.logger.info(f"Entry added: {entry_name} with metadata: {metadata}")
+            self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
             return True
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
