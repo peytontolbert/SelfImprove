@@ -169,6 +169,10 @@ class SystemNarrative:
                     self.logger.error(f"System reset failed: {e}")
                 continue
 
+            # Consult Ollama on alignment implications
+            alignment_considerations = await ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes")
+            self.logger.info(f"Alignment considerations: {alignment_considerations}")
+
             # Dynamically adjust the sleep duration based on system performance
             sleep_duration = self.calculate_improvement_cycle_frequency(system_state)
             await asyncio.sleep(sleep_duration)
