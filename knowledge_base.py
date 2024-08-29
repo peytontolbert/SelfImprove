@@ -13,25 +13,34 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.ollama = ollama_interface or OllamaInterface()
 
-    async def add_entry(self, entry_name, data):
+    async def add_entry(self, entry_name, data, metadata=None):
         decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I add this entry: {entry_name} with data: {data}", task="knowledge_base")
         if decision.get('add_entry', False):
+            entry_data = {
+                "data": data,
+                "metadata": metadata or {},
+                "timestamp": time.time()
+            }
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
             with open(file_path, 'w') as file:
-                json.dump(data, file)
-            self.logger.info(f"Entry added: {entry_name}")
+                json.dump(entry_data, file)
+            self.logger.info(f"Entry added: {entry_name} with metadata: {metadata}")
             return True
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
 
-    async def get_entry(self, entry_name):
+    async def get_entry(self, entry_name, include_metadata=False):
         file_path = os.path.join(self.base_directory, f"{entry_name}.json")
         if os.path.exists(file_path):
             with open(file_path, 'r') as file:
-                data = json.load(file)
+                entry_data = json.load(file)
+            data = entry_data.get("data")
+            metadata = entry_data.get("metadata", {})
             interpretation = await self.ollama.query_ollama(self.ollama.system_prompt, f"Interpret this data: {data}", task="knowledge_base")
             interpretation_result = interpretation.get('interpretation', data)
             self.logger.info(f"Entry retrieved: {entry_name} | Interpretation: {interpretation_result}")
+            if include_metadata:
+                return {"data": interpretation_result, "metadata": metadata}
             return interpretation_result
         else:
             return None
