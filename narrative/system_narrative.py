@@ -150,17 +150,21 @@ class SystemNarrative:
         system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
 
-        # Generate and apply improvements
+        # Generate and apply improvements in parallel
         await self.log_state("Generating improvement suggestions")
         improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
+        
+        # Validate and apply improvements in parallel
         if improvements:
-            for improvement in improvements:
-                validation = await si.validate_improvements([improvement])
-                if validation:
-                    await self.apply_and_log_improvement(si, kb, improvement, system_state)
+            tasks = [self.apply_and_log_improvement(si, kb, improvement, system_state) for improvement in improvements]
+            await asyncio.gather(*tasks)
 
-        # Additional improvement tasks
-        await self.perform_additional_tasks(task_queue, ca, tf, dm, vcs, ollama, si)
+        # Perform additional tasks in parallel
+        await asyncio.gather(
+            self.perform_additional_tasks(task_queue, ca, tf, dm, vcs, ollama, si),
+            self.manage_prompts_and_errors(pm, eh, ollama),
+            self.assess_alignment_implications(ollama)
+        )
 
         # Manage prompts and check for errors
         await self.manage_prompts_and_errors(pm, eh, ollama)
