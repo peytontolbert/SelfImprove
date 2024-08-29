@@ -1,87 +1,79 @@
 import logging
+import asyncio
 from core.ollama_interface import OllamaInterface
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
-import asyncio
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 class UserInterface:
     def get_input(self):
-        # Get input from the user
-        user_input = input("Enter command: ")
-        return user_input if user_input else ""
+        return input("Enter command: ").strip()
 
     def display_output(self, output):
-        # Display output to the user
-        pass
+        print(output)
 
-# task_queue.py
 class TaskQueue:
-    def create_task(self, task_details):
-        # Create and manage tasks based on Ollama's decisions
-        pass
+    def __init__(self):
+        self.tasks = []
 
-    def manage_orchestration(self):
-        # Handle task dependencies and execution order
-        pass
+    async def create_task(self, ollama, task_details):
+        # Use Ollama to decide on task creation and management
+        decision = await ollama.query_ollama("task_management", f"Should I create this task: {task_details}")
+        if decision.get('create_task', False):
+            self.tasks.append(task_details)
+            logger.info(f"Task created: {task_details}")
+        else:
+            logger.info(f"Task creation declined: {task_details}")
 
-# knowledge_base.py
-class KnowledgeBase:
-    def update_information(self, new_info):
-        # Update the database with new information
-        pass
+    async def manage_orchestration(self, ollama):
+        if self.tasks:
+            orchestration_decision = await ollama.query_ollama("task_orchestration", f"How should I orchestrate these tasks: {self.tasks}")
+            # Implement orchestration logic based on Ollama's decision
+            logger.info(f"Task orchestration: {orchestration_decision}")
 
-    def query_information(self, query):
-        # Retrieve information based on Ollama's queries
-        pass
+    def is_task_completed(self, task_details):
+        # Simplified check, replace with actual logic
+        return task_details in self.tasks
 
-# version_control.py
+    def remove_task(self, task_details):
+        self.tasks.remove(task_details)
+
 class VersionControlSystem:
-    def commit_changes(self, commit_message):
-        # Commit changes to the repository
-        pass
+    async def commit_changes(self, ollama, changes):
+        commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}")
+        # Implement actual commit logic here
+        logger.info(f"Committed changes with message: {commit_message}")
 
-    def rollback_changes(self):
-        # Rollback to a previous version if needed
-        pass
-
-# code_analysis.py
 class CodeAnalysis:
-    def analyze_code(self, code):
-        # Analyze the given code and suggest improvements
-        pass
+    async def analyze_code(self, ollama, code):
+        analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}")
+        return analysis
 
-# testing_framework.py
 class TestingFramework:
-    def run_tests(self, test_cases):
-        # Execute tests and collect results
-        pass
+    async def run_tests(self, ollama, test_cases):
+        test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}")
+        return test_results
 
-# deployment_manager.py
 class DeploymentManager:
-    def deploy_code(self):
-        # Handle deployment of code to production
-        pass
+    async def deploy_code(self, ollama):
+        deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?")
+        if deployment_decision.get('deploy', False):
+            # Implement actual deployment logic here
+            logger.info("Code deployed successfully")
+        else:
+            logger.info("Deployment deferred based on Ollama's decision")
 
-# self_improvement.py
 class SelfImprovement:
-    def analyze_performance(self):
-        # Analyze system performance and suggest improvements
-        pass
+    async def analyze_performance(self, ollama, metrics):
+        improvements = await ollama.improve_system(metrics)
+        return improvements
 
-# error_handling.py
-class ErrorHandling:
-    def handle_error(self, error):
-        # Analyze and handle errors
-        pass
-
-# main.py
 async def main():
-    # System startup and initialization logic
-    # Initialize components
     ui = UserInterface()
     ollama = OllamaInterface()
     task_queue = TaskQueue()
@@ -91,57 +83,52 @@ async def main():
     tf = TestingFramework()
     dm = DeploymentManager()
     si = SelfImprovement()
-    eh = ErrorHandling()
-    pm = PromptManager()
-    
-    # Initialize FileSystem
     fs = FileSystem()
-    # Initialize KnowledgeBase
-    kb = KnowledgeBase()
     pm = PromptManager()
     eh = ErrorHandler()
 
-    # Manage task orchestration
-    task_queue.manage_orchestration()
-
     while True:
         try:
-            # Create and manage tasks
-            task_details = {"task_name": "example_task", "priority": "high"}
-            task_queue.create_task(task_details)
+            user_input = ui.get_input()
+            if user_input.lower() == 'exit':
+                break
 
-            try:
-                # Load and refine prompt
-                prompt = pm.load_prompt("example_task")
-                refined_prompt = await ollama.refine_prompt(prompt, "example_task")
+            # Use Ollama to interpret user input and decide on action
+            action_decision = await ollama.query_ollama("user_input", f"Interpret this user input and decide on action: {user_input}")
+            
+            if action_decision.get('create_task', False):
+                await task_queue.create_task(ollama, action_decision['task_details'])
+            
+            await task_queue.manage_orchestration(ollama)
 
-                # Query Ollama with refined prompt
-                response = await ollama.query_ollama(ollama.system_prompt, refined_prompt)
-                ui.display_output(response)
+            # Example of using FileSystem
+            if action_decision.get('file_operation', False):
+                file_op = action_decision['file_operation']
+                if file_op == 'write':
+                    fs.write_to_file(action_decision['filename'], action_decision['data'])
+                elif file_op == 'read':
+                    content = fs.read_from_file(action_decision['filename'])
+                    ui.display_output(f"File content: {content}")
 
-                # Implement feedback loop for system improvement
-                performance_metrics = {"task_count": len(task_queue)}
-                improvements = await ollama.improve_system(performance_metrics)
-                if improvements:
-                    ui.display_output(f"Suggested improvements: {improvements}")
-                    # Apply improvements to the system
-                    for improvement in improvements:
-                        # Example: Log improvements or take action based on suggestions
-                        logger.info(f"Applying improvement: {improvement}")
+            # Example of using KnowledgeBase
+            if action_decision.get('kb_operation', False):
+                kb_op = action_decision['kb_operation']
+                if kb_op == 'update':
+                    kb.update_information(action_decision['new_info'])
+                elif kb_op == 'query':
+                    info = kb.query_information(action_decision['query'])
+                    ui.display_output(f"Knowledge Base info: {info}")
 
-                # Check if tasks are completed and handle them
-                if task_queue.is_task_completed(task_details):
-                    ui.display_output("Task completed successfully.")
-                    task_queue.remove_task(task_details)
-
-            except AttributeError as e:
-                if "'str' object has no attribute 'get'" in str(e):
-                    ui.display_output("Error: Expected a dictionary but got a string. Please check the data source.")
-                else:
-                    raise
+            # Continuous improvement loop
+            performance_metrics = {"task_count": len(task_queue.tasks)}
+            improvements = await si.analyze_performance(ollama, performance_metrics)
+            if improvements:
+                ui.display_output(f"Suggested improvements: {improvements}")
+                for improvement in improvements:
+                    logger.info(f"Applying improvement: {improvement}")
+                    # Implement logic to apply improvements
 
         except Exception as e:
-            # Handle other errors using ErrorHandler
             recovery = await eh.handle_error(ollama, e)
             ui.display_output(f"Error handled: {recovery}")
 
