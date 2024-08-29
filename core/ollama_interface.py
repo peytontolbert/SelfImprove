@@ -7,6 +7,7 @@ from chat_with_ollama import ChatGPT
 from knowledge_base import KnowledgeBase
 from functools import lru_cache
 import time
+from rag_retrieval import RAGRetrieval
 
 class OllamaInterface:
     def __init__(self, max_retries: int = 3, knowledge_base: KnowledgeBase = None):
@@ -20,6 +21,7 @@ class OllamaInterface:
         self.prompt_cache = {}
         self.prompt_templates = {}
         self.conversation_contexts = {}
+        self.rag_retrieval = RAGRetrieval()
 
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
@@ -45,6 +47,8 @@ class OllamaInterface:
             simplified_context_memory = self.simplify_context_memory(context_memory)
             context.update({"context_memory": simplified_context_memory})
         if refine and task not in ["logging", "categorization"]:
+            # Augment the prompt with retrieved documents
+            prompt = await self.rag_retrieval.augment_prompt_with_retrieval(prompt, task)
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
