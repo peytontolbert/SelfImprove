@@ -57,7 +57,6 @@ class OllamaInterface:
             self.logger.warning("No specific context provided. Using default context.")
         self.logger.info(f"Querying Ollama with context: {json.dumps(context, indent=2)}")
         # Monitor system performance and log decisions
-        self.monitor_performance(context)
         context.update({"timestamp": time.time()})
         context_str = json.dumps(context, indent=2)
         prompt = f"Context: {context_str}\n\n{prompt}"
