@@ -309,9 +309,6 @@ class SystemNarrative:
                 self.logger.error(f"System reset failed: {e}")
             return
 
-        sleep_duration = self.calculate_improvement_cycle_frequency(system_state)
-        await self.log_state(f"Sleeping for {sleep_duration} seconds before next cycle")
-        await asyncio.sleep(sleep_duration)
 
     async def handle_timeout(self):
         self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
