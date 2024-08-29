@@ -9,7 +9,7 @@ from file_system import FileSystem
 from knowledge_base import KnowledgeBase
 import time
 from narrative.system_narrative import SystemNarrative
-
+from core.improvement_manager import ImprovementManager
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -216,7 +216,7 @@ async def main():
     tf = TestingFramework()
     dm = DeploymentManager()
     improvement_manager = ImprovementManager(ollama)
-    si = SelfImprovement(ollama, kb)
+    si = SelfImprovement(ollama, kb, improvement_manager)
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
