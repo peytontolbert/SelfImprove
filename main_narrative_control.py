@@ -21,7 +21,14 @@ class VersionControlSystem:
         logger.info(f"Committing changes: {changes}")
         logger.info(f"Committed changes with message: {commit_message}")
 
-    async def suggest_branching_strategy(self, ollama, current_state):
+    async def assess_codebase_readiness(self, ollama, codebase_state):
+        """Assess if the current codebase is ready for production."""
+        readiness_prompt = (
+            f"Assess the readiness of the current codebase for production. "
+            f"Consider stability, features implemented, and known issues: {codebase_state}"
+        )
+        readiness_assessment = await ollama.query_ollama("codebase_readiness", readiness_prompt)
+        return readiness_assessment
         strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy based on the current state: {current_state}")
         return strategy
 
