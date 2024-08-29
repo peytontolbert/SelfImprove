@@ -1,6 +1,7 @@
 import logging
 import asyncio
 from core.ollama_interface import OllamaInterface
+from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
 from file_system import FileSystem
@@ -16,32 +17,6 @@ class UserInterface:
 
     def display_output(self, output):
         print(output)
-
-class TaskQueue:
-    def __init__(self):
-        self.tasks = []
-
-    async def create_task(self, ollama, task_details):
-        # Use Ollama to decide on task creation and management
-        decision = await ollama.query_ollama("task_management", f"Should I create this task: {task_details}")
-        if decision.get('create_task', False):
-            self.tasks.append(task_details)
-            logger.info(f"Task created: {task_details}")
-        else:
-            logger.info(f"Task creation declined: {task_details}")
-
-    async def manage_orchestration(self, ollama):
-        if self.tasks:
-            orchestration_decision = await ollama.query_ollama("task_orchestration", f"How should I orchestrate these tasks: {self.tasks}")
-            # Implement orchestration logic based on Ollama's decision
-            logger.info(f"Task orchestration: {orchestration_decision}")
-
-    def is_task_completed(self, task_details):
-        # Simplified check, replace with actual logic
-        return task_details in self.tasks
-
-    def remove_task(self, task_details):
-        self.tasks.remove(task_details)
 
 class VersionControlSystem:
     async def commit_changes(self, ollama, changes):
@@ -76,7 +51,7 @@ class SelfImprovement:
 async def main():
     ui = UserInterface()
     ollama = OllamaInterface()
-    task_queue = TaskQueue()
+    task_queue = TaskQueue(ollama)
     kb = KnowledgeBase(ollama_interface=ollama)
     vcs = VersionControlSystem()
     ca = CodeAnalysis()
@@ -97,9 +72,9 @@ async def main():
             action_decision = await ollama.query_ollama("user_input", f"Interpret this user input and decide on action: {user_input}")
             
             if action_decision.get('create_task', False):
-                await task_queue.create_task(ollama, action_decision['task_details'])
+                await task_queue.create_task(action_decision['task_details'])
             
-            await task_queue.manage_orchestration(ollama)
+            await task_queue.manage_orchestration()
 
             # Example of using FileSystem
             if action_decision.get('file_operation', False):
@@ -127,7 +102,7 @@ async def main():
                     ui.display_output(f"Improvement suggestions: {suggestions}")
 
             # Continuous improvement loop
-            performance_metrics = {"task_count": len(task_queue.tasks)}
+            performance_metrics = {"task_count": task_queue.get_task_count()}
             improvements = await si.analyze_performance(ollama, performance_metrics)
             if improvements:
                 ui.display_output(f"Suggested improvements: {improvements}")
