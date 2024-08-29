@@ -317,7 +317,7 @@ async def main():
     }
     logging.getLogger().setLevel(config["log_level"])
 
-    narrative = SystemNarrative()
+    narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb)
     logger.info("Initializing system components with detailed logging and context management")
     await narrative.log_state("System components initialized successfully")
     task_queue = TaskQueue(ollama)
