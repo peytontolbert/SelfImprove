@@ -97,6 +97,7 @@ class SystemNarrative:
         else:
             return 7200  # 2 hours
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        system_state = {}
         while True:
             try:
                 await self.log_state("Analyzing current system state")
