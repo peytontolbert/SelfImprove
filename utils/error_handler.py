@@ -16,9 +16,12 @@ class ErrorHandler:
             subtasks = await self.decompose_task(ollama_interface, recovery_suggestion.get('original_task'))
             recovery_suggestion['subtasks'] = subtasks
         
+        self.logger.info(f"Recovery suggestion: {recovery_suggestion}")
         return recovery_suggestion
 
     async def decompose_task(self, ollama_interface, task):
         decomposition_prompt = f"Decompose this task into smaller, manageable subtasks: {task}"
         decomposition_result = await ollama_interface.query_ollama("task_decomposition", decomposition_prompt)
-        return decomposition_result.get('subtasks', [])
+        subtasks = decomposition_result.get('subtasks', [])
+        self.logger.info(f"Decomposed task into subtasks: {subtasks}")
+        return subtasks

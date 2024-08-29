@@ -123,10 +123,10 @@ class SelfImprovement:
     async def improve_system_capabilities(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, narrative):
         while True:
             try:
-                narrative.log_state("Analyzing current system state")
+                await narrative.log_state("Analyzing current system state")
                 system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
-                narrative.log_state("Generating improvement suggestions")
+                await narrative.log_state("Generating improvement suggestions")
                 improvements = await self.improvement_manager.suggest_improvements(system_state)
 
                 if improvements:
@@ -134,7 +134,7 @@ class SelfImprovement:
                         # Validate the improvement
                         validation = await self.improvement_manager.validate_improvements([improvement])
                         if validation:
-                            narrative.log_decision(f"Applying improvement: {improvement}")
+                            await narrative.log_decision(f"Applying improvement: {improvement}")
                             result = await self.improvement_manager.apply_improvements([improvement])
 
                             # Learn from the experience
@@ -153,9 +153,9 @@ class SelfImprovement:
                             })
 
                             # Log the learning process
-                            narrative.log_state("Learning from experience", experience_data)
+                            await narrative.log_state("Learning from experience", experience_data)
 
-                narrative.log_state("Performing additional system improvement tasks")
+                await narrative.log_state("Performing additional system improvement tasks")
                 await task_queue.manage_orchestration()
                 code_analysis = await ca.analyze_code(ollama, "current_system_code")
                 if code_analysis.get('improvements'):
@@ -173,7 +173,7 @@ class SelfImprovement:
                     # Perform deployment
                     pass
 
-                narrative.log_state("Performing version control operations")
+                await narrative.log_state("Performing version control operations")
                 changes = "Recent system changes"  # This should be dynamically generated
                 await vcs.commit_changes(ollama, changes)
 
@@ -181,19 +181,19 @@ class SelfImprovement:
                 fs.write_to_file("system_state.log", str(system_state))
 
                 # Prompt management
-                narrative.log_state("Managing prompts")
+                await narrative.log_state("Managing prompts")
                 new_prompts = await pm.generate_new_prompts(ollama)
                 for prompt_name, prompt_content in new_prompts.items():
                     pm.save_prompt(prompt_name, prompt_content)
 
-                narrative.log_state("Checking for system errors")
+                await narrative.log_state("Checking for system errors")
                 system_errors = await eh.check_for_errors(ollama)
                 if system_errors:
                     for error in system_errors:
                         await eh.handle_error(ollama, error)
 
                 # Log completion of the improvement cycle
-                narrative.log_state("Completed improvement cycle")
+                await narrative.log_state("Completed improvement cycle")
 
             except Exception as e:
                 await narrative.log_error(f"Error in improve_system_capabilities: {str(e)}")
