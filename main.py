@@ -227,7 +227,9 @@ class SelfImprovement:
                     narrative.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
 
             # Wait before the next improvement cycle
-            await asyncio.sleep(3600)  # Wait for an hour
+            # Dynamically adjust the improvement cycle frequency
+            sleep_duration = self.calculate_improvement_cycle_frequency(system_state)
+            await asyncio.sleep(sleep_duration)
 
     async def retry_ollama_call(self, func, *args, max_retries=2, **kwargs):
         """Retry a function call with Ollama if the result is None."""
