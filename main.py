@@ -75,7 +75,7 @@ class ErrorHandling:
 # main.py
 async def main():
     ui = UserInterface()
-    ollama = OllamaInterface(api_endpoint="http://localhost:11434")
+    ollama = OllamaInterface()
     task_queue = TaskQueue()
     kb = KnowledgeBase()
     vcs = VersionControlSystem()
