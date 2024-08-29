@@ -60,3 +60,80 @@ class SystemNarrative:
         status = "successful" if success else "failed"
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
         await self.log_with_ollama(recovery_action, {"success": success})
+
+    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        """Control the process of improving system capabilities."""
+        while True:
+            try:
+                await self.log_state("Analyzing current system state")
+                system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+
+                await self.log_state("Generating improvement suggestions")
+                improvements = await si.analyze_performance(system_state)
+
+                if improvements:
+                    for improvement in improvements:
+                        validation = await si.validate_improvements([improvement])
+                        if validation:
+                            await self.log_decision(f"Applying improvement: {improvement}")
+                            result = await si.apply_improvements([improvement])
+
+                            experience_data = {
+                                "improvement": improvement,
+                                "result": result,
+                                "system_state": system_state
+                            }
+                            learning = await si.learn_from_experience(experience_data)
+
+                            await kb.add_entry(f"improvement_{int(time.time())}", {
+                                "improvement": improvement,
+                                "result": result,
+                                "learning": learning
+                            })
+
+                            await self.log_state("Learning from experience", experience_data)
+
+                await self.log_state("Performing additional system improvement tasks")
+                await task_queue.manage_orchestration()
+                code_analysis = await ca.analyze_code(ollama, "current_system_code")
+                if code_analysis.get('improvements'):
+                    for code_improvement in code_analysis['improvements']:
+                        await si.apply_code_change(code_improvement)
+
+                test_results = await tf.run_tests(ollama, "current_test_suite")
+                if test_results.get('failed_tests'):
+                    for failed_test in test_results['failed_tests']:
+                        fix = await ollama.query_ollama("test_fixing", f"Fix this failed test: {failed_test}")
+                        await si.apply_code_change(fix['code_change'])
+
+                deployment_decision = await dm.deploy_code(ollama)
+                if deployment_decision.get('deploy', True):
+                    pass
+
+                await self.log_state("Performing version control operations")
+                changes = "Recent system changes"
+                await vcs.commit_changes(ollama, changes)
+
+                fs.write_to_file("system_state.log", str(system_state))
+
+                await self.log_state("Managing prompts")
+                new_prompts = await pm.generate_new_prompts(ollama)
+                for prompt_name, prompt_content in new_prompts.items():
+                    pm.save_prompt(prompt_name, prompt_content)
+
+                await self.log_state("Checking for system errors")
+                system_errors = await eh.check_for_errors(ollama)
+                if system_errors:
+                    for error in system_errors:
+                        await eh.handle_error(ollama, error)
+
+                await self.log_state("Completed improvement cycle")
+
+            except Exception as e:
+                await self.log_error(f"Error in control_improvement_process: {str(e)}")
+                recovery_suggestion = await eh.handle_error(ollama, e)
+                if recovery_suggestion.get('decompose_task', False):
+                    subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
+                    self.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
+
+            await asyncio.sleep(3600)  # Wait for an hour
