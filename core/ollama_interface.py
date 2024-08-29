@@ -122,14 +122,14 @@ class OllamaInterface:
         context.update({"metrics": metrics})
         response = await self.query_ollama("reinforcement_learning", prompt, context=context)
         return response if response else {"feedback": []}
-        prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"
+        prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(metrics, indent=2)}"
         if context is None:
             context = {}
-        context.update({"performance_metrics": performance_metrics})
+        context.update({"performance_metrics": metrics})
         response = await self.query_ollama("system_improvement", prompt, context=context)
         # Suggest resource allocation and scaling strategies
-        context = {"performance_metrics": performance_metrics}
-        scaling_suggestions = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {performance_metrics}", context=context)
+        context = {"performance_metrics": metrics}
+        scaling_suggestions = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {metrics}", context=context)
         return response.get("suggestions", []) + scaling_suggestions.get("scaling_suggestions", [])
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
