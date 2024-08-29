@@ -1,3 +1,21 @@
+"""
+Main Narrative Control Module
+
+This module orchestrates the narrative-driven improvement process of the system.
+It integrates various components such as OllamaInterface, ImprovementManager, TaskQueue,
+and others to facilitate continuous system enhancement.
+
+Classes:
+- VersionControlSystem: Manages version control operations including commit and readiness assessment.
+- CodeAnalysis: Analyzes code and suggests improvements.
+- TestingFramework: Handles test execution and generation.
+- DeploymentManager: Manages code deployment and rollback operations.
+- SelfImprovement: Facilitates self-improvement processes using Ollama's insights.
+
+Functions:
+- main: Initializes system components and starts the narrative-controlled improvement process.
+"""
+
 import logging
 import asyncio
 from core.ollama_interface import OllamaInterface
@@ -16,6 +34,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class VersionControlSystem:
+    """
+    Handles version control operations such as committing changes and assessing codebase readiness.
+
+    Methods:
+    - commit_changes: Commits changes to the version control system with a generated commit message.
+    - assess_codebase_readiness: Evaluates the readiness of the current codebase for production deployment.
+    """
     async def commit_changes(self, ollama, changes):
         context = {"changes": changes}
         commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}", context=context)
@@ -33,12 +58,25 @@ class VersionControlSystem:
         return readiness_assessment
 
 class CodeAnalysis:
+    """
+    Analyzes code to provide suggestions for improvements.
+
+    Methods:
+    - analyze_code: Analyzes the given code and returns improvement suggestions.
+    """
     async def analyze_code(self, ollama, code):
         context = {"code": code}
         analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}", context=context)
         return analysis
 
 class TestingFramework:
+    """
+    Manages the execution and generation of tests.
+
+    Methods:
+    - run_tests: Executes and analyzes the provided test cases.
+    - generate_tests: Generates unit tests for the given code.
+    """
     async def run_tests(self, ollama, test_cases):
         context = {"test_cases": test_cases}
         test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}", context=context)
@@ -50,6 +88,13 @@ class TestingFramework:
         return generated_tests
 
 class DeploymentManager:
+    """
+    Manages code deployment and rollback operations.
+
+    Methods:
+    - deploy_code: Decides whether to deploy the current code based on Ollama's decision.
+    - rollback: Generates a rollback plan for a specified version.
+    """
     async def deploy_code(self, ollama):
         context = {"current_code": "current_code_placeholder"}
         deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?", context=context)
@@ -64,6 +109,25 @@ class DeploymentManager:
         logger.info(f"Rollback plan generated: {rollback_plan}")
 
 class SelfImprovement:
+    """
+    Facilitates self-improvement processes using Ollama's insights.
+
+    Attributes:
+    - ollama: Instance of OllamaInterface for querying and decision-making.
+    - knowledge_base: Instance of KnowledgeBase for storing and retrieving knowledge.
+    - improvement_manager: Instance of ImprovementManager for managing improvements.
+
+    Methods:
+    - analyze_performance: Analyzes system performance and suggests improvements.
+    - validate_improvements: Validates suggested improvements.
+    - apply_improvements: Applies validated improvements.
+    - apply_code_change: Applies a code change.
+    - apply_system_update: Applies a system update.
+    - learn_from_experience: Learns from past experiences to improve future performance.
+    - get_system_metrics: Retrieves current system metrics.
+    - suggest_prompt_refinements: Suggests refinements for system prompts.
+    - retry_ollama_call: Retries a function call with Ollama if the result is None.
+    """
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
         self.ollama = ollama
         self.knowledge_base = knowledge_base
@@ -122,6 +186,13 @@ class SelfImprovement:
         return None
 
 async def main():
+    """
+    Initializes system components and starts the narrative-controlled improvement process.
+
+    This function sets up instances of various components such as OllamaInterface, TaskQueue,
+    KnowledgeBase, and others. It then initiates the improvement process controlled by the
+    SystemNarrative.
+    """
     narrative = SystemNarrative()
     await narrative.log_state("Initializing system components")
     ollama = OllamaInterface()
