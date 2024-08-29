@@ -244,7 +244,8 @@ class SelfImprovement:
         # Use reinforcement learning feedback to adapt improvements
         rl_feedback = await rl_module.get_feedback(metrics)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-        return validated_improvements + performance_optimizations + rl_feedback
+        performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
+        return validated_improvements + performance_optimization_suggestions + rl_feedback
 
     async def validate_improvements(self, improvements):
         validated = []
