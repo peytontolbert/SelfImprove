@@ -120,47 +120,6 @@ class SystemNarrative:
             improvement_cycle_count += 1
             try:
                 await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh), timeout=300)  # 5-minute timeout for the entire cycle
-                    await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
-                    
-                    # System state analysis
-                    await self.log_state("Analyzing current system state")
-                    system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
-                    self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
-
-                    # Generate and apply improvements
-                    await self.log_state("Generating improvement suggestions")
-                    improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
-                    if improvements:
-                        for improvement in improvements:
-                            validation = await si.validate_improvements([improvement])
-                            if validation:
-                                await self.apply_and_log_improvement(si, kb, improvement, system_state)
-
-                    # Additional improvement tasks
-                    await self.perform_additional_tasks(task_queue, ca, tf, dm, vcs, ollama, si)
-
-                    # Manage prompts and check for errors
-                    await self.manage_prompts_and_errors(pm, eh, ollama)
-
-                    # Assess alignment implications
-                    await self.assess_alignment_implications(ollama)
-
-                    # Use reinforcement learning feedback
-                    rl_feedback = await self.rl_module.get_feedback(system_state)
-                    self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-                    await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
-                    self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
-                    await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
-                    await self.integrate_feedback_loop(rl_feedback)
-
-                async def integrate_feedback_loop(self, rl_feedback):
-                    for feedback in rl_feedback:
-                        self.logger.info(f"Integrating feedback: {feedback}")
-                        # Implement logic to integrate feedback into decision-making processes
-                        await self.knowledge_base.add_entry("integrated_feedback", {"feedback": feedback})
-                        # Log feedback integration to spreadsheet
-                        self.spreadsheet_manager.write_data((30, 1), [["Integrated Feedback"], [feedback]])
-
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
             except Exception as e:
@@ -168,6 +127,40 @@ class SystemNarrative:
 
             # Check for reset command and adjust sleep duration
             await self.check_reset_and_sleep(ollama, system_state)
+
+    async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
+        
+        # System state analysis
+        await self.log_state("Analyzing current system state")
+        system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+        self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
+
+        # Generate and apply improvements
+        await self.log_state("Generating improvement suggestions")
+        improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
+        if improvements:
+            for improvement in improvements:
+                validation = await si.validate_improvements([improvement])
+                if validation:
+                    await self.apply_and_log_improvement(si, kb, improvement, system_state)
+
+        # Additional improvement tasks
+        await self.perform_additional_tasks(task_queue, ca, tf, dm, vcs, ollama, si)
+
+        # Manage prompts and check for errors
+        await self.manage_prompts_and_errors(pm, eh, ollama)
+
+        # Assess alignment implications
+        await self.assess_alignment_implications(ollama)
+
+        # Use reinforcement learning feedback
+        rl_feedback = await self.rl_module.get_feedback(system_state)
+        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+        await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
+        self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
+        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
+        await self.integrate_feedback_loop(rl_feedback)
 
     async def apply_and_log_improvement(self, si, kb, improvement, system_state):
         await self.log_decision(f"Applying improvement: {improvement}")
