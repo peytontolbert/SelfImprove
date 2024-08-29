@@ -60,7 +60,7 @@ class OllamaInterface:
     async def generate_code(self, spec: str) -> str:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
         response = await self.query_ollama(prompt, {"task": "code_generation"})
-        return response.get("code", "")
+        return response.get("code", "") if response else ""
 
     async def handle_error(self, error: Exception) -> Dict[str, Any]:
         prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
