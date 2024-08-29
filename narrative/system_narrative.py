@@ -37,7 +37,10 @@ class SystemNarrative:
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
         # Update long-term memory with generated thoughts
-        longterm_memory.update({"thoughts": thoughts})
+        if thoughts != 'No thoughts generated':
+            longterm_memory.update({"thoughts": thoughts})
+        else:
+            self.logger.warning("No new thoughts generated to update long-term memory.")
         await self.knowledge_base.save_longterm_memory(longterm_memory)
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")

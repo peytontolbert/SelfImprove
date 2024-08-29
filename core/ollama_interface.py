@@ -207,9 +207,13 @@ class OllamaInterface:
     async def update_system_prompt(self, new_prompt: str) -> None:
         """Update the system prompt dynamically."""
         self.system_prompt = new_prompt
-        self.logger.info(f"System prompt updated: {new_prompt}")
-        # Save the updated prompt to the knowledge base
-        await self.knowledge_base.add_entry("system_prompt", {"prompt": new_prompt})
+        if new_prompt:
+            self.system_prompt = new_prompt
+            self.logger.info(f"System prompt updated: {new_prompt}")
+            # Save the updated prompt to the knowledge base
+            await self.knowledge_base.add_entry("system_prompt", {"prompt": new_prompt})
+        else:
+            self.logger.warning("Received empty prompt. Retaining the default system prompt.")
 
     async def cached_query(self, prompt: str, task: str) -> Dict[str, Any]:
         """Cache frequently used prompts to reduce API calls."""
