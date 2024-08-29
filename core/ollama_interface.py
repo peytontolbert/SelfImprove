@@ -29,8 +29,8 @@ class OllamaInterface:
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True) -> Dict[str, Any]:
         if refine and task not in ["logging", "categorization"]:
             refined_prompt = await self.refine_prompt(prompt, task)
-            if refined_prompt:
-                prompt = refined_prompt
+            if refined_prompt and isinstance(refined_prompt, str):
+                prompt = refined_prompt.strip()
         if context:
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
