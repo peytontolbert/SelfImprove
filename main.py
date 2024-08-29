@@ -75,8 +75,7 @@ class ErrorHandling:
 # main.py
 async def main():
     ui = UserInterface()
-    api_endpoint = "https://api.ollama.com"  # Replace with the actual API endpoint
-    ollama = OllamaInterface(api_endpoint)
+    ollama = OllamaInterface()
     task_queue = TaskQueue()
     kb = KnowledgeBase()
     vcs = VersionControlSystem()
