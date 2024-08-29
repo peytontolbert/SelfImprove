@@ -105,7 +105,10 @@ class CodeAnalysis:
         context = {"code": code}
         analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}", context=context)
         self.logger.info(f"Code analysis result: {analysis}")
-        return analysis
+        # Perform automated code reviews
+        code_review = await ollama.query_ollama("code_review", f"Perform a code review for this code: {code}", context=context)
+        self.logger.info(f"Automated code review result: {code_review}")
+        return analysis + code_review
 
     async def check_code_quality(self, ollama, code):
         context = {"code": code}
@@ -154,7 +157,10 @@ class TestingFramework:
         context = {"existing_tests": existing_tests}
         improvement_suggestions = await ollama.query_ollama("test_improvement", f"Suggest improvements for these existing tests: {existing_tests}", context=context)
         self.logger.info(f"Test improvement suggestions: {improvement_suggestions}")
-        return improvement_suggestions
+        # Generate more comprehensive and context-aware unit tests
+        context_aware_tests = await ollama.query_ollama("context_aware_test_generation", f"Generate context-aware tests for these functions: {existing_tests}", context=context)
+        self.logger.info(f"Context-aware test generation: {context_aware_tests}")
+        return improvement_suggestions + context_aware_tests
 
 class DeploymentManager:
     """
@@ -229,7 +235,10 @@ class SelfImprovement:
     async def analyze_performance(self, metrics):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
         validated_improvements = await self.improvement_manager.validate_improvements(improvements)
-        return validated_improvements
+        # Analyze code for potential performance bottlenecks
+        performance_optimizations = await self.ollama.query_ollama("performance_optimization", f"Suggest performance optimizations for these metrics: {metrics}", context={"metrics": metrics})
+        self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
+        return validated_improvements + performance_optimizations
 
     async def validate_improvements(self, improvements):
         validated = []
