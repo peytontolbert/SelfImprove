@@ -8,6 +8,11 @@ class ErrorHandler:
     def log_error(self, error):
         self.logger.error(f"Error occurred: {str(error)}")
 
+    def classify_errors(self):
+        """Classify errors into categories."""
+        # Placeholder implementation
+        return {"error_type": "generic_error"}
+
     async def handle_error(self, ollama_interface, error):
         self.log_error(error)
         error_type = type(error).__name__

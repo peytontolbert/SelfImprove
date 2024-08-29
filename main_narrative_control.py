@@ -308,6 +308,7 @@ async def main():
     """
     ollama = OllamaInterface()
     rl_module = ReinforcementLearningModule(ollama)
+    rl_module = ReinforcementLearningModule(ollama)
 
     # Initialize configuration settings
     config = {
@@ -320,14 +321,6 @@ async def main():
     narrative = SystemNarrative()
     logger.info("Initializing system components with detailed logging and context management")
     await narrative.log_state("System components initialized successfully")
-    ollama = OllamaInterface()
-    # Ensure specific context is provided for each task
-    default_context = {
-        "longterm_memory": "Details about long-term memory usage and optimization",
-        "current_tasks": "List of current tasks",
-        "system_status": "Current system status"
-    }
-    ollama.manage_conversation_context("default", default_context)
     task_queue = TaskQueue(ollama)
     kb = KnowledgeBase(ollama_interface=ollama)
     vcs = VersionControlSystem()

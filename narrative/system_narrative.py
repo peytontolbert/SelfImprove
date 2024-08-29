@@ -46,6 +46,7 @@ class SystemNarrative:
             "longterm_memory": await self.knowledge_base.get_longterm_memory()
         })
         self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
+        self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
         await self.log_with_ollama(message, context)
         # Log state to spreadsheet
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])

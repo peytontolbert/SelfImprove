@@ -31,17 +31,11 @@ class OllamaInterface:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
-        if context:
-            # Ensure context is comprehensive and relevant
-            context = {k: v for k, v in context.items() if v is not None}
-            context.update({"timestamp": time.time()})
-            context_str = json.dumps(context, indent=2)
-            prompt = f"Context: {context_str}\n\n{prompt}"
-        else:
-            # Provide a more informative default context
-            context = {"default": "No specific context provided. Please ensure to include relevant details for better results.", "timestamp": time.time()}
-            context_str = json.dumps(context, indent=2)
-            prompt = f"Context: {context_str}\n\n{prompt}"
+        context = context or {}
+        context.update({"timestamp": time.time()})
+        context_str = json.dumps(context, indent=2)
+        prompt = f"Context: {context_str}\n\n{prompt}"
+        if not context:
             self.logger.warning("No specific context provided. Using default context.")
         async def attempt_query():
             try:
