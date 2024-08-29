@@ -4,7 +4,7 @@ from core.ollama_interface import OllamaInterface
 import asyncio
 import time
 import subprocess
-
+import json
 class SystemNarrative:
     def __init__(self, ollama_interface=None, knowledge_base=None):
         self.logger = logging.getLogger("SystemNarrative")
