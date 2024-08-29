@@ -292,6 +292,10 @@ class OllamaInterface:
         error_prompt = f"An error of type {error_type} occurred: {str(error)}. Context: {json.dumps(context)}. Suggest an adaptive recovery strategy."
         context = {"error": str(error), "context": context}
         recovery_strategy = await self.query_ollama(self.system_prompt, error_prompt, context=context)
+        if 'dynamic_recovery' in recovery_strategy:
+            self.logger.info("Implementing dynamic recovery strategy as suggested by Ollama.")
+            # Example dynamic recovery logic: Adjust system parameters or restart services
+            await self.dynamic_recovery(recovery_strategy['dynamic_recovery'])
         
         if 'retry' in recovery_strategy:
             # Implement retry logic

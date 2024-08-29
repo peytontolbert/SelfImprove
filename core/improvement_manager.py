@@ -84,6 +84,13 @@ class ImprovementManager:
         except Exception as e:
             self.logger.error(f"Failed to update system: {str(e)}")
             return {"status": "failure", "message": f"System update failed: {str(e)}"}
+    async def proactive_monitoring(self):
+        """Monitor system metrics and detect potential issues proactively."""
+        metrics = await self.ollama.query_ollama("system_monitoring", "Monitor system metrics for potential issues.")
+        self.logger.info(f"Proactive monitoring metrics: {metrics}")
+        if metrics.get('issues_detected'):
+            await self.handle_detected_issues(metrics['issues_detected'])
+
     async def provide_feedback_on_improvements(self, improvements: List[str], results: List[Dict[str, Any]]):
         """Provide feedback on the applied improvements to refine future suggestions."""
         feedback_data = {"improvements": improvements, "results": results}
