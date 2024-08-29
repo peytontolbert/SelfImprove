@@ -9,6 +9,8 @@ from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
 class SystemNarrative:
     def __init__(self, ollama_interface=None, knowledge_base=None):
+        self.request_log = []  # Initialize a log to track requests and expected responses
+    def __init__(self, ollama_interface=None, knowledge_base=None):
         self.logger = logging.getLogger("SystemNarrative")
         self.ollama = ollama_interface or OllamaInterface()
         self.knowledge_base = knowledge_base or KnowledgeBase()
@@ -30,6 +32,7 @@ class SystemNarrative:
             "system_status": "Current system status"
         })
         self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+        self.track_request("thought_generation", prompt, "thoughts")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
@@ -37,6 +40,16 @@ class SystemNarrative:
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]])
         return thoughts
+
+    def track_request(self, task, prompt, expected_response):
+        """Track requests made to Ollama and the expected responses."""
+        self.request_log.append({
+            "task": task,
+            "prompt": prompt,
+            "expected_response": expected_response,
+            "timestamp": time.time()
+        })
+        self.logger.info(f"Tracked request for task '{task}' with expected response: {expected_response}")
 
     async def log_state(self, message, context=None):
         if context is None:
@@ -55,6 +68,7 @@ class SystemNarrative:
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
         # Analyze feedback and suggest improvements
+        self.track_request("feedback_analysis", f"Analyze feedback for the current state: {message}", "feedback")
         feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}", task="feedback_analysis", context=context)
         self.logger.info(f"Feedback analysis: {feedback}")
 
