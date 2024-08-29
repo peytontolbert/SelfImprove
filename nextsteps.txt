@@ -9,6 +9,9 @@
     - Use Ollama's insights to drive system improvements and optimizations.
 
  3. **Expand System Capabilities**
+    - Integrate the newly created KnowledgeBase and FileSystem modules into the system's workflow.
+    - Ensure that the system can effectively store and retrieve knowledge to enhance decision-making.
+    - Develop mechanisms for the system to autonomously update its knowledge base with new insights.
     - Begin scaling the system by adding more complex tasks and integrating additional modules.
     - Monitor system performance and scalability, adjusting resource allocation as guided by Ollama.
 
