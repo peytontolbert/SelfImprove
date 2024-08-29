@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 
 class VersionControlSystem:
     async def commit_changes(self, ollama, changes):
-        commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}")
+        context = {"changes": changes}
+        commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}", context=context)
         logger.info(f"Committing changes: {changes}")
         logger.info(f"Committed changes with message: {commit_message}")
 
@@ -27,33 +28,39 @@ class VersionControlSystem:
             f"Assess the readiness of the current codebase for production. "
             f"Consider stability, features implemented, and known issues: {codebase_state}"
         )
-        readiness_assessment = await ollama.query_ollama("codebase_readiness", readiness_prompt)
+        context = {"codebase_state": codebase_state}
+        readiness_assessment = await ollama.query_ollama("codebase_readiness", readiness_prompt, context=context)
         return readiness_assessment
 
 class CodeAnalysis:
     async def analyze_code(self, ollama, code):
-        analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}")
+        context = {"code": code}
+        analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}", context=context)
         return analysis
 
 class TestingFramework:
     async def run_tests(self, ollama, test_cases):
-        test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}")
+        context = {"test_cases": test_cases}
+        test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}", context=context)
         return test_results
 
     async def generate_tests(self, ollama, code):
-        generated_tests = await ollama.query_ollama("testing", f"Generate unit tests for this code: {code}")
+        context = {"code": code}
+        generated_tests = await ollama.query_ollama("testing", f"Generate unit tests for this code: {code}", context=context)
         return generated_tests
 
 class DeploymentManager:
     async def deploy_code(self, ollama):
-        deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?")
+        context = {"current_code": "current_code_placeholder"}
+        deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?", context=context)
         if deployment_decision.get('deploy', False):
             logger.info("Code deployed successfully")
         else:
             logger.info("Deployment deferred based on Ollama's decision")
 
     async def rollback(self, ollama, version):
-        rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}")
+        context = {"version": version}
+        rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}", context=context)
         logger.info(f"Rollback plan generated: {rollback_plan}")
 
 class SelfImprovement:

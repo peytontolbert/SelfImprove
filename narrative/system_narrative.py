@@ -20,7 +20,8 @@ class SystemNarrative:
             prompt += f" | Context: {context}"
         if longterm_memory:
             prompt += f" | Long-term Memory: {longterm_memory}"
-        ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation")
+        context = {"longterm_memory": longterm_memory}
+        ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}")
         return thoughts
@@ -34,7 +35,8 @@ class SystemNarrative:
         # Generate and log thoughts about the current state
         await self.generate_thoughts(context)
         # Analyze feedback and suggest improvements
-        feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}", task="feedback_analysis")
+        context = {"current_state": message}
+        feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}", task="feedback_analysis", context=context)
         self.logger.info(f"Feedback analysis: {feedback}")
 
     async def log_decision(self, decision, rationale=None):
@@ -55,10 +57,12 @@ class SystemNarrative:
             self.logger.error(f"System Error: {error}")
         await self.log_with_ollama(error, context)
         # Suggest and log recovery strategies
-        recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery")
+        context = {"error": str(error)}
+        recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery", context=context)
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
-        recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery")
+        context = {"error": str(error)}
+        recovery_strategy = await self.ollama.query_ollama(self.ollama.system_prompt, f"Suggest a recovery strategy for the following error: {str(error)}", task="error_recovery", context=context)
         self.logger.info(f"Recovery Strategy: {recovery_strategy}")
         await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
 
@@ -156,7 +160,8 @@ class SystemNarrative:
                     await self.log_error("No valid recovery suggestion received from Ollama.", {"error": str(e)})
 
             # Check for reset command
-            reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed")
+            context = {"system_state": "current_system_state_placeholder"}
+            reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed", context=context)
             if reset_command.get('reset', False):
                 await self.log_state("Resetting system state as per command")
                 # Example reset logic
@@ -170,7 +175,8 @@ class SystemNarrative:
                 continue
 
             # Consult Ollama on alignment implications
-            alignment_considerations = await ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes")
+            context = {"recent_changes": "recent_system_changes_placeholder"}
+            alignment_considerations = await ollama.query_ollama("alignment_consideration", "Assess the alignment implications of recent system changes", context=context)
             self.logger.info(f"Alignment considerations: {alignment_considerations}")
 
             # Dynamically adjust the sleep duration based on system performance

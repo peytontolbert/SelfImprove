@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 class VersionControlSystem:
     async def commit_changes(self, ollama, changes):
-        commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}")
+        context = {"changes": changes}
+        commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}", context=context)
         # Example commit logic
         # This is a placeholder for actual commit logic
         # Assuming a git-based system, you might use subprocess to run git commands
@@ -34,21 +35,25 @@ class VersionControlSystem:
         logger.info(f"Committed changes with message: {commit_message}")
 
     async def suggest_branching_strategy(self, ollama, current_state):
-        strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy based on the current state: {current_state}")
+        context = {"current_state": current_state}
+        strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy based on the current state: {current_state}", context=context)
         return strategy
 
 class CodeAnalysis:
     async def analyze_code(self, ollama, code):
-        analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}")
+        context = {"code": code}
+        analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}", context=context)
         return analysis
 
 class TestingFramework:
     async def run_tests(self, ollama, test_cases):
-        test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}")
+        context = {"test_cases": test_cases}
+        test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}", context=context)
         return test_results
 
     async def generate_tests(self, ollama, code, fs):
-        generated_tests = await ollama.query_ollama("testing", f"Generate unit tests for this code: {code}")
+        context = {"code": code}
+        generated_tests = await ollama.query_ollama("testing", f"Generate unit tests for this code: {code}", context=context)
         test_code = generated_tests.get("test_code", "")
         if test_code:
             # Save the generated test code using the FileSystem
@@ -67,7 +72,8 @@ class TestingFramework:
 
 class DeploymentManager:
     async def deploy_code(self, ollama):
-        deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?")
+        context = {"current_code": "current_code_placeholder"}
+        deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?", context=context)
         if deployment_decision.get('deploy', False):
             # Example deployment logic
             # This is a placeholder for actual deployment logic
@@ -83,7 +89,8 @@ class DeploymentManager:
             logger.info("Deployment deferred based on Ollama's decision")
 
     async def rollback(self, ollama, version):
-        rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}")
+        context = {"version": version}
+        rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}", context=context)
         # Implement rollback logic here
         logger.info(f"Rollback plan generated: {rollback_plan}")
 

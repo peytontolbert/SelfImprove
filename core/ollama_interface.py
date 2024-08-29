@@ -52,12 +52,14 @@ class OllamaInterface:
 
     async def refine_prompt(self, prompt: str, task: str) -> str:
         refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
-        response = await self.query_ollama("prompt_refinement", refinement_prompt, refine=False)
+        context = {"task": task}
+        response = await self.query_ollama("prompt_refinement", refinement_prompt, context=context, refine=False)
         return response.get("refined_prompt", prompt).strip()
 
     async def analyze_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"Analyze the following code and provide suggestions for improvement:\n\n{code}"
-        response = await self.query_ollama("code_analysis", prompt, context)
+        context = {"code": code}
+        response = await self.query_ollama("code_analysis", prompt, context=context)
         if response:
             return response
         else:
@@ -66,39 +68,47 @@ class OllamaInterface:
 
     async def generate_code(self, spec: str, context: Dict[str, Any] = None) -> str:
         prompt = f"Generate code based on the following specification:\n\n{spec}"
-        response = await self.query_ollama("code_generation", prompt, context)
+        context = {"spec": spec}
+        response = await self.query_ollama("code_generation", prompt, context=context)
         return response.get("code", "") if response else ""
 
     async def handle_error(self, error: Exception, context: Dict[str, Any] = None) -> Dict[str, Any]:
         prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
-        response = await self.query_ollama("error_handling", prompt, context)
+        context = {"error": str(error)}
+        response = await self.query_ollama("error_handling", prompt, context=context)
         return response if response else {"error": "No response from Ollama"}
 
     async def improve_system(self, performance_metrics: Dict[str, Any], context: Dict[str, Any] = None) -> List[str]:
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(performance_metrics, indent=2)}"
-        response = await self.query_ollama("system_improvement", prompt, context)
+        context = {"performance_metrics": performance_metrics}
+        response = await self.query_ollama("system_improvement", prompt, context=context)
         # Suggest resource allocation and scaling strategies
-        scaling_suggestions = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {performance_metrics}", context)
+        context = {"performance_metrics": performance_metrics}
+        scaling_suggestions = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {performance_metrics}", context=context)
         return response.get("suggestions", []) + scaling_suggestions.get("scaling_suggestions", [])
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
         prompt = f"Implement this improvement: {improvement}. Consider the system's current architecture and capabilities. Provide a detailed plan for implementation."
-        return await self.query_ollama(self.system_prompt, prompt, task="improvement_implementation")
+        context = {"improvement": improvement}
+        return await self.query_ollama(self.system_prompt, prompt, task="improvement_implementation", context=context)
 
     async def validate_improvement(self, improvement: str) -> Dict[str, Any]:
         prompt = f"Validate the following improvement suggestion: {improvement}. Consider potential risks, conflicts with existing system architecture, and alignment with project goals."
-        return await self.query_ollama(self.system_prompt, prompt, task="improvement_validation")
+        context = {"improvement": improvement}
+        return await self.query_ollama(self.system_prompt, prompt, task="improvement_validation", context=context)
 
     async def learn_from_experience(self, experience_data: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"Analyze this experience data and extract learnings: {json.dumps(experience_data)}. Focus on patterns, successful strategies, and areas for improvement."
-        return await self.query_ollama(self.system_prompt, prompt, task="experience_learning")
+        context = {"experience_data": experience_data}
+        return await self.query_ollama(self.system_prompt, prompt, task="experience_learning", context=context)
 
     def get_conversation_history(self) -> List[Dict[str, Any]]:
         return self.conversation_history
 
     async def evaluate_system_state(self, system_state: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"Evaluate the current system state: {json.dumps(system_state)}. Identify potential issues, bottlenecks, and areas for optimization."
-        return await self.query_ollama(prompt, {"task": "system_evaluation"})
+        context = {"system_state": system_state}
+        return await self.query_ollama(prompt, {"task": "system_evaluation"}, context=context)
 
     async def update_system_prompt(self, new_prompt: str) -> None:
         """Update the system prompt dynamically."""
@@ -140,7 +150,8 @@ class OllamaInterface:
     async def suggest_error_recovery(self, error: Exception) -> str:
         """Suggest a recovery strategy for a given error."""
         error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
-        recovery_suggestion = await self.query_ollama(self.system_prompt, error_prompt)
+        context = {"error": str(error)}
+        recovery_suggestion = await self.query_ollama(self.system_prompt, error_prompt, context=context)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
 
     async def manage_prompt_template(self, template_name: str, template: str) -> None:
@@ -148,7 +159,8 @@ class OllamaInterface:
         self.prompt_templates[template_name] = template
         self.logger.info(f"Prompt template '{template_name}' added/updated")
         # Generate documentation for the prompt template
-        documentation = await self.query_ollama("documentation_generation", f"Generate documentation for the prompt template: {template_name}")
+        context = {"template_name": template_name}
+        documentation = await self.query_ollama("documentation_generation", f"Generate documentation for the prompt template: {template_name}", context=context)
         self.logger.info(f"Documentation generated for '{template_name}': {documentation}")
 
     async def use_prompt_template(self, template_name: str, **kwargs) -> str:
@@ -168,7 +180,8 @@ class OllamaInterface:
             raise ValueError(f"Conversation context '{context_id}' not found")
         context = self.conversation_contexts[context_id]
         context_aware_prompt = f"Given the context: {json.dumps(context)}\n\nRespond to: {prompt}"
-        return await self.query_ollama(self.system_prompt, context_aware_prompt)
+        context = {"context_id": context_id}
+        return await self.query_ollama(self.system_prompt, context_aware_prompt, context=context)
 
     async def handle_parallel_tasks(self, tasks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Handle multiple tasks in parallel."""
@@ -184,7 +197,8 @@ class OllamaInterface:
         """Handle errors adaptively based on the error type and context."""
         error_type = type(error).__name__
         error_prompt = f"An error of type {error_type} occurred: {str(error)}. Context: {json.dumps(context)}. Suggest an adaptive recovery strategy."
-        recovery_strategy = await self.query_ollama(self.system_prompt, error_prompt)
+        context = {"error": str(error), "context": context}
+        recovery_strategy = await self.query_ollama(self.system_prompt, error_prompt, context=context)
         
         if 'retry' in recovery_strategy:
             # Implement retry logic

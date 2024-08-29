@@ -10,10 +10,12 @@ class TaskQueue:
 
     async def create_task(self, task_details):
         # Use Ollama to decide on task creation and management
-        decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I create this task: {task_details}", task="task_management")
+        context = {"task_details": task_details}
+        decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I create this task: {task_details}", task="task_management", context=context)
         if decision.get('create_task', False):
             # Decompose the task into subtasks
-            subtasks = await self.ollama.query_ollama(self.ollama.system_prompt, f"Decompose this task into subtasks: {task_details}", task="task_decomposition")
+            context = {"task_details": task_details}
+            subtasks = await self.ollama.query_ollama(self.ollama.system_prompt, f"Decompose this task into subtasks: {task_details}", task="task_decomposition", context=context)
             self.tasks.extend(subtasks.get('subtasks', [task_details]))
             logger.info(f"Task created with subtasks: {subtasks.get('subtasks', [task_details])}")
         else:
@@ -21,7 +23,8 @@ class TaskQueue:
 
     async def manage_orchestration(self):
         if self.tasks:
-            orchestration_decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"How should I orchestrate these tasks: {self.tasks}", task="task_orchestration")
+            context = {"tasks": self.tasks}
+            orchestration_decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"How should I orchestrate these tasks: {self.tasks}", task="task_orchestration", context=context)
             # Implement orchestration logic based on Ollama's decision
             logger.info(f"Task orchestration: {orchestration_decision}")
 
