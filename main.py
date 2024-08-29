@@ -1,6 +1,7 @@
 import logging
 import asyncio
 from core.ollama_interface import OllamaInterface
+from core.improvement_manager import ImprovementManager
 from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
 from utils.error_handler import ErrorHandler
@@ -131,15 +132,15 @@ async def improve_system_capabilities(ollama, si, kb, task_queue, vcs, ca, tf, d
             system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
 
             narrative.log_state("Generating improvement suggestions")
-            improvements = await si.analyze_performance(system_state)
+            improvements = await improvement_manager.suggest_improvements(system_state)
 
             if improvements:
                 for improvement in improvements:
                     # Validate the improvement
-                    validation = await si.validate_improvements([improvement])
+                    validation = await improvement_manager.validate_improvements([improvement])
                     if validation:
                         narrative.log_decision(f"Applying improvement: {improvement}")
-                        result = await si.apply_improvements([improvement])
+                        result = await improvement_manager.apply_improvements([improvement])
 
                         # Learn from the experience
                         experience_data = {
@@ -216,7 +217,7 @@ async def main():
     ca = CodeAnalysis()
     tf = TestingFramework()
     dm = DeploymentManager()
-    si = SelfImprovement(ollama, kb)
+    improvement_manager = ImprovementManager(ollama)
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
