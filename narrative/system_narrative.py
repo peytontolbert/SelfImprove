@@ -169,4 +169,6 @@ class SystemNarrative:
                     self.logger.error(f"System reset failed: {e}")
                 continue
 
-            await asyncio.sleep(3600)  # Wait for an hour
+            # Dynamically adjust the sleep duration based on system performance
+            sleep_duration = self.calculate_improvement_cycle_frequency(system_state)
+            await asyncio.sleep(sleep_duration)
