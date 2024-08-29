@@ -92,7 +92,28 @@ class KnowledgeBase:
         result = tx.run(query, capability_name=capability_name)
         return [{"current": record["current"], "relationship": record["r"], "next": record["next"]} for record in result]
     async def add_entry(self, entry_name, data, metadata=None, narrative_context=None, context=None):
-        pass
+        if context:
+            data.update({"context": context})
+        
+        decision = await self.ollama.query_ollama(
+            self.ollama.system_prompt,
+            f"Should I add this entry: {entry_name} with data: {data}",
+            task="knowledge_base"
+        )
+        
+        if decision.get('add_entry', False):
+            properties = {
+                "data": data,
+                "metadata": metadata or {},
+                "narrative_context": narrative_context or {},
+                "timestamp": time.time()
+            }
+            self.add_node(entry_name, properties)
+            self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
+            return True
+        
+        self.logger.info(f"Entry addition declined: {entry_name}")
+        return False
 
     async def integrate_cross_disciplinary_knowledge(self, disciplines: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate knowledge across multiple disciplines."""
