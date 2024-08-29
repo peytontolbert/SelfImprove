@@ -305,8 +305,8 @@ async def main():
     KnowledgeBase, and others. It then initiates the improvement process controlled by the
     SystemNarrative. The narrative can reset, change actions, and influence decisions dynamically.
     """
+    ollama = OllamaInterface()
     kb = KnowledgeBase(ollama_interface=ollama)
-    ollama = OllamaInterface(knowledge_base=kb)
     rl_module = ReinforcementLearningModule(ollama)
     rl_module = ReinforcementLearningModule(ollama)
 
