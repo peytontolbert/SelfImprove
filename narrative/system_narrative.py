@@ -64,7 +64,7 @@ class SystemNarrative:
         prompt = f"Log this message: {message}"
         if context:
             prompt += f" | Context: {context}"
-        await self.ollama.query_ollama("logging", prompt)
+        await self.ollama.query_ollama("logging", prompt, refine=False)
 
     async def log_recovery(self, recovery_action, success=True):
         status = "successful" if success else "failed"

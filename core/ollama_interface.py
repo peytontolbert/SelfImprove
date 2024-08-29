@@ -27,8 +27,8 @@ class OllamaInterface:
         await self.session.close()
 
     async def query_ollama(self, system_prompt: str, prompt: str, context: Dict[str, Any] = None, refine: bool = True) -> Dict[str, Any]:
-        if refine:
-            prompt = await self.refine_prompt(prompt, system_prompt)
+        if refine and task != "logging":
+            prompt = await self.refine_prompt(prompt, task)
         if context:
             context_str = json.dumps(context, indent=2)
             prompt = f"Context: {context_str}\n\n{prompt}"
