@@ -96,13 +96,19 @@ class KnowledgeBase:
     async def add_entry(self, entry_name, data, metadata=None, narrative_context=None, context=None):
         if context:
             data.update({"context": context})
-        
+
+        # Evaluate the relevance of the data
+        relevance_decision = await self.evaluate_relevance(entry_name, data)
+        if not relevance_decision.get('is_relevant', False):
+            self.logger.info(f"Entry deemed irrelevant and not added: {entry_name}")
+            return False
+
         decision = await self.ollama.query_ollama(
             self.ollama.system_prompt,
             f"Should I add this entry: {entry_name} with data: {data}",
             task="knowledge_base"
         )
-        
+
         if decision.get('add_entry', False):
             properties = {
                 "data": data,
@@ -113,9 +119,17 @@ class KnowledgeBase:
             self.add_node(entry_name, properties)
             self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
             return True
-        
+
         self.logger.info(f"Entry addition declined: {entry_name}")
         return False
+
+    async def evaluate_relevance(self, entry_name, data):
+        """Evaluate the relevance of the data before adding it to long-term memory."""
+        prompt = f"Evaluate the relevance of this entry: {entry_name} with data: {data}"
+        context = {"entry_name": entry_name, "data": data}
+        relevance_decision = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="relevance_evaluation", context=context)
+        self.logger.info(f"Relevance evaluation for {entry_name}: {relevance_decision}")
+        return relevance_decision
 
     async def integrate_cross_disciplinary_knowledge(self, disciplines: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate knowledge across multiple disciplines."""
