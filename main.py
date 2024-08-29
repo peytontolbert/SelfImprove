@@ -124,17 +124,6 @@ class SelfImprovement:
         refinements = await self.ollama.query_ollama("prompt_refinement", f"Suggest refinements for these prompts: {current_prompts}")
         return refinements
 
-class EthicalAudit:
-    def __init__(self, ollama: OllamaInterface):
-        self.ollama = ollama
-
-    async def conduct_audit(self, system_behavior):
-        audit_result = await self.ollama.query_ollama("ethical_audit", f"Conduct an ethical audit of this system behavior: {system_behavior}")
-        return audit_result
-
-    async def flag_ethical_concerns(self, action):
-        concerns = await self.ollama.query_ollama("ethical_audit", f"Identify any ethical concerns with this action: {action}")
-        return concerns
 
 async def main():
     ui = UserInterface()
@@ -149,8 +138,6 @@ async def main():
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
-    ea = EthicalAudit(ollama)
-
     # Start continuous improvement in the background
     asyncio.create_task(si.continuous_improvement())
 
@@ -167,12 +154,6 @@ async def main():
             if isinstance(action_decision, str):
                 action_decision = json.loads(action_decision)
             
-            # Ethical check before proceeding
-            ethical_concerns = await ea.flag_ethical_concerns(action_decision)
-            if ethical_concerns:
-                ui.display_output(f"Ethical concerns flagged: {ethical_concerns}")
-                continue  # Skip this action if there are ethical concerns
-
             if action_decision.get('create_task', False):
                 task_details = action_decision.get('task_details', '')
                 decomposed_tasks = await ollama.handle_parallel_tasks([{"type": "task_decomposition", "prompt": f"Decompose this task: {task_details}"}])
