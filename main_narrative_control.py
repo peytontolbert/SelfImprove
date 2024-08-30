@@ -275,7 +275,7 @@ class SelfImprovement:
         quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
             "actions": improvements,
             "system_state": metrics
-        })
+        }, context={"metrics": metrics})
         self.logger.info(f"Quantum decisions: {quantum_decisions}")
         consciousness_insights = self.consciousness_emulator.emulate_consciousness(metrics)
         self.logger.info(f"Consciousness insights: {consciousness_insights}")
