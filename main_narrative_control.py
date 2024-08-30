@@ -318,7 +318,7 @@ class SystemManager:
     def scale_component(self, component_name):
         self.logger.info(f"Scaling component: {component_name}")
         # Example scaling logic: Adjust resources based on a simple threshold
-        component = self.components.get(component_name)
+        component = self.components.components.get(component_name)
         if component:
             load = self.collect_performance_metrics().get(component_name, 0)
             if load > 0.8:
