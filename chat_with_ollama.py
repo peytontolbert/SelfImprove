@@ -100,7 +100,7 @@ class ChatGPT:
                 if i < retries - 1:  # i is zero indexed
                     time.sleep(delay)  # wait before trying again
                 else:
-                    raise e  # re-raise the last exception if all retries fail
+                    raise ConnectionError(f"Failed to connect to the local server at {url} after {retries} retries. Please ensure the server is running and accessible.") from e
 
     async def chat_with_ollama(self, system_prompt: str, prompt: str, retries: int=5, delay: int=5):
         url = "http://localhost:11434/api/generate"
