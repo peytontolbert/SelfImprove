@@ -261,15 +261,7 @@ class SystemNarrative:
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
 
-    def track_request(self, task, prompt, expected_response):
-        """Track requests made to Ollama and the expected responses."""
-        self.request_log.append({
-            "task": task,
-            "prompt": prompt,
-            "expected_response": expected_response,
-            "timestamp": time.time()
-        })
-        self.logger.info(f"Tracked request for task '{task}' with expected response: {expected_response}")
+    async def execute_actions(self, actions):
         """Execute a list of actions derived from thoughts and improvements."""
         try:
             for action in actions:
