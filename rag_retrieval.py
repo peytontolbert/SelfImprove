@@ -1,26 +1,23 @@
 import logging
-import aiohttp
 from typing import List, Dict, Any
+from knowledge_base import KnowledgeBase
 
 class RAGRetrieval:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    def __init__(self, knowledge_base: KnowledgeBase):
+        self.logger = logging.getLogger(__name__)
+        self.knowledge_base = knowledge_base
+
     async def retrieve_documents(self, query: str) -> List[Dict[str, Any]]:
-        """Retrieve relevant documents based on the query."""
+        """Retrieve relevant documents based on the query using the graph database."""
         self.logger.info(f"Retrieving documents for query: {query}")
-        
-        # Hypothetical API call to a document retrieval service
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"http://document-retrieval-service/api/search?query={query}") as response:
-                    if response.status == 200:
-                        documents = await response.json()
-                        self.logger.debug(f"Retrieved documents: {documents}")
-                        return documents
-                    else:
-                        self.logger.error(f"Failed to retrieve documents: {response.status}")
-                        return []
+            # Query the graph database for relevant documents
+            documents = await self.knowledge_base.query_insights(query)
+            self.logger.debug(f"Retrieved documents: {documents}")
+            return documents
         except Exception as e:
             self.logger.error(f"Error during document retrieval: {str(e)}")
             return []
