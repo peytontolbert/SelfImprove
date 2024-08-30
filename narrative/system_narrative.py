@@ -708,7 +708,7 @@ class QuantumPredictiveAnalyzer:
             return optimal_decision
         except Exception as e:
             self.logger.error(f"Error in quantum predictive analysis: {e}", exc_info=True)
-            return {"error": "Quantum analysis failed", "details": str(e)}
+            return {"error": "Quantum analysis failed", "details": {"message": str(e)}}
 
     def prepare_decision_space(self, predictive_context):
         """
