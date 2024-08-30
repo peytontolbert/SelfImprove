@@ -35,7 +35,7 @@ from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
-def setup_logging():
+logger = setup_logging()
     """Set up logging with a detailed format."""
     logging.basicConfig(
         level=logging.INFO,
@@ -412,13 +412,14 @@ class SelfImprovement:
             if result is not None:
                 return result
             logger.warning(f"Attempt {attempt + 1} failed, retrying...")
-        logger.error("All attempts failed, returning None")
+        self.logger.error("All attempts failed, returning None")
         self.logger.error("All attempts failed, returning None")
         await self.narrative.log_error("All attempts failed", {"function": func.__name__, "args": args, "kwargs": kwargs})
         return None
 
 def initialize_components():
     components = {
+        "ollama": OllamaInterface(),
         "ollama": OllamaInterface(),
         "rl_module": ReinforcementLearningModule(ollama),
         "task_queue": TaskQueue(ollama),
