@@ -33,38 +33,47 @@ class SystemNarrative:
     async def log_chain_of_thought(self, thought_processes):
         """Log and enhance the chain of thought for system processes."""
         # Enhance the chain of thought by synthesizing multiple thoughts
-        enhanced_thought = self.synthesize_thoughts(thought_processes)
+        enhanced_thought_response = await self.ollama.query_ollama("thought_synthesis", "Synthesize multiple thoughts into a cohesive thought.", context={"thoughts": thought_processes})
+        enhanced_thought = enhanced_thought_response.get("synthesized_thought", self.synthesize_thoughts(thought_processes))
         
         # Add explicit step-by-step guidance
-        steps = self.break_down_thoughts(thought_processes)
+        steps_response = await self.ollama.query_ollama("thought_breakdown", "Break down thoughts into explicit steps.", context={"thoughts": thought_processes})
+        steps = steps_response.get("steps", self.break_down_thoughts(thought_processes))
         self.logger.info(f"Step-by-step guidance: {steps}")
         
         # Provide contextual information
-        context_info = self.provide_context(thought_processes)
+        context_info_response = await self.ollama.query_ollama("context_provision", "Provide contextual information for the thought processes.", context={"thoughts": thought_processes})
+        context_info = context_info_response.get("context_info", self.provide_context(thought_processes))
         self.logger.info(f"Contextual Information: {context_info}")
         
         # Include intermediate checks
-        checks = self.intermediate_checks(thought_processes)
+        checks_response = await self.ollama.query_ollama("intermediate_checks", "Include intermediate checks for the thought processes.", context={"thoughts": thought_processes})
+        checks = checks_response.get("checks", self.intermediate_checks(thought_processes))
         self.logger.info(f"Intermediate Checks: {checks}")
         
         # Add example-driven approach
-        examples = self.provide_examples(thought_processes)
+        examples_response = await self.ollama.query_ollama("example_provision", "Provide examples for each step in the thought process.", context={"thoughts": thought_processes})
+        examples = examples_response.get("examples", self.provide_examples(thought_processes))
         self.logger.info(f"Example-Driven Steps: {examples}")
         
         # Dynamic contextual adaptation
-        adapted_thoughts = self.dynamic_contextual_adaptation(thought_processes)
+        adapted_thoughts_response = await self.ollama.query_ollama("contextual_adaptation", "Adapt thoughts dynamically based on real-time context changes.", context={"thoughts": thought_processes})
+        adapted_thoughts = adapted_thoughts_response.get("adapted_thoughts", self.dynamic_contextual_adaptation(thought_processes))
         self.logger.info(f"Adapted Thoughts: {adapted_thoughts}")
         
         # Feedback-driven refinement
-        refined_thoughts = await self.feedback_driven_refinement(adapted_thoughts)
+        refined_thoughts_response = await self.ollama.query_ollama("feedback_refinement", "Refine thoughts based on feedback loops.", context={"thoughts": adapted_thoughts})
+        refined_thoughts = refined_thoughts_response.get("refined_thoughts", await self.feedback_driven_refinement(adapted_thoughts))
         self.logger.info(f"Refined Thoughts: {refined_thoughts}")
         
         # Predictive thought modeling
-        predictive_thoughts = self.predictive_thought_modeling(refined_thoughts)
+        predictive_thoughts_response = await self.ollama.query_ollama("predictive_modeling", "Model future thoughts using predictive analytics.", context={"thoughts": refined_thoughts})
+        predictive_thoughts = predictive_thoughts_response.get("predictive_thoughts", await self.predictive_thought_modeling(refined_thoughts))
         self.logger.info(f"Predictive Thoughts: {predictive_thoughts}")
 
         # Bias detection and mitigation
-        unbiased_thoughts = self.detect_and_mitigate_bias(predictive_thoughts)
+        unbiased_thoughts_response = await self.ollama.query_ollama("bias_detection", "Detect and mitigate bias in the thought processes.", context={"thoughts": predictive_thoughts})
+        unbiased_thoughts = unbiased_thoughts_response.get("unbiased_thoughts", self.detect_and_mitigate_bias(predictive_thoughts))
         self.logger.info(f"Unbiased Thoughts: {unbiased_thoughts}")
 
         # Log the entire thought process using OllamaInterface
