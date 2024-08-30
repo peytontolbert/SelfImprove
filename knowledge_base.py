@@ -338,7 +338,7 @@ class KnowledgeBase:
         """Summarize or compress less relevant data."""
         for entry_name, data in self.longterm_memory.items():
             if data.get('relevance', 0) < 5:  # Example threshold
-                self.longterm_memory[entry_name] = self.summarize_memory(data)
+                self.longterm_memory[entry_name] = await self.summarize_memory(data)
 
     async def periodic_memory_review(self):
         """Periodically review and update memory based on new insights."""
