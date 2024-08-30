@@ -15,6 +15,7 @@ Classes:
 Functions:
 - main: Initializes system components and starts the narrative-controlled improvement process.
 """
+import git
 import subprocess
 import random
 import logging
@@ -74,11 +75,9 @@ class VersionControlSystem:
         commit_message = await ollama.query_ollama("version_control", f"Generate a commit message for these changes: {changes}", context=context)
         self.logger.info(f"Committing changes: {changes}")
         self.logger.info(f"Committed changes with message: {commit_message}")
-        # Here you would typically use a VCS library to actually commit the changes
-        # For example, with GitPython:
-        # repo = git.Repo('.')
-        # repo.git.add(A=True)
-        # repo.index.commit(commit_message)
+        repo = git.Repo('.')
+        repo.git.add(A=True)
+        repo.index.commit(commit_message)
 
     async def assess_codebase_readiness(self, ollama, codebase_state):
         """Assess if the current codebase is ready for production."""
@@ -96,17 +95,17 @@ class VersionControlSystem:
         branch_strategy = await ollama.query_ollama("version_control", f"Suggest a branching strategy for: {purpose}", context=context)
         self.logger.info(f"Creating branch: {branch_name} for purpose: {purpose}")
         self.logger.info(f"Branching strategy: {branch_strategy}")
-        # Implement branch creation logic here
-        # For example: repo.git.checkout('-b', branch_name)
+        repo = git.Repo('.')
+        repo.git.checkout('-b', branch_name)
 
     async def merge_branch(self, ollama, source_branch, target_branch):
         context = {"source_branch": source_branch, "target_branch": target_branch}
         merge_strategy = await ollama.query_ollama("version_control", f"Suggest a merge strategy for merging {source_branch} into {target_branch}", context=context)
         self.logger.info(f"Merging branch {source_branch} into {target_branch}")
         self.logger.info(f"Merge strategy: {merge_strategy}")
-        # Implement merge logic here
-        # For example: repo.git.checkout(target_branch)
-        #              repo.git.merge(source_branch)
+        repo = git.Repo('.')
+        repo.git.checkout(target_branch)
+        repo.git.merge(source_branch)
 
 class CodeAnalysis:
     """
