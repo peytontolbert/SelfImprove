@@ -55,9 +55,15 @@ class DimensionalCodeVisualizer:
         Returns:
         - A list of dependencies found in the codebase.
         """
-        # Placeholder for dependency analysis logic
+        dependencies = set()
         self.logger.debug("Analyzing dependencies in the codebase.")
-        return ["dependency1", "dependency2"]
+        for file_path in codebase:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    if line.startswith('import') or line.startswith('from'):
+                        dependencies.add(line.strip())
+        self.logger.info(f"Dependencies found: {dependencies}")
+        return list(dependencies)
 
     def analyze_interactions(self, codebase):
         """
@@ -69,6 +75,12 @@ class DimensionalCodeVisualizer:
         Returns:
         - A list of interactions found in the codebase.
         """
-        # Placeholder for interaction analysis logic
+        interactions = set()
         self.logger.debug("Analyzing interactions in the codebase.")
-        return ["interaction1", "interaction2"]
+        for file_path in codebase:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    if 'def ' in line or 'class ' in line:
+                        interactions.add(line.strip())
+        self.logger.info(f"Interactions found: {interactions}")
+        return list(interactions)
