@@ -1,7 +1,9 @@
 import logging
+from core.ollama_interface import OllamaInterface
 
 class DimensionalCodeVisualizer:
-    def __init__(self):
+    def __init__(self, ollama: OllamaInterface):
+        self.ollama = ollama
         self.logger = logging.getLogger("DimensionalCodeVisualizer")
 
     def visualize_code_structure(self, codebase):
@@ -22,6 +24,9 @@ class DimensionalCodeVisualizer:
         # Enhanced visualization logic
         visualization = self.create_visualization(codebase)
         self.logger.info("Visualization completed successfully.")
+        # Use Ollama to suggest improvements
+        improvement_suggestions = self.ollama.query_ollama("visualization_improvement", "Suggest improvements for the current visualization.")
+        self.logger.info(f"Visualization improvement suggestions: {improvement_suggestions}")
         return visualization
 
     def create_visualization(self, codebase):

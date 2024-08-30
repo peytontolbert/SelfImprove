@@ -1,8 +1,10 @@
 import logging
 from typing import Dict, Any
+from core.ollama_interface import OllamaInterface
 
 class ConsciousnessEmulator:
-    def __init__(self):
+    def __init__(self, ollama: OllamaInterface):
+        self.ollama = ollama
         self.logger = logging.getLogger(__name__)
 
     def emulate_consciousness(self, context: Dict[str, Any]) -> Dict[str, Any]:
@@ -46,4 +48,7 @@ class ConsciousnessEmulator:
         prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         self.logger.info(f"Consciousness-emulated prioritized actions: {prioritized_actions}")
+        # Use Ollama to refine consciousness emulation
+        refinement_suggestions = self.ollama.query_ollama("consciousness_refinement", "Refine consciousness emulation based on current context.")
+        self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
         return {"enhanced_awareness": context, "prioritized_actions": prioritized_actions}

@@ -417,6 +417,8 @@ async def main():
     # Initialize configuration settings
     config = load_configuration()
     # Implement dynamic configuration updates
+    config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
+    logger.info(f"Configuration updates suggested by Ollama: {config_updates}")
     await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
@@ -434,6 +436,8 @@ async def main():
     prompt_versions = prompt_manager.get_next_version("system_prompts")
     logger.info(f"Current prompt version: {prompt_versions}")
     # Implement dynamic system prompt management
+    prompt_management_suggestions = await ollama.query_ollama("prompt_management", "Suggest improvements for system prompt management.")
+    logger.info(f"Prompt management suggestions: {prompt_management_suggestions}")
     new_system_prompt = await ollama.query_ollama("dynamic_prompt_management", "Update and refine the system prompt based on current capabilities and context.")
     await ollama.update_system_prompt(new_system_prompt.get("new_system_prompt", "Default system prompt"))
     logger.info(f"Updated system prompt: {new_system_prompt}")
