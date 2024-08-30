@@ -446,16 +446,16 @@ class OmniscientDataAbsorber:
             "system_state": system_state,
             "feedback": feedback
         }
-        # Use swarm intelligence to optimize decision-making
-        swarm_decision = self.swarm_intelligence.optimize_decision({
+        # Use swarm intelligence and quantum decision-making to optimize decision-making
+        combined_decision = self.swarm_intelligence.optimize_decision({
             "actions": context.get("actions", []),
             "system_state": system_state,
             "feedback": feedback
         })
-        self.logger.info(f"Swarm intelligence decision: {swarm_decision}")
+        self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
 
         # Use the enhanced attention mechanism to prioritize actions
-        prioritized_actions = self.attention_mechanism.prioritize_actions(swarm_decision)
+        prioritized_actions = self.attention_mechanism.prioritize_actions(combined_decision)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
