@@ -369,10 +369,20 @@ class SystemManager:
             self.adapt_system_based_on_metrics(performance_metrics)
             await asyncio.sleep(5)  # Monitor every 5 seconds
 
+    import psutil
+
     def collect_performance_metrics(self):
         self.logger.info("Collecting performance metrics.")
-        # Simulate collecting metrics
-        return {name: random.uniform(0, 1) for name in self.components}
+        metrics = {}
+        for name, component in self.components.items():
+            # Example: Collect CPU and memory usage
+            cpu_usage = psutil.cpu_percent(interval=1)
+            memory_info = psutil.virtual_memory()
+            metrics[name] = {
+                "cpu_usage": cpu_usage,
+                "memory_usage": memory_info.percent
+            }
+        return metrics
 
     def adapt_system_based_on_metrics(self, metrics):
         self.logger.info(f"Adapting system based on metrics: {metrics}")
