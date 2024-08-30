@@ -936,7 +936,7 @@ class OmniscientDataAbsorber:
         self.request_log = []
         self.ollama = ollama_interface
         self.logger = logging.getLogger("OmniscientDataAbsorber")
-        self.spreadsheet_manager = SpreadsheetManager()
+        self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
         self.swarm_intelligence = SwarmIntelligence()
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
 
