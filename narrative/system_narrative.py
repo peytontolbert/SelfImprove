@@ -350,14 +350,21 @@ class SystemNarrative:
 
     async def evolve_feedback_loop(self, rl_feedback, predictive_insights):
         """Evolve the feedback loop by integrating reinforcement learning feedback and predictive insights."""
-        # Refine feedback loop with adaptive mechanisms
-        historical_feedback = await self.knowledge_base.get_entry("historical_feedback")
-        combined_feedback = rl_feedback + predictive_insights.get("suggestions", []) + historical_feedback.get("feedback", [])
+        combined_feedback = await self.optimize_feedback_loop(rl_feedback, predictive_insights)
         self.logger.info(f"Refining feedback loop with adaptive feedback: {combined_feedback}")
         await self.knowledge_base.add_entry("refined_feedback", {"combined_feedback": combined_feedback})
         self.logger.info("Long-term memory updated with refined feedback.")
         self.spreadsheet_manager.write_data((35, 1), [["Refined Feedback"], [combined_feedback]])
-        # Implement further logic to utilize combined feedback for long-term evolution
+
+    async def optimize_feedback_loop(self, rl_feedback, predictive_insights):
+        """Optimize the feedback loop by combining various feedback sources."""
+        historical_feedback = await self.knowledge_base.get_entry("historical_feedback")
+        combined_feedback = (
+            rl_feedback +
+            predictive_insights.get("suggestions", []) +
+            historical_feedback.get("feedback", [])
+        )
+        return combined_feedback
 
     async def apply_and_log_improvement(self, si, kb, improvement, system_state):
         await self.log_decision(f"Applying improvement: {improvement}")
