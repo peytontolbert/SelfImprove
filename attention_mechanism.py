@@ -26,9 +26,14 @@ class AttentionMechanism:
             urgency = action.get("urgency", 1)  # Default urgency is 1
             dependencies = action.get("dependencies", 0)  # Default dependencies is 0
             historical_performance = feedback.get(action.get("name"), {}).get("historical_performance", 1)
+            resource_availability = system_state.get("resources", {}).get(action.get("name"), 1)
+            alignment_with_goals = system_state.get("alignment", {}).get(action.get("name"), 1)
 
             # Composite score calculation
-            composite_score = (impact_score * urgency) / (1 + dependencies) * historical_performance
+            composite_score = (
+                (impact_score * urgency * alignment_with_goals) /
+                (1 + dependencies) * historical_performance * resource_availability
+            )
             action["composite_score"] = composite_score
 
         # Sort actions by composite score

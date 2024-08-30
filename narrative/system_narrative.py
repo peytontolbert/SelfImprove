@@ -281,7 +281,12 @@ class SystemNarrative:
             "system_state": system_state,
             "feedback": feedback
         }
-        prioritized_actions = self.attention_mechanism.prioritize_actions(context)
+        # Use the enhanced attention mechanism to prioritize actions
+        prioritized_actions = self.attention_mechanism.prioritize_actions({
+            "actions": context.get("actions", []),
+            "system_state": system_state,
+            "feedback": feedback
+        })
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
