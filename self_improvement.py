@@ -116,7 +116,6 @@ class SelfImprovement:
         }
         self.logger.info(f"Retrieved system metrics: {metrics}")
         return metrics
-        self.logger.info(f"Code change applied: {code_change}")
         return {"status": "success", "message": "Code change applied"}
 
     async def meta_learn(self, performance_data):
