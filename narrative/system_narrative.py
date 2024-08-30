@@ -154,7 +154,8 @@ class SystemNarrative:
             feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
             self.logger.info(f"Feedback analysis: {feedback}")
         except Exception as e:
-            self.logger.error(f"Error during log state operation: {str(e)}")
+            self.logger.error(f"Error during log state operation: {str(e)}", exc_info=True)
+            await self.suggest_recovery_strategy(e)
         """Log detailed reasoning before executing a step."""
         if context is None:
             context = {}
@@ -1141,8 +1142,6 @@ class OmniscientDataAbsorber:
                 async with session.request(method, url, json=data) as response:
                     response_data = await response.json()
                     self.logger.info(f"Network operation successful: {response_data}")
-                    # Ensure proper cleanup and resource management
-                    await session.close()
         except Exception as e:
             self.logger.error(f"Error performing network operation: {str(e)}")
 

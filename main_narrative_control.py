@@ -448,17 +448,7 @@ async def main():
         try:
             while True:
                 try:
-                    await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
-                    context = await gather_context(ollama, consciousness_emulator)
-
-                    await process_tasks(components, context)
-                    await manage_prompts(components, context)
-                    await analyze_and_improve_system(components, context)
-                    await optimize_system(components, context)
-                    await handle_complex_tasks(components, context)
-
-                    await narrative.log_chain_of_thought("Completed main loop iteration")
-                    await asyncio.sleep(60)  # Adjust the sleep time as needed
+                    await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
                 except Exception as e:
                     logger.exception("An error occurred in the main loop", exc_info=e)
                     await error_handling_and_recovery(components, e)
@@ -466,10 +456,39 @@ async def main():
             if not session.closed:
                 await session.close()
 
+    async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
+        await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
+        context = await gather_context(ollama, consciousness_emulator)
+
+        await process_tasks(components, context)
+        await manage_prompts(components, context)
+        await analyze_and_improve_system(components, context)
+        await optimize_system(components, context)
+        await handle_complex_tasks(components, context)
+
+        await narrative.log_chain_of_thought("Completed main loop iteration")
+        await asyncio.sleep(60)  # Adjust the sleep time as needed
+
 async def perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator):
+    """
+    Perform the knowledge absorption process.
+
+    This function coordinates the absorption of knowledge from various sources
+    and updates the system's consciousness state.
+
+    Parameters:
+    - data_absorber: The data absorber component responsible for knowledge absorption.
+    - ollama: The Ollama interface for querying system state.
+    - consciousness_emulator: The consciousness emulator for enhancing system awareness.
+
+    Returns:
+    - The result of the consciousness emulation process.
+    """
+    logger.info("Starting knowledge absorption process.")
     await data_absorber.absorb_knowledge()
     initial_context = await ollama.evaluate_system_state({})
     consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
+    logger.info("Knowledge absorption completed.")
     return consciousness_result
 
 async def gather_context(ollama, consciousness_emulator):
