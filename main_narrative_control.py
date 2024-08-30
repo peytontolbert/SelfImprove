@@ -338,14 +338,15 @@ class SystemManager:
 
     def restart_component(self, component_name):
         self.logger.info(f"Restarting component: {component_name}")
-        # Implement component restart logic using subprocess
-        try:
-            # Use a Windows-compatible command to restart a service
-            subprocess.run(["net", "stop", component_name], check=True)
-            subprocess.run(["net", "start", component_name], check=True)
-            self.logger.info(f"Component {component_name} restarted successfully.")
-        except subprocess.CalledProcessError as e:
-            self.logger.error(f"Failed to restart component {component_name}: {e}")
+        component = self.components.components.get(component_name)
+        if component and hasattr(component, 'restart'):
+            try:
+                component.restart()
+                self.logger.info(f"Component {component_name} restarted successfully.")
+            except Exception as e:
+                self.logger.error(f"Failed to restart component {component_name}: {e}")
+        else:
+            self.logger.warning(f"Component {component_name} does not support restart operation.")
 
     def update_component(self, component_name):
         self.logger.info(f"Updating component: {component_name}")
