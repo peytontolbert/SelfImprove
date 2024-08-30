@@ -113,16 +113,6 @@ class OmniscientDataAbsorber:
 
         return enhanced_space
 
-    async def disseminate_knowledge(self):
-        """Disseminate absorbed knowledge for decision-making."""
-        try:
-            entries = await self.knowledge_base.list_entries()
-            for entry in entries:
-                data = await self.knowledge_base.get_entry(entry)
-                self.logger.info(f"Disseminating knowledge: {entry} - {data}")
-        except Exception as e:
-            self.logger.error(f"Error disseminating knowledge: {e}")
-
     async def generate_thoughts(self, context=None):
         """Generate detailed thoughts or insights about the current state and tasks."""
         try:
