@@ -98,11 +98,17 @@ class OmniscientDataAbsorber:
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         current_state = await self.ollama.evaluate_system_state({})
 
+        # Use quantum decision-making to evaluate possibilities
+        quantum_possibilities = self.quantum_decision_maker.evaluate_possibilities(
+            "decision_space_enrichment", current_state, {}
+        )
+
         enhanced_space = {
             **decision_space,
             "longterm_memory": longterm_memory,
             "current_state": current_state,
-            "historical_decisions": await self.knowledge_base.get_entry("historical_decisions")
+            "historical_decisions": await self.knowledge_base.get_entry("historical_decisions"),
+            "quantum_possibilities": quantum_possibilities
         }
 
         return enhanced_space
