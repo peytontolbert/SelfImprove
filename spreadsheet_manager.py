@@ -1,39 +1,38 @@
 import openpyxl
-import json
+from openpyxl.utils.exceptions import InvalidFileException
+from typing import List, Tuple, Optional
 
 class SpreadsheetManager:
-    def __init__(self, file_path):
+    def __init__(self, file_path: str):
         self.file_path = file_path
         try:
             self.workbook = openpyxl.load_workbook(file_path)
-        except (FileNotFoundError, openpyxl.utils.exceptions.InvalidFileException):
+        except (FileNotFoundError, InvalidFileException) as e:
             self.workbook = openpyxl.Workbook()
             self.workbook.save(file_path)
-        self.sheet = self.workbook.active
+            print(f"Created a new workbook due to: {e}")
 
-    def read_data(self, cell_range):
-        """Read data from a specified cell range."""
-        data = []
-        for row in self.sheet[cell_range]:
-            data.append([cell.value for cell in row])
-        return data
+    def read_data(self, cell_range: str) -> List[List[Optional[str]]]:
+        try:
+            sheet = self.workbook.active
+            return [[cell.value for cell in row] for row in sheet[cell_range]]
+        except Exception as e:
+            print(f"Error reading data from {cell_range}: {e}")
+            return []
 
-    def write_data(self, start_cell, data, sheet_name=None):
-        """Write data to the spreadsheet starting from a specified cell."""
-        if sheet_name:
-            if sheet_name not in self.workbook.sheetnames:
-                self.add_sheet(sheet_name)
-            self.sheet = self.workbook[sheet_name]
-        """Write data to the spreadsheet starting from a specified cell."""
-        for row_idx, row_data in enumerate(data, start=start_cell[0]):
-            for col_idx, value in enumerate(row_data, start=start_cell[1]):
-                # Convert complex data types to JSON strings
-                if isinstance(value, (dict, list)):
-                    value = json.dumps(value, indent=2)
-                self.sheet.cell(row=row_idx, column=col_idx, value=str(value))
-        self.workbook.save(self.file_path)
+    def write_data(self, start_cell: Tuple[int, int], data: List[List[Optional[str]]], sheet_name: Optional[str] = None) -> None:
+        try:
+            sheet = self.workbook[sheet_name] if sheet_name else self.workbook.active
+            for i, row in enumerate(data):
+                for j, value in enumerate(row):
+                    sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
+            self.workbook.save(self.file_path)
+        except Exception as e:
+            print(f"Error writing data to {start_cell}: {e}")
 
-    def add_sheet(self, sheet_name):
-        """Add a new sheet to the workbook."""
-        self.workbook.create_sheet(title=sheet_name)
-        self.workbook.save(self.file_path)
+    def add_sheet(self, sheet_name: str) -> None:
+        try:
+            self.workbook.create_sheet(title=sheet_name)
+            self.workbook.save(self.file_path)
+        except Exception as e:
+            print(f"Error adding sheet {sheet_name}: {e}")
