@@ -9,12 +9,7 @@ class QuantumDecisionMaker:
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama_interface
 
-    def __init__(self, ollama_interface: OllamaInterface):
-        self.logger = logging.getLogger(__name__)
-        self.ollama = ollama_interface
-        # Initialize the deep learning model
-        self.model = SimpleNN(input_size=10, hidden_size=5, output_size=1)  # Adjust sizes as needed
-        self.model.eval()  # Set the model to evaluation mode
+    async def evaluate_possibilities(self, action, system_state, feedback) -> List[Dict[str, Any]]:
         """
         Evaluate multiple possibilities for a given action using quantum-inspired logic.
 
