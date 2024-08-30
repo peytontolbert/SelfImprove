@@ -48,7 +48,7 @@ class SystemNarrative:
             self.spreadsheet_manager.write_data((5, 1), [["Thought Process"], [thought_process]], sheet_name="SystemData")
             await log_with_ollama(self.ollama, thought_process, relevant_context)
             # Generate and log thoughts about the current state
-            await self.generate_thoughts(relevant_context)
+            await self.data_absorber.generate_thoughts(relevant_context)
             # Analyze feedback and suggest improvements
             self.track_request("feedback_analysis", f"Analyze feedback for the current thought process: {thought_process}. Consider system performance, recent changes, and long-term memory.", "feedback")
             feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current thought process: {thought_process}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
@@ -731,7 +731,7 @@ class OmniscientDataAbsorber:
             if context:
                 prompt += f" | Context: {context}"
             self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
-            await self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+            await self.knowledge_base.log_interaction("OmniscientDataAbsorber", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
             self.track_request("thought_generation", prompt, "thoughts")
             ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
             thoughts = ollama_response.get('thoughts', 'No thoughts generated')
