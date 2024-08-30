@@ -7,8 +7,9 @@ from datetime import datetime
 from typing import List, Dict, Any
 
 class TaskQueue:
-    def __init__(self):
+    def __init__(self, ollama: OllamaInterface):
         self.tasks: List[Dict[str, Any]] = []
+        self.ollama = ollama
 
     def add_task(self, name: str, priority: int = 1, deadline: datetime = None, status: str = "Pending"):
         """Add a new task to the queue."""
@@ -39,10 +40,24 @@ class TaskQueue:
         now = datetime.now()
         return [task for task in self.tasks if task['deadline'] and task['deadline'] < now and task['status'] == "Pending"]
 
-    def display_tasks(self):
-        """Display all tasks."""
-        for task in self.tasks:
-            print(f"Task: {task['name']}, Priority: {task['priority']}, Deadline: {task['deadline']}, Status: {task['status']}")
+    async def create_project_plan(self, project_requirements):
+        context = {"requirements": project_requirements}
+        project_plan = await self.ollama.query_ollama("project_planning", f"Create a project plan for these requirements: {project_requirements}", context=context)
+        logger.info(f"Project plan: {project_plan}")
+        return project_plan
+
+    async def assign_tasks(self, project_plan):
+        for task in project_plan['tasks']:
+            self.add_task(task['name'], task.get('priority', 1), task.get('deadline'), task.get('status', 'Pending'))
+        logger.info("Tasks assigned to queue")
+
+    async def generate_progress_report(self):
+        completed_tasks = [task for task in self.tasks if task['status'] == "Completed"]
+        pending_tasks = [task for task in self.tasks if task['status'] == "Pending"]
+        context = {"completed": completed_tasks, "pending": pending_tasks}
+        report = await self.ollama.query_ollama("progress_report", "Generate a progress report", context=context)
+        logger.info(f"Progress report: {report}")
+        return report
     def __init__(self, ollama: OllamaInterface):
         self.tasks = []
         self.ollama = ollama
