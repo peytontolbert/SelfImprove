@@ -1,0 +1,6 @@
+{
+  "system_prompt": "dynamic_resource_allocation",
+  "prompt": "Context: {\n  \"task\": null,\n  \"prompt_length\": 85,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994940.805798\n}\n\nAdjust resource allocation dynamically using predictive analytics and real-time data.",
+  "response": "{\n  \"task\": {\n    \"id\": 123,\n    \"priority\": \"high\",\n    \"resource_requirements\": {\n      \"cpu\": 50,\n      \"memory\": 100,\n      \"storage\": 200\n    }\n  },\n  \"prompt_length\": 85,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": {\n    \"previous_allocation\": {\n      \"cpu\": 30,\n      \"memory\": 50,\n      \"storage\": 100\n    },\n    \"current_load\": {\n      \"cpu\": 60,\n      \"memory\": 80,\n      \"storage\": 150\n    }\n  },\n  \"timestamp\": 1724994940.805798,\n\n  \"dynamic_resource_allocation\": {\n    \"allocated_resources\": {\n      \"cpu\": 70,\n      \"memory\": 120,\n      \"storage\": 220\n    },\n    \"predicted_usage\": {\n      \"cpu\": 80,\n      \"memory\": 90,\n      \"storage\": 180\n    }\n  }\n}",
+  "timestamp": 1724994945.8183804
+}
