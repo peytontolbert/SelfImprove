@@ -150,7 +150,7 @@ class KnowledgeBase:
                 documents.extend(longterm_memory.get("insights", []))
             # Enhance document retrieval with contextual awareness
             context = {"query": query}
-            enhanced_context = self.ollama.emulate_consciousness(context)
+            enhanced_context = await self.ollama.emulate_consciousness(context)
             prioritized_documents = sorted(documents, key=lambda doc: enhanced_context.get("prioritized_actions", {}).get(doc['title'], 0), reverse=True)
             self.logger.debug(f"Retrieved and prioritized documents: {prioritized_documents}")
             return prioritized_documents
