@@ -174,6 +174,7 @@ class KnowledgeBase:
         self.logger.debug(f"Augmented prompt: {augmented_prompt}")
         self.logger.info(f"Augmented prompt for task '{task}': {augmented_prompt}")
         return str(augmented_prompt)
+    async def sync_with_spreadsheet(self, spreadsheet_manager: SpreadsheetManager, sheet_name: str = "KnowledgeBase"):
         """Synchronize data between the spreadsheet and the graph database."""
         try:
             # Read data from the spreadsheet
