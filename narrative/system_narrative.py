@@ -836,8 +836,12 @@ class OmniscientDataAbsorber:
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
         await self.knowledge_base.save_longterm_memory(longterm_memory)
+        with open('longterm.json', 'w') as f:
+            json.dump(longterm_memory, f, indent=2)
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
+        with open('narrative_data.json', 'w') as f:
+            json.dump({"thoughts": thoughts}, f, indent=2)
         return thoughts
 
     def track_request(self, task, prompt, expected_response):
@@ -962,6 +966,7 @@ class OmniscientDataAbsorber:
         await log_with_ollama(self.ollama, decision, rationale)
         # Log decision and rationale in the knowledge base
         await self.knowledge_base.add_entry("system_decision", {"decision": decision, "rationale": rationale, "timestamp": time.time()})
+        self.driver.session().run("MATCH (n) RETURN n")  # Ensure session is active and updates are committed
         # Log decision and rationale in the knowledge base
         await self.knowledge_base.add_entry("system_decision", {"decision": decision, "rationale": rationale, "timestamp": time.time()})
         # Log decision to spreadsheet
