@@ -238,8 +238,8 @@ class KnowledgeBase:
         self.logger.info(f"Memory summary: {summary}")
         return summary
 
-    async def get_longterm_memory(self):
-        """Retrieve, refine, and manage long-term memory entries."""
+    async def get_longterm_memory(self, max_size: int = 1024 * 1024):
+        """Retrieve, refine, and manage long-term memory entries, ensuring size constraints."""
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
         for entry_name in entries:
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
@@ -250,6 +250,12 @@ class KnowledgeBase:
         # Prioritize and manage memory
         self.prioritize_memory_entries()
         self.summarize_less_relevant_data()
+
+        # Check the size of the long-term memory
+        memory_size = sum(len(json.dumps(entry)) for entry in self.longterm_memory.values())
+        if memory_size > max_size:
+            self.logger.warning(f"Long-term memory size ({memory_size} bytes) exceeds the maximum allowed size ({max_size} bytes). Summarizing data.")
+            await self.summarize_memory_with_ollama(self.longterm_memory)
 
         if self.longterm_memory:
             self.logger.info(f"Retrieved and refined long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
