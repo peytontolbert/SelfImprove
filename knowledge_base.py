@@ -73,18 +73,26 @@ class KnowledgeBase:
         # Create initial nodes or constraints if needed
         tx.run("CREATE CONSTRAINT IF NOT EXISTS FOR (n:Node) REQUIRE n.name IS UNIQUE")
 
-    def add_node(self, label, properties):
-        """Add a node with detailed properties to the graph."""
+    def add_nodes_batch(self, label, nodes):
+        """Add multiple nodes in a batch to the graph."""
         with self.driver.session() as session:
-            session.write_transaction(self._create_node, label, properties)
+            session.write_transaction(self._create_nodes_batch, label, nodes)
 
     @staticmethod
-    def _create_node(tx, label, properties):
-        # Construct the query with explicit property assignments
-        property_assignments = ", ".join([f"n.{k} = ${k}" for k in properties.keys()])
-        query = f"MERGE (n:{label}) SET {property_assignments}"
-        sanitized_properties = {k: (json.dumps(v) if isinstance(v, (dict, list)) else v) for k, v in properties.items()}
-        tx.run(query, **sanitized_properties)
+    def _create_nodes_batch(tx, label, nodes):
+        query = f"UNWIND $nodes AS node MERGE (n:{label} {{name: node.name}}) SET n += node.properties"
+        tx.run(query, nodes=[{"name": node["name"], "properties": node["properties"]} for node in nodes])
+
+    def find_shortest_path(self, start_node, end_node, relationship_type):
+        """Find the shortest path between two nodes."""
+        with self.driver.session() as session:
+            result = session.run(
+                "MATCH (start {name: $start_node}), (end {name: $end_node}), "
+                "p = shortestPath((start)-[:$relationship_type*]-(end)) "
+                "RETURN p",
+                start_node=start_node, end_node=end_node, relationship_type=relationship_type
+            )
+            return [record["p"] for record in result]
 
     def add_relationship(self, from_node, to_node, relationship_type, properties=None):
         """Add or update a relationship with properties between nodes."""
