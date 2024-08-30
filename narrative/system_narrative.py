@@ -539,7 +539,7 @@ class SystemNarrative:
         return recovery_actions
 
 class QuantumPredictiveAnalyzer:
-    def __init__(self):
+    def __init__(self, ollama_interface: OllamaInterface):
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
         self.logger = logging.getLogger("QuantumPredictiveAnalyzer")
 
