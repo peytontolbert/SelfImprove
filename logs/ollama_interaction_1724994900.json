@@ -1,0 +1,6 @@
+{
+  "system_prompt": "Default software assistant prompt",
+  "prompt": "Context: {\n  \"task\": null,\n  \"prompt_length\": 368,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994897.695815\n}\n\nEvaluate the relevance of this entry: user_feedback with data: {'task': None, 'prompt_length': 67, 'system_definition': \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\", 'context_memory': {'feedback': {'user_id': None, 'rating': None, 'comments': None}, 'responses': []}, 'timestamp': 1724994889.5989857}",
+  "response": "{} \n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\n\n  \n\n\n\n\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\n\n  \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\n\n",
+  "timestamp": 1724994900.6529
+}

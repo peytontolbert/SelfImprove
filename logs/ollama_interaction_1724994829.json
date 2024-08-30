@@ -1,0 +1,6 @@
+{
+  "system_prompt": "adaptive_prompt_refinement",
+  "prompt": "Context: {\n  \"task\": \"relevance_evaluation\",\n  \"prompt_length\": 269,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994826.981051\n}\n\nRefine the following prompt for the task of relevance_evaluation:\n\nEvaluate the relevance of this entry: progress_evaluation with data: {'progress_evaluation': {'evaluation_method': 'Contextual Analysis', 'evaluation_score': 0, 'goal_completion_status': 'Not started'}}",
+  "response": "{ \"prompt\": \"What is the relevance of 'progress_evaluation' given evaluation_method = Contextual Analysis, evaluation_score = 0 and goal_completion_status = Not started?\" }",
+  "timestamp": 1724994829.7537434
+}

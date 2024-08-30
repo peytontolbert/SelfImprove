@@ -1,0 +1,6 @@
+{
+  "system_prompt": "adaptive_prompt_refinement",
+  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 83,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994799.052887\n}\n\nRefine the following prompt for the task of general:\n\n{'task': 'system_evaluation'}",
+  "response": "{\n  \"prompt\": \"Evaluate the performance of a software development project and its capabilities for complex tasks.\",\n  \"context\": {\n    \"task\": \"general\",\n    \"prompt_length\": 83,\n    \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n    \"context_memory\": \"{}\",\n    \"timestamp\": 1724994799.052887\n  }\n}",
+  "timestamp": 1724994802.3687458
+}

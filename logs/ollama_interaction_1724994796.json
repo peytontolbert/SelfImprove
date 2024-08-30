@@ -1,0 +1,6 @@
+{
+  "system_prompt": "adaptive_prompt_refinement",
+  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 125,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994793.5039814\n}\n\nRefine the following prompt for the task of general:\n\nProvide an overview of the current system capabilities and performance.",
+  "response": "{\"prompt\": \"What are the current system capabilities, and how is its performance impacting the project?\"}",
+  "timestamp": 1724994796.0688727
+}

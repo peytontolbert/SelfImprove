@@ -24,10 +24,10 @@ class SystemNarrative:
         self.data_absorber = data_absorber
         self.logger = logging.getLogger("SystemNarrative")
         self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
-        self.consciousness_emulator = ConsciousnessEmulator()
+        self.consciousness_emulator = ConsciousnessEmulator(ollama_interface)
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
-        self.code_visualizer = DimensionalCodeVisualizer()
+        self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
 
     async def log_chain_of_thought(self, thought_process, context=None):
         """Log detailed reasoning before executing a step."""

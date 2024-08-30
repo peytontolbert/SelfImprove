@@ -1,0 +1,6 @@
+{
+  "system_prompt": "adaptive_prompt_refinement",
+  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 100,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724993997.6731308\n}\n\nRefine the following prompt for the task of general:\n\nAnalyze feedback for the current system state.",
+  "response": "{\"prompt\": \"Provide a detailed analysis of the current system state, incorporating user feedback and performance metrics.\", \"context\": \"adaptive_prompt_refinement\"}",
+  "timestamp": 1724994000.3018224
+}

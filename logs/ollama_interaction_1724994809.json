@@ -1,0 +1,6 @@
+{
+  "system_prompt": "adaptive_prompt_refinement",
+  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 106,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994805.5335784\n}\n\nRefine the following prompt for the task of general:\n\nDefine short-term goals for incremental improvement.",
+  "response": "{ \n\"task\": \"general\", \n\"input\": \" Define short-term goals for incremental improvement.\", \n\"refinement_level\": 1, \n\"refined_prompt\": \"What are specific short-term objectives that can be achieved in the next [timeframe] to incrementally improve performance, efficiency, or outcomes?\", \n\"context_memory\": \"{\\\"task\\\": \\\"general\\\", \\\"prompt_length\\\": 106, \\\"system_definition\\\": \\\"The term \\\\u0027system\\\\u0027 refers to the project and its capabilities for complex software development assistant tasks.\\\", \\\"context_memory\\\": \\\"{}\\\", \\\"timestamp\\\": 1724994805.5335784}\", \n\"refinement_reason\": \"Added a specific timeframe placeholder to encourage more detailed and contextual response.\", \n\"timestamp\": 1724994823.1335786 \n}",
+  "timestamp": 1724994809.7966971
+}

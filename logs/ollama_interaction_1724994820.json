@@ -1,0 +1,6 @@
+{
+  "system_prompt": "Default software assistant prompt",
+  "prompt": "Context: {\n  \"task\": null,\n  \"prompt_length\": 560,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994817.542755\n}\n\nEvaluate the relevance of this entry: short_term_goals with data: {'task': None, 'prompt_length': 52, 'system_definition': \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\", 'context_memory': '{\"goal_setting\": {\"next_timeframe\": [90, 180], \"short_term_objectives\": [{\"objective\": \"Improve response accuracy by 15%\", \"metric\": \"accuracy\", \"target_value\": 0.85}, {\"objective\": \"Reduce average response time by 25%\", \"metric\": \"response_time\", \"target_value\": 2.5}]}', 'timestamp': 1724994809.797201}",
+  "response": "{}\n\n  \n\n\n\n\n\n \n \n\n  \n \n  \n\n \n\n \n\n \n\n \n\n \n \n\n \n \n\n\n\n\n\n\n  \n\n\n\n\n\n  \n\n\n\n  \n\n\n\n \n\n \n \n",
+  "timestamp": 1724994820.425794
+}

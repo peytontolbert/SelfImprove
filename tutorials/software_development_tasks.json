@@ -11,7 +11,7 @@
         },
         {
             "difficulty": "Hard",
-            "task": "Handle a large machine learning codebase. The user requests multiple changes, including optimizing the model's performance, adding new data preprocessing steps, and updating the model's evaluation metrics."
+            "task": "Handle a large machine learning codebase. The user requests multiple changes, including optimizing the model's performance, adding new data preprocessing steps, and major codebase changes."
         }
     ]
 }
