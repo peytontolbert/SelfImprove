@@ -357,6 +357,7 @@ def initialize_components():
     improvement_manager = ImprovementManager(ollama)
     omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
     si = SelfImprovement(ollama, kb, improvement_manager)
+    si = SelfImprovement(ollama, kb, improvement_manager)
     components = {
         "ollama": ollama,
         "rl_module": ReinforcementLearningModule(ollama),
