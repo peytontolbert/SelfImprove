@@ -25,7 +25,6 @@ import aiohttp
 import json
 import torch
 import tempfile
-import tempfile
 import unittest
 import torch.nn as nn
 import torch.optim as optim
@@ -34,7 +33,6 @@ from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
 from core.task_manager import TaskQueue
-from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from prompts.management.prompt_manager import PromptManager
 from error_handler import ErrorHandler
 from file_system import FileSystem
@@ -704,11 +702,13 @@ async def main():
     system_manager.log_system_state()
     ollama = components["ollama"]
     system_manager.manage_component("ollama", action="status")
+    # Initialize and use components
     rl_module = components["rl_module"]
     si = components["si"]
     metrics = await si.get_system_metrics()
     rl_feedback = await rl_module.get_feedback(metrics)
     logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+
     task_queue = components["task_queue"]
     vcs = components["vcs"]
     ca = components["ca"]
@@ -716,7 +716,6 @@ async def main():
     dm = components["dm"]
     kb = components["kb"]
     narrative = components["narrative"]
-    si = components["si"]
     fs = components["fs"]
     pm = components["pm"]
     eh = components["eh"]
