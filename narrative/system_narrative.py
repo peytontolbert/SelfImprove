@@ -570,8 +570,16 @@ class SystemNarrative:
             feedback = await self.ollama.query_ollama("real_time_feedback", "Gather real-time feedback for adaptive learning.", context={"system_state": system_state})
             self.logger.info(f"Real-time feedback: {feedback}")
 
-            # Adjust strategies based on feedback
-            strategy_adjustments = await self.ollama.query_ollama("strategy_adjustment", "Adjust strategies based on real-time feedback.", context={"feedback": feedback})
+            # Analyze long-term data for strategy refinement
+            long_term_data = await self.knowledge_base.get_longterm_memory()
+            self.logger.info(f"Long-term data for strategy refinement: {long_term_data}")
+
+            # Use predictive analytics to refine strategies
+            predictive_insights = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to refine strategies for long-term evolution.", context={"feedback": feedback, "long_term_data": long_term_data})
+            self.logger.info(f"Predictive insights for strategy refinement: {predictive_insights}")
+
+            # Adjust strategies based on feedback and predictive insights
+            strategy_adjustments = await self.ollama.query_ollama("strategy_adjustment", "Adjust strategies based on real-time feedback and predictive insights.", context={"feedback": feedback, "predictive_insights": predictive_insights})
             self.logger.info(f"Strategy adjustments: {strategy_adjustments}")
 
             # Log the adjustments
