@@ -109,6 +109,8 @@ class SystemNarrative:
                 await self.handle_database_update(details)
             else:
                 self.logger.error(f"Unknown action type: {action_type}. Please check the action details.")
+        # Log the execution of actions
+        self.logger.info(f"Executed actions: {actions}")
 
     async def handle_network_operation(self, details):
         """Handle network operations such as API calls."""
@@ -245,10 +247,18 @@ class SystemNarrative:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
-        # Use the attention mechanism to prioritize actions
-        context = {"actions": [{"name": "optimize_performance", "impact_score": 8}, {"name": "enhance_security", "impact_score": 5}]}
+        # Use the attention mechanism to prioritize actions based on system state and feedback
+        system_state = await self.ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+        feedback = await self.ollama.query_ollama("feedback_analysis", "Analyze feedback for the current system state.", context={"system_state": system_state})
+        context = {
+            "actions": [{"name": "optimize_performance", "impact_score": 8}, {"name": "enhance_security", "impact_score": 5}],
+            "system_state": system_state,
+            "feedback": feedback
+        }
         prioritized_actions = self.attention_mechanism.prioritize_actions(context)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
+        # Execute prioritized actions
+        await self.execute_actions(prioritized_actions["prioritized_actions"])
         await self.self_optimization(ollama, kb)
         system_state = {}
         improvement_cycle_count = 0
