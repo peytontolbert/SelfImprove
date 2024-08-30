@@ -7,6 +7,7 @@ from meta_learner import MetaLearner
 # Delay the import of SystemNarrative to avoid circular import issues
 from simple_nn import GeneralNN
 from swarm_intelligence import SwarmIntelligence
+from attention_mechanism import ConsciousnessEmulator
 from quantum_optimizer import QuantumOptimizer
 from knowledge_base import KnowledgeBase
 from core.improvement_manager import ImprovementManager
@@ -31,13 +32,13 @@ class SelfImprovement:
     - suggest_prompt_refinements: Suggests refinements for system prompts.
     - retry_ollama_call: Retries a function call with Ollama if the result is None.
     """
-    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
+    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager, consciousness_emulator: ConsciousnessEmulator):
         self.nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=torch.nn.ReLU)
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
         from narrative.system_narrative import SystemNarrative
         self.system_narrative: SystemNarrative
-        self.swarm_intelligence = SwarmIntelligence()
+        self.swarm_intelligence = SwarmIntelligence(ollama)
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
 
