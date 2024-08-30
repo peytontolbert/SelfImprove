@@ -577,7 +577,7 @@ async def analyze_and_improve_system(components, context):
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in refined_improvements])
     logger.info("Logged improvements to spreadsheet")
     
-    metrics = si.get_system_metrics()
+    metrics = await si.get_system_metrics()
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
     
