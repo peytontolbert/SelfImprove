@@ -408,7 +408,7 @@ def initialize_components():
         "pm": PromptManager(),
         "eh": ErrorHandler(),
         "tutorial_manager": TutorialManager(),
-        "meta_learner": MetaLearner(),
+        "meta_learner": MetaLearner(ollama, kb),
         "quantum_optimizer": QuantumOptimizer(ollama),
         "swarm_intelligence": SwarmIntelligence(ollama),
     }
