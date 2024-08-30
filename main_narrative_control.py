@@ -308,13 +308,7 @@ class SystemManager:
             if action == "status":
                 self.logger.info(f"Component {component_name} status: {component}")
             elif action == "restart":
-                if isinstance(component, OllamaInterface):
-                    self.logger.info(f"Restarting Ollama component: {component_name}")
-                    # Implement specific restart logic for OllamaInterface
-                    # Placeholder for restart logic, as restart method does not exist
-                    self.logger.warning(f"No restart method for OllamaInterface. Skipping restart for {component_name}.")
-                else:
-                    self.restart_component(component_name)
+                self.restart_component(component_name)
             elif action == "update":
                 self.update_component(component_name)
             elif action == "scale":
@@ -328,12 +322,14 @@ class SystemManager:
         component = self.components.components.get(component_name)
         if component:
             load = self.collect_performance_metrics().get(component_name, 0)
-            if load > 0.8:
+            if load["cpu_usage"] > 80 or load["memory_usage"] > 80:
                 self.logger.info(f"Increasing resources for {component_name}")
-                # Increase resources (e.g., CPU, memory)
-            elif load < 0.2:
+                # Example: Increase resources (e.g., add more instances)
+                self.scale_up(component_name)
+            elif load["cpu_usage"] < 20 and load["memory_usage"] < 20:
                 self.logger.info(f"Decreasing resources for {component_name}")
-                # Decrease resources
+                # Example: Decrease resources (e.g., remove instances)
+                self.scale_down(component_name)
 
     def log_system_state(self):
         self.logger.info("Logging system state for all components.")
@@ -394,12 +390,12 @@ class SystemManager:
     def adapt_system_based_on_metrics(self, metrics):
         self.logger.info(f"Adapting system based on metrics: {metrics}")
         for component_name, load in metrics.items():
-            if load > 0.8:
+            if load["cpu_usage"] > 80 or load["memory_usage"] > 80:
                 self.logger.info(f"High load on {component_name}, scaling up.")
-                self.scale_component(component_name)
-            elif load < 0.2:
+                self.scale_up(component_name)
+            elif load["cpu_usage"] < 20 and load["memory_usage"] < 20:
                 self.logger.info(f"Low load on {component_name}, scaling down.")
-                self.scale_component(component_name)
+                self.scale_down(component_name)
 
 async def initialize_components():
     ollama = OllamaInterface()
@@ -741,3 +737,10 @@ def load_configuration():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    def scale_up(self, component_name):
+        self.logger.info(f"Scaling up resources for {component_name}")
+        # Implement logic to increase resources, e.g., add more instances
+
+    def scale_down(self, component_name):
+        self.logger.info(f"Scaling down resources for {component_name}")
+        # Implement logic to decrease resources, e.g., remove instances
