@@ -42,6 +42,9 @@ class OllamaInterface:
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
         if context is None:
             context = {}
+        # Clarify the meaning of "system" in the context
+        context.update({"system_definition": "The term 'system' refers to the project and its capabilities for complex software development assistant tasks."})
+        
         if use_contextual_memory:
             if "longterm_memory" not in context:
                 context_memory = await self.knowledge_base.get_longterm_memory()
