@@ -534,7 +534,7 @@ async def process_tasks(components, context):
     task_queue = components["task_queue"]
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
     
-    tasks_data = spreadsheet_manager.read_data("A1:B10")
+    tasks_data = spreadsheet_manager.read_data("A1:B10", sheet_name="Tasks")
     logger.info(f"Existing tasks and statuses: {json.dumps(tasks_data, indent=2)}")
     
     prioritized_tasks = await ollama.query_ollama("task_prioritization", "Prioritize and optimize task execution based on current context", context=context)
