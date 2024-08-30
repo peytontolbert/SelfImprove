@@ -228,9 +228,20 @@ class KnowledgeBase:
         return relevance_decision
 
     async def get_longterm_memory(self) -> Dict[str, Any]:
-        """Retrieve long-term memory data."""
-        # Placeholder implementation
-        return self.longterm_memory
+        """Retrieve long-term memory data from the graph database."""
+        self.logger.info("Retrieving long-term memory from the graph database.")
+        longterm_memory = {}
+        try:
+            with self.driver.session() as session:
+                result = session.run("MATCH (n:LongTermMemory) RETURN n.name AS name, n.data AS data")
+                for record in result:
+                    name = record["name"]
+                    data = record["data"]
+                    longterm_memory[name] = data
+            self.logger.info("Successfully retrieved long-term memory.")
+        except Exception as e:
+            self.logger.error(f"Error retrieving long-term memory: {str(e)}")
+        return longterm_memory
 
     async def integrate_cross_disciplinary_knowledge(self, disciplines: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate knowledge across multiple disciplines."""
