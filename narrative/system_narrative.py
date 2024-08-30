@@ -332,19 +332,20 @@ class SystemNarrative:
         self.logger.info(f"Advanced Resource allocation optimization: {resource_optimization}")
         await self.knowledge_base.add_entry("advanced_resource_optimization", resource_optimization)
 
-        # Enhanced feedback loops for rapid learning
-        feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
-        self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
-        await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
+        # Advanced feedback loops for continuous learning
+        feedback_optimization = await self.ollama.query_ollama("advanced_feedback_optimization", "Enhance feedback loops with machine learning models for rapid adaptation.", context={"system_state": system_state})
+        self.logger.info(f"Advanced feedback loop optimization: {feedback_optimization}")
+        await self.knowledge_base.add_entry("advanced_feedback_optimization", feedback_optimization)
 
-        # Structured Self-Reflection and Adaptation
-        self_reflection = await self.ollama.query_ollama(
-            "self_reflection",
-            "Reflect on recent performance and suggest structured adjustments.",
-            context={"system_state": system_state}
-        )
-        self.logger.info(f"Structured Self-reflection insights: {self_reflection}")
-        await self.knowledge_base.add_entry("structured_self_reflection", self_reflection)
+        # Predictive analytics for future challenges
+        future_challenges = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to anticipate future challenges and develop strategies.", context={"system_state": system_state})
+        self.logger.info(f"Predictive analytics insights: {future_challenges}")
+        await self.knowledge_base.add_entry("predictive_analytics_insights", future_challenges)
+
+        # Adaptive learning for strategy refinement
+        adaptive_learning = await self.ollama.query_ollama("adaptive_learning", "Implement adaptive learning techniques to refine strategies based on feedback.", context={"system_state": system_state})
+        self.logger.info(f"Adaptive learning insights: {adaptive_learning}")
+        await self.knowledge_base.add_entry("adaptive_learning_insights", adaptive_learning)
 
         # Implement adaptive goal setting based on real-time performance metrics
         current_goals = await self.knowledge_base.get_entry("current_goals")
