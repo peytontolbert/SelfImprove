@@ -442,7 +442,6 @@ class RefinementManager:
 
     async def get_performance_metric(self, refinement):
         self.logger.info(f"Getting performance metric for refinement: {refinement}")
-        # Simulate performance evaluation
         performance_score = random.uniform(0, 1)
         
         # Use Ollama for advanced performance evaluation
@@ -539,7 +538,7 @@ class RefinementManager:
         self.ollama = ollama
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
-        self.refinement_manager = RefinementManager(ollama, knowledge_base)
+        self.refinement_manager = RefinementManager(ollama, knowledge_base, improvement_manager, consciousness_emulator)
         self.swarm_intelligence = SwarmIntelligence(ollama)
 
     async def analyze_performance(self, metrics, rl_module):
