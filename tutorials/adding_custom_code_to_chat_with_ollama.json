@@ -1,0 +1,23 @@
+{
+    "title": "Adding Custom Code to chat_with_ollama.py",
+    "content": [
+        "This tutorial will guide you through the process of adding custom code to the `chat_with_ollama.py` file for your specific project needs.",
+        "Step 1: Open the `chat_with_ollama.py` file in your preferred code editor.",
+        "Step 2: Identify the `ChatGPT` class where you want to add your custom method.",
+        "Step 3: Define your custom method within the `ChatGPT` class. For example, to add a method that logs custom messages, you can do the following:",
+        "```python",
+        "def log_custom_message(self, message):",
+        "    \"\"\"Log a custom message.\"\"\"",
+        "    print(f\"Custom Log: {message}\")",
+        "```",
+        "Step 4: Save your changes to the `chat_with_ollama.py` file.",
+        "Step 5: Test your new method by creating an instance of `ChatGPT` and calling your custom method:",
+        "```python",
+        "if __name__ == \"__main__\":",
+        "    chat_gpt = ChatGPT()",
+        "    chat_gpt.log_custom_message(\"This is a test message.\")",
+        "```",
+        "Step 6: Run the script to ensure your custom method works as expected.",
+        "By following these steps, you can extend the functionality of the `ChatGPT` class to suit your project's requirements."
+    ]
+}
