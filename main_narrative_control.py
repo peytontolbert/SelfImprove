@@ -572,8 +572,8 @@ async def main():
     # Quantum optimization for complex problem spaces
     problem_space = {"variables": ["x", "y"], "constraints": ["x + y <= 10"]}
     await narrative.log_chain_of_thought("Applying quantum optimization to complex problem spaces.")
-    optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
-    logger.info(f"Quantum optimized solution: {optimized_solution}")
+    quantum_optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
+    logger.info(f"Quantum optimized solution: {quantum_optimized_solution}")
     complex_tasks = ["Optimize system architecture", "Enhance user experience"]
     subtasks_results = await asyncio.gather(
         *[ollama.query_ollama("task_decomposition", f"Decompose the task: {task}") for task in complex_tasks]
