@@ -231,8 +231,65 @@ class SelfImprovement:
         return learning
 
     async def get_system_metrics(self):
+        """
+        Retrieve and enhance system performance metrics.
+
+        Returns:
+        - A dictionary with categorized metrics, historical comparisons, and trend insights.
+        """
         response = await self.ollama.query_ollama("system_metrics", "Provide an overview of the current system capabilities and performance.")
-        return response.get("metrics", {})
+        current_metrics = response.get("metrics", {})
+
+        # Categorize metrics
+        categorized_metrics = {
+            "performance": current_metrics.get("performance", {}),
+            "resource_usage": current_metrics.get("resource_usage", {}),
+            "error_rates": current_metrics.get("error_rates", {}),
+        }
+
+        # Add historical comparisons
+        historical_data = await self.knowledge_base.get_entry("historical_metrics")
+        comparisons = {
+            "performance": self.compare_with_historical(categorized_metrics["performance"], historical_data.get("performance", {})),
+            "resource_usage": self.compare_with_historical(categorized_metrics["resource_usage"], historical_data.get("resource_usage", {})),
+            "error_rates": self.compare_with_historical(categorized_metrics["error_rates"], historical_data.get("error_rates", {})),
+        }
+
+        # Provide trend insights
+        trend_insights = await self.ollama.query_ollama("trend_analysis", "Analyze trends based on current and historical metrics.", context={"current": current_metrics, "historical": historical_data})
+
+        enhanced_metrics = {
+            "categorized_metrics": categorized_metrics,
+            "comparisons": comparisons,
+            "trend_insights": trend_insights.get("insights", {})
+        }
+
+        self.logger.info(f"Enhanced system metrics: {enhanced_metrics}")
+        return enhanced_metrics
+
+    def compare_with_historical(self, current, historical):
+        """
+        Compare current metrics with historical data.
+
+        Parameters:
+        - current: Current metrics data.
+        - historical: Historical metrics data.
+
+        Returns:
+        - A dictionary with comparison results.
+        """
+        comparison = {}
+        for key, current_value in current.items():
+            historical_value = historical.get(key, None)
+            if historical_value is not None:
+                comparison[key] = {
+                    "current": current_value,
+                    "historical": historical_value,
+                    "change": current_value - historical_value
+                }
+            else:
+                comparison[key] = {"current": current_value, "historical": "N/A", "change": "N/A"}
+        return comparison
 
     async def suggest_prompt_refinements(self):
         current_prompts = await self.knowledge_base.get_entry("system_prompts")
