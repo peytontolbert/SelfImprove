@@ -376,12 +376,18 @@ class SystemManager:
         self.logger.info("Collecting performance metrics.")
         metrics = {}
         for name, component in self.components.items():
-            # Example: Collect CPU and memory usage
+            # Collect detailed system metrics
             cpu_usage = psutil.cpu_percent(interval=1)
             memory_info = psutil.virtual_memory()
+            disk_io = psutil.disk_io_counters()
+            net_io = psutil.net_io_counters()
             metrics[name] = {
                 "cpu_usage": cpu_usage,
-                "memory_usage": memory_info.percent
+                "memory_usage": memory_info.percent,
+                "disk_read_bytes": disk_io.read_bytes,
+                "disk_write_bytes": disk_io.write_bytes,
+                "net_sent_bytes": net_io.bytes_sent,
+                "net_recv_bytes": net_io.bytes_recv
             }
         return metrics
 
