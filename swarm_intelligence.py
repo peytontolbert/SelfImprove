@@ -147,7 +147,8 @@ class SwarmIntelligence:
         emergent_behavior_score = 0
         if action not in system_state.get("historical_actions", []):
             emergent_behavior_score += 2  # Increase score for novel actions
-        if feedback.get(action, {}).get("innovation_score", 0) > 0.5:
+        action_name = action.get("name", "")
+        if feedback.get(action_name, {}).get("innovation_score", 0) > 0.5:
             emergent_behavior_score += 3  # Increase score for high innovation
 
         self.logger.info(f"Emergent behavior score for action '{action}': {emergent_behavior_score}")
