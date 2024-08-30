@@ -1,5 +1,9 @@
 import logging
+import logging
+import subprocess
 from core.ollama_interface import OllamaInterface
+from meta_learner import MetaLearner
+from quantum_decision_maker import QuantumOptimizer
 from knowledge_base import KnowledgeBase
 from core.improvement_manager import ImprovementManager
 
@@ -76,7 +80,7 @@ class SelfImprovement:
             if validation.get('is_valid', False):
                 validated.append(improvement)
             else:
-                logger.info(f"Invalid improvement suggestion: {improvement}")
+                self.logger.info(f"Invalid improvement suggestion: {improvement}")
         return validated
 
     async def apply_improvements(self, improvements):
@@ -84,7 +88,7 @@ class SelfImprovement:
         return results
 
     async def apply_code_change(self, code_change):
-        logger.info(f"Code change applied: {code_change}")
+        self.logger.info(f"Code change applied: {code_change}")
         return {"status": "success", "message": "Code change applied"}
 
     async def meta_learn(self, performance_data):
@@ -133,7 +137,7 @@ class SelfImprovement:
             result = await func(*args, **kwargs)
             if result is not None:
                 return result
-            logger.warning(f"Attempt {attempt + 1} failed, retrying...")
+            self.logger.warning(f"Attempt {attempt + 1} failed, retrying...")
         self.logger.error("All attempts failed, returning None")
         self.logger.error("All attempts failed, returning None")
         await self.narrative.log_error("All attempts failed", {"function": func.__name__, "args": args, "kwargs": kwargs})
