@@ -246,6 +246,9 @@ class SystemNarrative:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        # Use the attention mechanism to prioritize actions based on system state and feedback
+        system_state = await self.ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+
         # Evaluate and enhance AI's interaction capabilities
         interaction_capabilities = await self.ollama.query_ollama("interaction_capability_evaluation", "Evaluate and enhance AI's interaction capabilities.", context={"system_state": system_state})
         self.logger.info(f"Interaction capabilities evaluation: {interaction_capabilities}")
