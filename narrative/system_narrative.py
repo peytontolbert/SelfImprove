@@ -89,6 +89,50 @@ class SystemNarrative:
         })
         self.logger.info(f"Tracked request for task '{task}' with expected response: {expected_response}")
 
+    async def execute_actions(self, actions):
+        """Execute a list of actions derived from thoughts and improvements."""
+        for action in actions:
+            action_type = action.get("type")
+            details = action.get("details", {})
+            if action_type == "file_operation":
+                await self.handle_file_operation(details)
+            elif action_type == "system_update":
+                await self.handle_system_update(details)
+            else:
+                self.logger.warning(f"Unknown action type: {action_type}")
+
+    async def handle_file_operation(self, details):
+        """Handle file operations such as create, edit, or delete."""
+        operation = details.get("operation")
+        filename = details.get("filename")
+        content = details.get("content", "")
+        try:
+            if operation == "create":
+                self.logger.info(f"Creating file: {filename}")
+                self.fs.create_file(filename, content)
+            elif operation == "edit":
+                self.logger.info(f"Editing file: {filename}")
+                self.fs.edit_file(filename, content)
+            elif operation == "delete":
+                self.logger.info(f"Deleting file: {filename}")
+                self.fs.delete_file(filename)
+            else:
+                self.logger.warning(f"Unknown file operation: {operation}")
+        except Exception as e:
+            self.logger.error(f"Error handling file operation: {str(e)}")
+
+    async def handle_system_update(self, details):
+        """Handle system updates."""
+        update_command = details.get("command")
+        try:
+            self.logger.info(f"Executing system update: {update_command}")
+            result = subprocess.run(update_command, shell=True, check=True, capture_output=True, text=True)
+            self.logger.info(f"System update executed successfully: {update_command}")
+            self.logger.debug(f"Update output: {result.stdout}")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Failed to execute system update: {str(e)}")
+            self.logger.debug(f"Update error output: {e.stderr}")
+
     async def log_state(self, message, context=None):
         if context is None:
             context = {}
