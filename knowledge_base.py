@@ -290,7 +290,14 @@ class KnowledgeBase:
         """Summarize memory entries."""
         self.logger.info(f"Summarizing memory: {memory}")
         # Ensure the coroutine is awaited
-        summary = await self.ollama.query_ollama("memory_summarization", f"Summarize the following memory data: {json.dumps(memory)}")
+        # Ensure memory is serializable before passing to json.dumps
+        try:
+            memory_data = json.dumps(memory)
+        except (TypeError, ValueError) as e:
+            self.logger.error(f"Error serializing memory data: {e}")
+            return "Error: Memory data is not serializable"
+
+        summary = await self.ollama.query_ollama("memory_summarization", f"Summarize the following memory data: {memory_data}")
         self.logger.info(f"Memory summary: {summary}")
         return summary
 
