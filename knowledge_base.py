@@ -248,13 +248,18 @@ class KnowledgeBase:
         return memory_str
 
     async def get_longterm_memory(self):
-        """Retrieve and refine long-term memory entries."""
+        """Retrieve, refine, and manage long-term memory entries."""
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
         for entry_name in entries:
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
             with open(file_path, 'r') as file:
                 data = json.load(file)
             self.longterm_memory[entry_name] = self.refine_memory_entry(data)
+        
+        # Prioritize and manage memory
+        self.prioritize_memory_entries()
+        self.summarize_less_relevant_data()
+
         if self.longterm_memory:
             self.logger.info(f"Retrieved and refined long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
             # Log metrics for reinforcement learning
@@ -264,6 +269,10 @@ class KnowledgeBase:
             await self.provide_context_from_memory()
         else:
             self.logger.warning("No long-term memory entries found.")
+        
+        # Periodically review and update memory
+        await self.periodic_memory_review()
+
         return self.longterm_memory
 
     def refine_memory_entry(self, data):
@@ -273,7 +282,25 @@ class KnowledgeBase:
         self.logger.info(f"Refined memory entry: {refined_data}")
         return refined_data
 
-    async def provide_context_from_memory(self):
+    def prioritize_memory_entries(self):
+        """Prioritize memory entries based on relevance and usage frequency."""
+        # Example logic to prioritize entries
+        prioritized_entries = sorted(self.longterm_memory.items(), key=lambda item: item[1].get('relevance', 0), reverse=True)
+        self.longterm_memory = dict(prioritized_entries[:100])  # Keep top 100 relevant entries
+
+    def summarize_less_relevant_data(self):
+        """Summarize or compress less relevant data."""
+        for entry_name, data in self.longterm_memory.items():
+            if data.get('relevance', 0) < 5:  # Example threshold
+                self.longterm_memory[entry_name] = self.summarize_memory(data)
+
+    async def periodic_memory_review(self):
+        """Periodically review and update memory based on new insights."""
+        new_insights = await self.ollama.query_ollama("memory_review", "Review and update long-term memory with new insights.")
+        for entry_name, insights in new_insights.items():
+            if entry_name in self.longterm_memory:
+                self.longterm_memory[entry_name].update(insights)
+        self.logger.info("Periodic memory review completed.")
         """Provide necessary context from long-term memory for ongoing processes."""
         context = {"longterm_memory": self.longterm_memory}
         self.logger.info(f"Providing context from long-term memory: {json.dumps(context, indent=2)}")
