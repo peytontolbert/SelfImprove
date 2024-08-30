@@ -1,3 +1,4 @@
+import os
 import logging
 import aiohttp
 from knowledge_base import KnowledgeBase
@@ -38,7 +39,35 @@ class TemporalEngine:
             # Simulate processing time
             await asyncio.sleep(2)
 
-class SystemNarrative:
+class OmniscientDataAbsorber:
+    def __init__(self, knowledge_base: KnowledgeBase):
+        self.knowledge_base = knowledge_base
+        self.logger = logging.getLogger("OmniscientDataAbsorber")
+
+    async def absorb_knowledge(self):
+        """Absorb knowledge from various sources."""
+        try:
+            # Example: Absorb knowledge from files
+            files = os.listdir("knowledge_base_data")
+            for file in files:
+                with open(os.path.join("knowledge_base_data", file), 'r') as f:
+                    data = f.read()
+                    await self.knowledge_base.add_entry(file, {"content": data})
+            self.logger.info("Knowledge absorbed from files.")
+            await self.omniscient_data_absorber.absorb_knowledge()
+            await self.omniscient_data_absorber.disseminate_knowledge()
+        except Exception as e:
+            self.logger.error(f"Error absorbing knowledge: {e}")
+
+    async def disseminate_knowledge(self):
+        """Disseminate absorbed knowledge for decision-making."""
+        try:
+            entries = await self.knowledge_base.list_entries()
+            for entry in entries:
+                data = await self.knowledge_base.get_entry(entry)
+                self.logger.info(f"Disseminating knowledge: {entry} - {data}")
+        except Exception as e:
+            self.logger.error(f"Error disseminating knowledge: {e}")
     def __init__(self, ollama_interface: OllamaInterface = None, knowledge_base: KnowledgeBase = None):
         self.attention_mechanism = AttentionMechanism()
         self.request_log = []  # Initialize a log to track requests and expected responses
@@ -48,6 +77,7 @@ class SystemNarrative:
         self.spreadsheet_manager = SpreadsheetManager("narrative_data.xlsx")
         self.rl_module = ReinforcementLearningModule(ollama_interface)
         self.temporal_engine = TemporalEngine()
+        self.omniscient_data_absorber = OmniscientDataAbsorber(self.knowledge_base)
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     async def generate_thoughts(self, context=None):
