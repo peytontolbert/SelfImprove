@@ -41,89 +41,6 @@ class SelfImprovement:
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
 
-    async def analyze_performance(self, metrics, rl_module):
-        """
-        Analyze system performance and suggest improvements.
-
-        Parameters:
-        - metrics: A dictionary of system metrics.
-        - rl_module: A reinforcement learning module for feedback.
-
-        Returns:
-        - A list of validated improvements and suggestions.
-        """
-        try:
-            improvements = await self.improvement_manager.suggest_improvements(metrics)
-            
-            # Use reinforcement learning feedback to adapt improvements
-            rl_feedback = await rl_module.get_feedback(metrics)
-            self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-
-            # Train the neural network model with performance data
-            train_loader = self.prepare_data_loader(metrics)
-            criterion = torch.nn.MSELoss()
-            optimizer = torch.optim.Adam(self.nn_model.parameters())
-            self.nn_model.train_model(train_loader, criterion, optimizer, num_epochs=10)
-
-            # Use the trained model to predict improvements
-            predicted_improvements = self.predict_improvements(metrics)
-            improvements.extend(predicted_improvements)
-
-            # Optimize improvements using swarm intelligence
-            optimized_improvements = await self.swarm_intelligence.optimize_decision({
-                "actions": improvements,
-                "system_state": metrics,
-                "feedback": rl_feedback
-            })
-
-            await self.system_narrative.log_chain_of_thought({
-                "process": "Performance analysis",
-                "metrics": metrics,
-                "improvements": improvements,
-                "optimized_improvements": optimized_improvements
-            })
-
-            validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
-
-            # Analyze code for potential performance bottlenecks
-            performance_optimizations = await self.ollama.query_ollama(
-                "performance_optimization",
-                f"Suggest performance optimizations for these metrics: {metrics}",
-                context={"metrics": metrics, "longterm_memory": await self.knowledge_base.get_longterm_memory()}
-            )
-            self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
-
-            # Integrate real-time feedback loop
-            real_time_feedback = await self.collect_real_time_feedback(metrics)
-            self.logger.info(f"Real-time feedback: {real_time_feedback}")
-            improvements.extend(real_time_feedback)
-
-            performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
-
-            # Monitor code health and evolution with feedback loop
-            code_health = await self.ollama.query_ollama("code_health_monitoring", "Monitor the health and evolution of the codebase with feedback loop.", context={"metrics": metrics})
-            self.logger.info(f"Code health monitoring with feedback loop: {code_health}")
-
-            # Integrate meta-learning and reinforcement learning for strategy adaptation
-            meta_learning_strategies = await self.meta_learn(metrics)
-            self.logger.info(f"Meta-learning strategies: {meta_learning_strategies}")
-
-            # Implement predictive analytics for proactive improvements
-            predictive_insights = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to anticipate future challenges and opportunities.", context={"metrics": metrics})
-            self.logger.info(f"Predictive insights: {predictive_insights}")
-            improvements.extend(predictive_insights.get("suggestions", []))
-
-            # Generate and test hypotheses for self-improvement
-            hypotheses = await self.generate_hypotheses(metrics)
-            tested_hypotheses = await self.test_hypotheses(hypotheses)
-            self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
-
-
-            return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
-
-        except Exception as e:
-            self.logger.error(f"Error during performance analysis: {e}")
-            return []
 
     def prepare_data_loader(self, metrics):
         """
@@ -230,42 +147,6 @@ class SelfImprovement:
         self.logger.info(f"Learned from experience: {learning}")
         return learning
 
-    async def get_system_metrics(self):
-        """
-        Retrieve and enhance system performance metrics.
-
-        Returns:
-        - A dictionary with categorized metrics, historical comparisons, and trend insights.
-        """
-        response = await self.ollama.query_ollama("system_metrics", "Provide an overview of the current system capabilities and performance.")
-        current_metrics = response.get("metrics", {})
-
-        # Categorize metrics
-        categorized_metrics = {
-            "performance": current_metrics.get("performance", {}),
-            "resource_usage": current_metrics.get("resource_usage", {}),
-            "error_rates": current_metrics.get("error_rates", {}),
-        }
-
-        # Add historical comparisons
-        historical_data = await self.knowledge_base.get_entry("historical_metrics")
-        comparisons = {
-            "performance": self.compare_with_historical(categorized_metrics["performance"], historical_data.get("performance", {})),
-            "resource_usage": self.compare_with_historical(categorized_metrics["resource_usage"], historical_data.get("resource_usage", {})),
-            "error_rates": self.compare_with_historical(categorized_metrics["error_rates"], historical_data.get("error_rates", {})),
-        }
-
-        # Provide trend insights
-        trend_insights = await self.ollama.query_ollama("trend_analysis", "Analyze trends based on current and historical metrics.", context={"current": current_metrics, "historical": historical_data})
-
-        enhanced_metrics = {
-            "categorized_metrics": categorized_metrics,
-            "comparisons": comparisons,
-            "trend_insights": trend_insights.get("insights", {})
-        }
-
-        self.logger.info(f"Enhanced system metrics: {enhanced_metrics}")
-        return enhanced_metrics
 
     def compare_with_historical(self, current, historical):
         """
