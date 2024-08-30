@@ -748,6 +748,9 @@ async def main():
             await data_absorber.absorb_knowledge()
             context = await consciousness_emulator.emulate_consciousness(await ollama.evaluate_system_state({}))
             
+            # Ensure context is updated with consciousness insights
+            context.update(await consciousness_emulator.emulate_consciousness(context))
+            
             await process_tasks(components, context)
             await manage_prompts(components, context)
             await analyze_and_improve_system(components, context)

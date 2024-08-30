@@ -899,6 +899,10 @@ class OmniscientDataAbsorber:
             await self.disseminate_knowledge()
         except Exception as e:
             self.logger.error(f"Error absorbing knowledge: {e}")
+        finally:
+            # Ensure the loop exits or continues based on a condition
+            if not self.should_continue_absorbing():
+                return
 
     def get_prioritized_files(self):
         """Get files sorted by modification time."""
