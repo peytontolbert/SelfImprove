@@ -440,8 +440,10 @@ async def main():
         while True:
             try:
                 await data_absorber.absorb_knowledge()
-                context = await consciousness_emulator.emulate_consciousness(await ollama.evaluate_system_state({}))
-                context.update(await consciousness_emulator.emulate_consciousness(context))
+                initial_context = await ollama.evaluate_system_state({})
+                consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
+                context = consciousness_result["enhanced_awareness"]
+                context.update(consciousness_result)
 
                 await process_tasks(components, context)
                 await manage_prompts(components, context)
