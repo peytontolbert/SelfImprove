@@ -307,7 +307,12 @@ class SystemManager:
             if action == "status":
                 self.logger.info(f"Component {component_name} status: {component}")
             elif action == "restart":
-                self.restart_component(component_name)
+                if isinstance(component, OllamaInterface):
+                    self.logger.info(f"Restarting Ollama component: {component_name}")
+                    # Implement specific restart logic for OllamaInterface
+                    component.restart()  # Assuming a restart method exists
+                else:
+                    self.restart_component(component_name)
             elif action == "update":
                 self.update_component(component_name)
             elif action == "scale":
@@ -467,7 +472,10 @@ async def system_initialization(system_manager, ollama, narrative):
     system_manager.manage_component("ollama", action="status")
     await ollama.__aenter__()
     system_manager.manage_component("ollama", action="restart")
-    await narrative.log_chain_of_thought("Starting main narrative control process.")
+    if hasattr(narrative, 'log_chain_of_thought'):
+        await narrative.log_chain_of_thought("Starting main narrative control process.")
+    else:
+        logger.warning("log_chain_of_thought method not found in SystemNarrative.")
     
     config = load_configuration()
     config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
