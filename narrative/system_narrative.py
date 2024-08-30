@@ -47,9 +47,18 @@ class SystemNarrative:
         checks = self.intermediate_checks(thought_processes)
         self.logger.info(f"Intermediate Checks: {checks}")
         
+        # Add example-driven approach
+        examples = self.provide_examples(thought_processes)
+        self.logger.info(f"Example-Driven Steps: {examples}")
+        
         # Log the enhanced chain of thought
         self.logger.info(f"Enhanced Chain of Thought: {enhanced_thought}")
         await log_with_ollama(self.ollama, f"Enhanced Chain of Thought: {enhanced_thought}")
+
+    def provide_examples(self, thought_processes):
+        """Provide examples for each step in the thought process."""
+        examples = [f"Example for Step {i+1}: Demonstrating {thought}" for i, thought in enumerate(thought_processes)]
+        return examples
         
     def break_down_thoughts(self, thought_processes):
         """Break down thoughts into explicit steps."""
