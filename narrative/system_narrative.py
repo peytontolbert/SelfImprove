@@ -122,7 +122,22 @@ class SystemNarrative:
         # Further enhancement logic can be added here
         return combined_thought
 
-    async def log_state(self, message, thought_process="Default thought process", context=None):
+    async def log_chain_of_thought(self, thought_process, context=None):
+        """Log the chain of thought with detailed context."""
+        context = context or {}
+        relevant_context = {
+            "system_status": context.get("system_status", "Current system status"),
+            "recent_changes": context.get("recent_changes", "Recent changes in the system"),
+            "longterm_memory": context.get("longterm_memory", {}).get("thoughts", {}),
+            "current_tasks": context.get("current_tasks", "List of current tasks"),
+            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {})
+        }
+        try:
+            self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
+            await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}", relevant_context)
+            self.spreadsheet_manager.write_data((5, 1), [["Thought Process"], [thought_process]], sheet_name="SystemData")
+        except Exception as e:
+            self.logger.error(f"Error during log chain of thought operation: {str(e)}", exc_info=True)
         context = context or {}
         relevant_context = {
             "system_status": context.get("system_status", "Current system status"),
