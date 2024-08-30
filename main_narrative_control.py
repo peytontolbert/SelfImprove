@@ -34,7 +34,6 @@ from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
-from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
 from error_handler import ErrorHandler
 from file_system import FileSystem
