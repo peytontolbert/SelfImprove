@@ -91,7 +91,7 @@ class SystemNarrative:
         await self.ollama.log_chain_of_thought("Feedback-driven refinement process completed.")
         return refined_thoughts
 
-    def predictive_thought_modeling(self, thought_processes):
+    async def predictive_thought_modeling(self, thought_processes):
         """Model future thoughts using predictive analytics."""
         # Example logic for predictive modeling
         predictive_thoughts = [f"Predictive {thought}" for thought in thought_processes]
