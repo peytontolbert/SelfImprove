@@ -58,7 +58,11 @@ class QuantumDecisionMaker:
         context = context or {}
         context.update({"longterm_memory": longterm_memory})
 
-        # Use evolutionary algorithms to evolve decision strategies
+        # Filter out invalid decisions
+        valid_decisions = [decision for decision in decision_space if isinstance(decision, dict) and "score" in decision]
+        if not valid_decisions:
+            self.logger.warning("No valid decisions found. Using fallback decision.")
+            return {"decision": "fallback_action", "reason": "No valid decisions found, using fallback."}
         evolved_decisions = self.evolve_decision_strategies(valid_decisions, context)
         try:
             if not decision_space:
@@ -113,23 +117,6 @@ class QuantumDecisionMaker:
         mutated_decision = decision.copy()
         mutated_decision["score"] += random.uniform(-1, 1)  # Random mutation
         return mutated_decision
-        """
-        Calculate a score for a given action variation.
-
-        Parameters:
-        - action: The action to evaluate.
-        - system_state: Current state of the system.
-        - feedback: Feedback data to consider.
-        - variation: The variation of the action to evaluate.
-
-        Returns:
-        - An integer score representing the evaluation.
-        """
-        # Example scoring logic based on variation
-        base_score = feedback.get(action, {}).get("base_score", 1)
-        # Integrate insights from OllamaInterface
-        insights = await self.ollama.query_ollama("decision_insights", f"Provide insights for action: {action}", context={"system_state": system_state})
-        insight_score = insights.get("insight_score", 0)
-        score = base_score + variation + insight_score  # Enhanced scoring logic
-        self.logger.debug(f"Calculated score for action '{action}' variation {variation}: {score}")
-        return score
+        for variation in range(5):
+            score = await self.calculate_score(action, system_state, feedback, variation)
+            possible_outcomes.append({"action": action, "score": score + predicted_score})
