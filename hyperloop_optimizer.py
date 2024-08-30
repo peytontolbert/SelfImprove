@@ -1,4 +1,5 @@
 import logging
+import random
 from typing import Dict, Any, List
 
 class HyperloopOptimizer:
