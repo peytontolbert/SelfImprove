@@ -463,9 +463,11 @@ async def main():
                     await narrative.log_chain_of_thought("Completed main loop iteration")
                     await asyncio.sleep(60)  # Adjust the sleep time as needed
                 except Exception as e:
+                    logger.error(f"Error in main loop: {str(e)}")
                     await error_handling_and_recovery(components, e)
         finally:
-            await session.close()
+            if not session.closed:
+                await session.close()
 
 async def system_initialization(system_manager, ollama, narrative):
     system_manager.log_system_state()
