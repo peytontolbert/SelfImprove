@@ -184,7 +184,7 @@ class OllamaInterface:
         if isinstance(refined_prompt, str):
             return refined_prompt.strip()
         else:
-            self.logger.error("Refined prompt is not a string.")
+            self.logger.error("Refined prompt is not a string. Returning original prompt.")
             return prompt
 
     async def analyze_code(self, code: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
