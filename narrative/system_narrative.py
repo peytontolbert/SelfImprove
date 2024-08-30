@@ -392,6 +392,9 @@ class SystemNarrative:
 
         # Optimize feedback loop for rapid learning
         feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+        # Integrate machine learning models for adaptive feedback
+        adaptive_feedback = await self.ollama.query_ollama("adaptive_feedback", "Use machine learning to adapt feedback loops based on historical data and current performance.")
+        self.logger.info(f"Adaptive feedback integration: {adaptive_feedback}")
         self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
         await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
         # Periodically analyze long-term memory for insights
@@ -545,6 +548,9 @@ class SystemNarrative:
     async def handle_general_error(self, e, eh, ollama):
         await self.log_error(f"Error in control_improvement_process: {str(e)}")
         await self.process_recovery_suggestion(eh, ollama, e)
+        # Implement predictive analysis for error recovery
+        predictive_recovery = await ollama.query_ollama("predictive_error_recovery", "Predict potential errors and suggest preemptive recovery strategies.")
+        self.logger.info(f"Predictive recovery strategies: {predictive_recovery}")
 
     async def process_recovery_suggestion(self, eh, ollama, e):
         recovery_suggestion = await eh.handle_error(ollama, e)
