@@ -427,10 +427,14 @@ class RefinementManager:
         return evaluation_results
 
     async def get_performance_metric(self, refinement):
-        # Placeholder for obtaining a performance metric for a given refinement
-        # Example: Return a random performance metric for demonstration
-        import random
-        return random.uniform(0, 1)
+        # Calculate a performance metric based on refinement attributes
+        # Example: Use a simple heuristic based on refinement complexity
+        complexity = refinement.get('complexity', 1)
+        impact = refinement.get('impact', 1)
+        # Calculate a performance score (higher is better)
+        performance_score = (impact / complexity) * 100
+        self.logger.info(f"Calculated performance metric for refinement: {performance_score}")
+        return performance_score
 
     async def apply_reinforcement_learning(self, strategy, feedback, performance_data):
         # Placeholder for reinforcement learning logic
