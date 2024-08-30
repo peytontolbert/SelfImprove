@@ -63,9 +63,13 @@ class SystemNarrative:
         predictive_thoughts = self.predictive_thought_modeling(refined_thoughts)
         self.logger.info(f"Predictive Thoughts: {predictive_thoughts}")
         
+        # Bias detection and mitigation
+        unbiased_thoughts = self.detect_and_mitigate_bias(predictive_thoughts)
+        self.logger.info(f"Unbiased Thoughts: {unbiased_thoughts}")
+        
         # Log the enhanced chain of thought
-        self.logger.info(f"Enhanced Chain of Thought: {enhanced_thought}")
-        await log_with_ollama(self.ollama, f"Enhanced Chain of Thought: {enhanced_thought}")
+        self.logger.info(f"Enhanced Chain of Thought: {unbiased_thoughts}")
+        await log_with_ollama(self.ollama, f"Enhanced Chain of Thought: {unbiased_thoughts}")
 
     def dynamic_contextual_adaptation(self, thought_processes):
         """Adapt thoughts dynamically based on real-time context changes."""
