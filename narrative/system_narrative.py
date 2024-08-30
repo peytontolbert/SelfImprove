@@ -79,10 +79,10 @@ class SystemNarrative:
         """Detect and mitigate bias in the thought processes."""
         # Example logic for bias detection and mitigation
         unbiased_thoughts = [thought.replace("bias", "unbiased") for thought in thoughts]
-        return unbiased_thoughts
         # Bias detection and mitigation
         unbiased_thoughts = self.detect_and_mitigate_bias(predictive_thoughts)
         self.logger.info(f"Unbiased Thoughts: {unbiased_thoughts}")
+        return unbiased_thoughts
         
         # Log the enhanced chain of thought
 
