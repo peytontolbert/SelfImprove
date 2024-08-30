@@ -161,6 +161,9 @@ class OllamaInterface:
                 delay *= 2
         self.logger.error("All retry attempts failed.")
         return None
+
+    async def refine_prompt(self, prompt: str, task: str) -> str:
+        """Refine a given prompt based on the task."""
         if task == "general":
             refinement_prompt = (
                 f"Refine the following prompt for assessing alignment implications:\n\n"
