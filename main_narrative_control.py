@@ -495,7 +495,7 @@ async def system_initialization(system_manager, ollama, narrative):
     await ollama.__aenter__()
     system_manager.manage_component("ollama", action="restart")
     if hasattr(narrative, 'log_chain_of_thought'):
-        await narrative.log_chain_of_thought("Starting main narrative control process.")
+        narrative.log_chain_of_thought("Starting main narrative control process.")
     else:
         logger.warning("log_chain_of_thought method not found in SystemNarrative.")
     
