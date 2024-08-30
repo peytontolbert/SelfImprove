@@ -122,7 +122,16 @@ class OllamaInterface:
             except json.JSONDecodeError:
                 self.logger.error("Failed to decode JSON response from Ollama.")
                 self.logger.error(f"Invalid JSON response received: {result}")
-                return {"error": "Invalid JSON response", "response": result}
+                
+                # Attempt to clean and parse the response
+                cleaned_result = result.replace('\n', '').replace('\r', '')
+                try:
+                    response_data = json.loads(cleaned_result)
+                    self.logger.info("Successfully parsed cleaned JSON response.")
+                    return response_data
+                except json.JSONDecodeError:
+                    self.logger.error("Failed to decode cleaned JSON response.")
+                    return {"error": "Invalid JSON response after cleaning", "response": result}
         elif isinstance(result, dict):
             if not result:
                 self.logger.error("Empty response data received from Ollama. This may indicate a network issue or a problem with the Ollama service.")
