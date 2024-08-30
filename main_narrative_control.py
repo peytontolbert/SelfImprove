@@ -695,14 +695,6 @@ async def initialize_components():
         tutorial_manager.save_tutorial("advanced_features", {"title": "Advanced Features", "content": "Learn about advanced features..."})
         logger.info("New tutorial saved: Advanced Features")
 
-    # Use swarm intelligence to optimize initial decisions
-    swarm_intelligence = components["swarm_intelligence"]
-    initial_decisions = [{"name": "optimize_performance"}, {"name": "enhance_security"}]
-    optimized_decisions = swarm_intelligence.optimize_decision({
-        "actions": initial_decisions,
-        "system_state": await components["ollama"].evaluate_system_state({})
-    })
-    logger.info(f"Optimized initial decisions: {optimized_decisions}")
 
     return components
 

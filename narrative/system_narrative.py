@@ -1327,13 +1327,13 @@ class OmniscientDataAbsorber:
             "system_state": system_state,
             "feedback": feedback
         }
-        # Use swarm intelligence and quantum decision-making to optimize decision-making
-        combined_decision = self.swarm_intelligence.optimize_decision({
+        # Use swarm intelligence to optimize decisions based on current state and feedback
+        optimized_decisions = self.swarm_intelligence.optimize_decision({
             "actions": context.get("actions", []),
             "system_state": system_state,
             "feedback": feedback
         })
-        self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
+        self.logger.info(f"Optimized decisions using swarm intelligence: {optimized_decisions}")
 
         # Use the consciousness emulator to prioritize actions
         prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
