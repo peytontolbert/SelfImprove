@@ -422,6 +422,7 @@ async def main():
     components = initialize_components()
     ollama = components["ollama"]
     rl_module = components["rl_module"]
+    si = components["si"]
     metrics = await si.get_system_metrics()
     rl_feedback = await rl_module.get_feedback(metrics)
     logger.info(f"Reinforcement learning feedback: {rl_feedback}")
