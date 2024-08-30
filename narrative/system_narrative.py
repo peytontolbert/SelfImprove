@@ -385,6 +385,7 @@ class SystemNarrative:
         # Use reinforcement learning feedback and predictive analysis
         rl_feedback = await self.rl_module.get_feedback(system_state)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+        improvements.extend(rl_feedback)
         await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
         self.logger.info("Long-term memory updated with reinforcement learning feedback.")
         self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])

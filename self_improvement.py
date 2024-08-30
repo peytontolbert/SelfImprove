@@ -47,6 +47,7 @@ class SelfImprovement:
         # Use reinforcement learning feedback to adapt improvements
         rl_feedback = await rl_module.get_feedback(metrics)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+        improvements.extend(rl_feedback)
         performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
         
         # Monitor code health and evolution with feedback loop
