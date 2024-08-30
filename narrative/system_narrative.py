@@ -494,12 +494,12 @@ class SystemNarrative:
         # Deploy code if approved
         deployment_decision = await si.retry_ollama_call(dm.deploy_code, ollama)
         if deployment_decision and deployment_decision.get('deploy', False):
-            await self.log_state("Deployment approved by Ollama")
+            await self.log_state("Deployment approved by Ollama", context={})
         else:
-            await self.log_state("Deployment deferred based on Ollama's decision")
+            await self.log_state("Deployment deferred based on Ollama's decision", context={})
 
         # Perform version control operations
-        await self.log_state("Performing version control operations")
+        await self.log_state("Performing version control operations", context={})
         changes = "Recent system changes"
         await vcs.commit_changes(ollama, changes)
 
@@ -1412,7 +1412,7 @@ class OmniscientDataAbsorber:
         })
 
     async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si):
-        await self.log_state("Performing additional system improvement tasks")
+        await self.log_state("Performing additional system improvement tasks", context={})
         await task_queue.manage_orchestration()
         
         # Analyze code and suggest improvements
@@ -1441,12 +1441,12 @@ class OmniscientDataAbsorber:
         await vcs.commit_changes(ollama, changes)
 
     async def manage_prompts_and_errors(self, pm, eh, ollama):
-        await self.log_state("Managing prompts")
+        await self.log_state("Managing prompts", context={})
         new_prompts = await pm.generate_new_prompts(ollama)
         for prompt_name, prompt_content in new_prompts.items():
             pm.save_prompt(prompt_name, prompt_content)
 
-        await self.log_state("Checking for system errors")
+        await self.log_state("Checking for system errors", context={})
         system_errors = await eh.check_for_errors(ollama)
         if system_errors:
             for error in system_errors:
@@ -1546,7 +1546,7 @@ class OmniscientDataAbsorber:
         context = {"system_state": "current_system_state_placeholder"}
         reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed", context=context)
         if reset_command.get('reset', False):
-            await self.log_state("Resetting system state as per command")
+            await self.log_state("Resetting system state as per command", context={})
             try:
                 subprocess.run(["./reset.sh"], check=True)
                 self.logger.info("System reset executed successfully.")
