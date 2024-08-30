@@ -62,7 +62,7 @@ class QuantumDecisionMaker:
             self.logger.error("No valid decisions found in decision space.")
             return {"error": "No valid decisions found"}
         self.logger.info(f"Optimal decision made: {optimal_decision}")
-        await self.ollama.log_chain_of_thought("Quantum decision-making process completed.")
+        await self.system_narrative.log_chain_of_thought("Quantum decision-making process completed.")
         return optimal_decision
 
     async def calculate_score(self, action, system_state, feedback, variation) -> int:

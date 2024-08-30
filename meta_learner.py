@@ -33,7 +33,7 @@ class MetaLearner:
         self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
         strategies.update(collaborative_insights)
         await self.knowledge_base.add_entry("optimized_strategies", strategies)
-        await self.ollama.log_chain_of_thought("Strategy optimization process completed.")
+        await self.system_narrative.log_chain_of_thought("Strategy optimization process completed.")
         return strategies
 
     async def evolve_longterm_strategies(self, historical_data: Dict[str, Any]) -> Dict[str, Any]:

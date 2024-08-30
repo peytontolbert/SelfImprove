@@ -35,7 +35,7 @@ class SelfImprovement:
 
     async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
-        await self.ollama.log_chain_of_thought("Analyzing performance for self-improvement.")
+        await self.system_narrative.log_chain_of_thought("Analyzing performance for self-improvement.")
         # Use swarm intelligence to optimize improvements
         optimized_improvements = self.swarm_intelligence.optimize_decision({
             "actions": improvements,

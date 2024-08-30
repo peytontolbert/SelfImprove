@@ -41,7 +41,7 @@ class ConsciousnessEmulator:
         # Use Ollama to refine consciousness emulation
         refinement_suggestions = self.ollama.query_ollama("consciousness_refinement", "Refine consciousness emulation based on current context.")
         self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
-        await self.ollama.log_chain_of_thought("Consciousness emulation process completed.")
+        await self.system_narrative.log_chain_of_thought("Consciousness emulation process completed.")
         return {"enhanced_awareness": context, "prioritized_actions": prioritized_actions}
 
     def analyze_context(self, context):
