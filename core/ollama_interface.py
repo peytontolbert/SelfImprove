@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 import json
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Callable, Coroutine
 import logging
 from chat_with_ollama import ChatGPT
 from knowledge_base import KnowledgeBase
@@ -34,11 +34,13 @@ class OllamaInterface:
 
     async def __aexit__(self, exc_type, exc, tb):
         if self.session:
-            await self.session.close()
-            self.session = None
-            self.logger.info("Client session closed successfully.")
-        else:
-            self.logger.warning("Attempted to close a non-existent session.")
+            try:
+                await self.session.close()
+                self.logger.info("Client session closed successfully.")
+            except Exception as e:
+                self.logger.error(f"Error closing client session: {e}")
+            finally:
+                self.session = None
 
     def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""
@@ -148,7 +150,17 @@ class OllamaInterface:
         log_name = f"ollama_interaction_{int(time.time())}"
         self.log_manager.save_log(log_name, log_data)
 
-    async def refine_prompt(self, prompt: str, task: str) -> str:
+    async def retry_with_backoff(self, func: Callable[[], Coroutine], retries: int = 3, delay: int = 1) -> Any:
+        """Retry a coroutine with exponential backoff."""
+        for attempt in range(retries):
+            try:
+                return await func()
+            except Exception as e:
+                self.logger.warning(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay} seconds...")
+                await asyncio.sleep(delay)
+                delay *= 2
+        self.logger.error("All retry attempts failed.")
+        return None
         if task == "general":
             refinement_prompt = (
                 f"Refine the following prompt for assessing alignment implications:\n\n"
