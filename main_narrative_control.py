@@ -739,8 +739,6 @@ async def main():
     await narrative.log_chain_of_thought("Starting main narrative control process.")
     await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, components)
 
-    # Example usage of GeneralNN
-    nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=nn.ReLU)
     # Example: Train the model (assuming train_loader is defined)
     # nn_model.train_model(train_loader, criterion=nn.MSELoss(), optimizer=optim.Adam(nn_model.parameters()), num_epochs=10)
     # Example: Evaluate the model (assuming test_loader is defined)
