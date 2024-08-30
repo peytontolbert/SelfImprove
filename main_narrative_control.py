@@ -737,206 +737,173 @@ async def initialize_components():
 async def main():
     components = await initialize_components()
     system_manager = SystemManager(components)
-    system_manager.log_system_state()
     ollama = components["ollama"]
-    # Log initial system state
+    narrative = components["narrative"]
+    
+    await system_initialization(system_manager, ollama, narrative)
+    await process_tasks(components)
+    await manage_prompts(components)
+    await analyze_and_improve_system(components)
+    await optimize_system(components)
+    await handle_complex_tasks(components)
+    await error_handling_and_recovery(components)
+
+async def system_initialization(system_manager, ollama, narrative):
     system_manager.log_system_state()
-
-    # Manage and verify the status of critical components
     system_manager.manage_component("ollama", action="status")
-
-    narrative = components["narrative"]
-    # Initialize and use components
-    rl_module = components["rl_module"]
-    si = components["si"]
-    consciousness_emulator = components["consciousness_emulator"]
-    metrics = await si.get_system_metrics()
-    rl_feedback = await rl_module.get_feedback(metrics)
-    logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-
-    # Use ConsciousnessEmulator to prioritize actions
-    context = {"metrics": metrics, "rl_feedback": rl_feedback}
-    prioritized_actions = await consciousness_emulator.emulate_consciousness(context)
-    logger.info(f"Prioritized actions from ConsciousnessEmulator: {prioritized_actions}")
-
-    # Log the impact of ConsciousnessEmulator
-    await narrative.log_chain_of_thought({
-        "process": "Consciousness Emulation",
-        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
-        "prioritized_actions": prioritized_actions
-    })
-
-    # Log the impact of ConsciousnessEmulator
-    await narrative.log_chain_of_thought({
-        "process": "Consciousness Emulation",
-        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
-        "prioritized_actions": prioritized_actions
-    })
-
-    task_queue = components["task_queue"]
-    vcs = components["vcs"]
-    ca = components["ca"]
-    tf = components["tf"]
-    dm = components["dm"]
-    kb = components["kb"]
-    narrative = components["narrative"]
-    fs = components["fs"]
-    pm = components["pm"]
-    eh = components["eh"]
-    tutorial_manager = components["tutorial_manager"]
-    meta_learner = components["meta_learner"]
-    quantum_optimizer = components["quantum_optimizer"]
-    swarm_intelligence = components["swarm_intelligence"]
-
-    # Ensure OllamaInterface is fully initialized
     await ollama.__aenter__()
-
-    # Restart critical components if necessary
     system_manager.manage_component("ollama", action="restart")
-
-    # Integrate system narrative deeply into the main loop
     await narrative.log_chain_of_thought("Starting main narrative control process.")
-    await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, components)
-
-    # Log the impact of ConsciousnessEmulator
-    await narrative.log_chain_of_thought({
-        "process": "Consciousness Emulation",
-        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
-        "prioritized_actions": prioritized_actions
-    })
-
-    # Example: Train the model (assuming train_loader is defined)
-    # nn_model.train_model(train_loader, criterion=nn.MSELoss(), optimizer=optim.Adam(nn_model.parameters()), num_epochs=10)
-    # Example: Evaluate the model (assuming test_loader is defined)
-    # nn_model.evaluate_model(test_loader, criterion=nn.MSELoss())
+    
     config = load_configuration()
-    # Implement dynamic configuration updates
     config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
     logger.info(f"Configuration updates suggested by Ollama: {config_updates}")
     await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
+    
     await narrative.log_chain_of_thought({
         "process": "Initialization",
         "description": "Initializing system components with detailed logging and context management."
     })
-    await narrative.log_chain_of_thought({"process": "Starting main narrative control process."})
     await narrative.log_state("System components initialized successfully", "Initialization complete")
-    
-    # Initialize prompt manager for versioning and A/B testing
-    prompt_manager = PromptManager()
+
+async def process_tasks(components):
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
-    # Read existing tasks and their statuses
     tasks_data = spreadsheet_manager.read_data("A1:B10")
     logger.info(f"Existing tasks and statuses: {json.dumps(tasks_data, indent=2)}")
-
-    # Process tasks data
+    
     processed_tasks = [{"task": task[0], "status": "Processed"} for task in tasks_data if task]
-
-    # Write processed tasks back to the spreadsheet
     spreadsheet_manager.write_data((1, 3), [["Task", "Status"]] + [[task["task"], task["status"]] for task in processed_tasks])
     logger.info("Processed tasks written to spreadsheet")
 
-    # Manage prompt versions and A/B testing
+async def manage_prompts(components):
+    ollama = components["ollama"]
+    prompt_manager = PromptManager()
     prompt_versions = prompt_manager.get_next_version("system_prompts")
     logger.info(f"Current prompt version: {prompt_versions}")
-    # Implement dynamic system prompt management
+    
     prompt_management_suggestions = await ollama.query_ollama("prompt_management", "Suggest improvements for system prompt management.")
     logger.info(f"Prompt management suggestions: {prompt_management_suggestions}")
+    
     new_system_prompt = await ollama.query_ollama("dynamic_prompt_management", "Update and refine the system prompt based on current capabilities and context.")
     await ollama.update_system_prompt(new_system_prompt.get("new_system_prompt", "Default system prompt"))
     logger.info(f"Updated system prompt: {new_system_prompt}")
+
+async def analyze_and_improve_system(components):
+    ollama = components["ollama"]
+    kb = components["kb"]
+    si = components["si"]
+    rl_module = components["rl_module"]
+    narrative = components["narrative"]
+    spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
+    
     longterm_memory = await kb.get_longterm_memory()
     summarized_memory = await kb.summarize_memory(longterm_memory)
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
     await kb.save_longterm_memory(summarized_memory)
+    
     await narrative.log_chain_of_thought("Analyzing system performance to suggest improvements.")
     improvements = await si.analyze_performance({"metric": "value", "longterm_memory": longterm_memory}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
-
-    # Store performance metrics
+    
     metrics = await si.get_system_metrics()
     spreadsheet_manager.write_data((20, 1), [["Metric", "Value"]] + list(metrics.items()))
     logger.info("Stored performance metrics in spreadsheet")
-    # Continuous knowledge base refinement
+    
     knowledge_refinement = await ollama.query_ollama("knowledge_base_refinement", "Analyze and refine the knowledge base for optimal structure and relevance.")
     await kb.add_entry("knowledge_refinement", knowledge_refinement)
     logger.info(f"Knowledge base refinement: {knowledge_refinement}")
-
-    # Ollama-centric performance optimization
+    
     await narrative.log_chain_of_thought("Performing quantum-inspired code analysis and optimization with consciousness emulation.")
-    code_snippet = "def example_function(x): return x * 2"
     performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}")
     logger.info(f"Performance optimizations: {performance_optimizations}")
 
-    system_state = await components["ollama"].evaluate_system_state({})
-    # Enhance continuous improvement framework
+async def optimize_system(components):
+    ollama = components["ollama"]
+    si = components["si"]
+    kb = components["kb"]
+    meta_learner = components["meta_learner"]
+    narrative = components["narrative"]
+    hyperloop_optimizer = components["hyperloop_optimizer"]
+    quantum_optimizer = components["quantum_optimizer"]
+    
+    system_state = await ollama.evaluate_system_state({})
     logger.info("Enhancing continuous improvement framework with robust feedback integration.")
     feedback_optimization = await ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
     logger.info(f"Feedback loop optimization: {feedback_optimization}")
     await kb.add_entry("feedback_optimization", feedback_optimization)
-
-    # Implement adaptive learning and strategy adjustment
+    
     learning_data = await si.learn_from_experience({"interaction_data": "recent_interactions"})
     logger.info(f"Adaptive learning data: {learning_data}")
-    # Meta-learning for strategy optimization
+    
     optimized_strategies = await meta_learner.optimize_learning_strategies(ollama, {"performance_data": "current_performance_data"})
     logger.info(f"Optimized learning strategies: {optimized_strategies}")
-
-    # Hyperloop multidimensional optimization
-    hyperloop_optimizer = components["hyperloop_optimizer"]
+    
+    await narrative.log_chain_of_thought("Applying hyperloop multidimensional optimization to complex problem spaces.")
     problem_space = {"variables": ["x", "y", "z"], "constraints": ["x + y + z <= 30"]}
     dimensions = ["x", "y", "z"]
-    await narrative.log_chain_of_thought("Applying hyperloop multidimensional optimization to complex problem spaces.")
     feedback = {"x": 0.1, "y": -0.05, "z": 0.2}  # Example feedback
     optimized_solution = await hyperloop_optimizer.optimize(problem_space, dimensions, feedback)
     logger.info(f"Hyperloop optimized solution: {optimized_solution}")
     
-    # Apply hyperloop optimized solution to system processes
     if optimized_solution:
         await narrative.log_chain_of_thought("Applying hyperloop optimized solution to system processes.")
         system_parameters = components.get("system_parameters", {})
         system_parameters.update(optimized_solution)
         logger.info(f"System parameters updated with hyperloop optimized solution: {system_parameters}")
-
-    # Quantum optimization for complex problem spaces
-    problem_space = {"variables": ["x", "y"], "constraints": ["x + y <= 10"]}
+    
     await narrative.log_chain_of_thought("Applying quantum optimization to complex problem spaces.")
+    problem_space = {"variables": ["x", "y"], "constraints": ["x + y <= 10"]}
     quantum_optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
     logger.info(f"Quantum optimized solution: {quantum_optimized_solution}")
     
-    # Apply quantum optimized solution to system processes
     if quantum_optimized_solution:
         await narrative.log_chain_of_thought("Applying quantum optimized solution to system processes.")
         system_strategies = components.get("system_strategies", {})
         system_strategies.update(quantum_optimized_solution)
         logger.info(f"System strategies updated with quantum optimized solution: {system_strategies}")
 
-    # Generate complex tasks using Ollama
+async def handle_complex_tasks(components):
+    ollama = components["ollama"]
+    
     task_generation_prompt = "Generate complex tasks for the current system state."
     complex_tasks_response = await ollama.query_ollama("task_generation", task_generation_prompt)
     complex_tasks = complex_tasks_response.get("tasks", [])
-
-    # Decompose tasks into subtasks
+    
     subtasks_results = await asyncio.gather(
         *[ollama.query_ollama("task_decomposition", f"Decompose the task: {task}") for task in complex_tasks]
     )
     for task, subtasks in zip(complex_tasks, subtasks_results):
         logger.info(f"Decomposed subtasks for {task}: {subtasks}")
-    # Enhanced error recovery
+
+async def error_handling_and_recovery(components):
+    ollama = components["ollama"]
+    narrative = components["narrative"]
+    eh = components["eh"]
+    si = components["si"]
+    kb = components["kb"]
+    task_queue = components["task_queue"]
+    vcs = components["vcs"]
+    ca = components["ca"]
+    tf = components["tf"]
+    dm = components["dm"]
+    fs = components["fs"]
+    pm = components["pm"]
+    
     await narrative.log_chain_of_thought("Suggesting adaptive recovery strategies for recent errors.")
     error_recovery_strategies = await ollama.query_ollama("adaptive_error_recovery", "Suggest adaptive recovery strategies for recent errors.")
     logger.info(f"Adaptive error recovery strategies: {error_recovery_strategies}")
-    # Scalability and resource optimization
+    
     scaling_decisions = await ollama.query_ollama("scalability_optimization", "Provide guidance on scaling and resource allocation based on current system load.")
     logger.info(f"Scalability and resource optimization decisions: {scaling_decisions}")
+    
     error_handler = ErrorHandler()
     error_types = error_handler.classify_errors(Exception("Sample error for classification"))
     logger.info(f"Error types classified: {error_types}")
-    # Implement fallback strategies based on error types
+    
     try:
-        # Use specific context for improvement process
         context_id = "improvement_process"
         context = {
             "task": "self_improvement",
@@ -950,7 +917,6 @@ async def main():
     except Exception as e:
         logger.error("An unexpected error occurred during the improvement process", exc_info=True)
         await eh.handle_error(ollama, e)
-    # Removed shutdown logic to keep the system running indefinitely
 
 def load_configuration():
     return {
