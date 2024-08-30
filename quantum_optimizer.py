@@ -38,7 +38,9 @@ class QuantumOptimizer:
             self.analyze_results(quantum_solution)
             return quantum_solution
         except Exception as e:
-            self.logger.error(f"Quantum optimization failed: {e}")
+            self.logger.error(f"Quantum optimization failed: {e}", exc_info=True)
+            # Log additional context for debugging
+            self.logger.debug(f"Problem space: {problem_space}")
             return None
 
     async def refine_problem_space(self, problem_space):

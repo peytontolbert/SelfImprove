@@ -33,10 +33,12 @@ class MetaLearner:
         self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
         strategies.update(collaborative_insights)
         await self.knowledge_base.add_entry("optimized_strategies", strategies)
+        # Log the feedback loop for strategy optimization
         await self.system_narrative.log_chain_of_thought({
             "process": "Strategy optimization",
             "performance_data": performance_data,
-            "strategies": strategies
+            "strategies": strategies,
+            "collaborative_insights": collaborative_insights
         })
         return strategies
 
