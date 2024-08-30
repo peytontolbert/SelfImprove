@@ -8,6 +8,7 @@ from knowledge_base import KnowledgeBase
 from functools import lru_cache
 import time
 from tutorial_manager import TutorialManager
+from log_manager import LogManager
 
 class OllamaInterface:
     def __init__(self, max_retries: int = 3, knowledge_base: KnowledgeBase = None):
@@ -23,6 +24,7 @@ class OllamaInterface:
         self.prompt_cache = {}
         self.prompt_templates = {}
         self.conversation_contexts = {}
+        self.log_manager = LogManager()
 
     async def __aenter__(self):
         if not self.session:
@@ -83,6 +85,7 @@ class OllamaInterface:
 
         result = await self.retry_with_backoff(attempt_query)
         if result is None:
+            self.log_interaction(system_prompt, prompt, result)
             self.logger.error("No response received from Ollama after retries.")
             # Implement a fallback strategy
             fallback_response = {
@@ -93,6 +96,8 @@ class OllamaInterface:
             return fallback_response
 
         self.logger.debug(f"Request payload: {prompt}")
+
+        self.log_interaction(system_prompt, prompt, result)
 
         if isinstance(result, str):
             try:
@@ -118,7 +123,16 @@ class OllamaInterface:
             self.logger.debug(f"Raw response: {result}")
             return {"error": "Unexpected response type", "response": str(result)}
 
-    async def retry_with_backoff(self, func, max_retries=3, initial_delay=1):
+    def log_interaction(self, system_prompt, prompt, response):
+        """Log the interaction with Ollama."""
+        log_data = {
+            "system_prompt": system_prompt,
+            "prompt": prompt,
+            "response": response,
+            "timestamp": time.time()
+        }
+        log_name = f"ollama_interaction_{int(time.time())}"
+        self.log_manager.save_log(log_name, log_data)
         delay = initial_delay
         for attempt in range(max_retries):
             result = await func()
