@@ -442,7 +442,7 @@ async def initialize_components():
     return components
 
 async def main():
-    components = initialize_components()
+    components = await initialize_components()
     ollama = components["ollama"]
     rl_module = components["rl_module"]
     si = components["si"]
