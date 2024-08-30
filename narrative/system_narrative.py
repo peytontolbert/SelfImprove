@@ -178,18 +178,6 @@ class SystemNarrative:
         context = {"error": str(error)}
         recovery_suggestion = await self.ollama.query_ollama(self.ollama.system_prompt, error_prompt, task="error_recovery", context=context)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
-        try:
-            self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
-            self.spreadsheet_manager.write_data((5, 1), [["Thought Process"], [thought_process]], sheet_name="SystemData")
-            await log_with_ollama(self.ollama, thought_process, relevant_context)
-            # Generate and log thoughts about the current state
-            await self.data_absorber.generate_thoughts(relevant_context)
-            # Analyze feedback and suggest improvements
-            self.track_request("feedback_analysis", f"Analyze feedback for the current thought process: {thought_process}. Consider system performance, recent changes, and long-term memory.", "feedback")
-            feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current thought process: {thought_process}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
-            self.logger.info(f"Feedback analysis: {feedback}")
-        except Exception as e:
-            self.logger.error(f"Error during log state operation: {str(e)}")
         # Initialize system_state and other required variables
         improvement_cycle_count = 0
         performance_metrics = await self.si.get_system_metrics()
