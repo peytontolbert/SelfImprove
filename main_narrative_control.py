@@ -415,8 +415,8 @@ async def initialize_components():
             await component.initialize()
 
     # Load a tutorial on the first run
-    tutorial_manager = components["tutorial_manager"]
-    if components["ollama"].first_run:
+    tutorial_manager = components.components["tutorial_manager"]
+    if components.components["ollama"].first_run:
         tutorial = tutorial_manager.load_tutorial("getting_started")
         if tutorial:
             logger.info(f"Loaded tutorial: {tutorial}")
