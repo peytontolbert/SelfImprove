@@ -676,7 +676,7 @@ class SystemNarrative:
         await self.handle_timeout()
 
         # Implement predictive analysis for error recovery
-        predictive_recovery = await ollama.query_ollama("predictive_error_recovery", "Predict potential errors and suggest preemptive recovery strategies.")
+        predictive_recovery = await self.ollama.query_ollama("predictive_error_recovery", "Predict potential errors and suggest preemptive recovery strategies.")
         self.logger.info(f"Predictive recovery strategies: {predictive_recovery}")
 
     async def handle_general_error(self, e, eh, ollama):
@@ -1243,6 +1243,8 @@ class OmniscientDataAbsorber:
         await self.knowledge_base.add_entry("feedback_loops", feedback_loops)
 
         # Enhance feedback loop with adaptive mechanisms
+        rl_feedback = context.get("rl_feedback", {})
+        predictive_insights = context.get("predictive_insights", {})
         feedback_optimization = await self.ollama.query_ollama(
             "feedback_optimization",
             "Enhance feedback loops for rapid learning and adaptation using advanced machine learning models.",
