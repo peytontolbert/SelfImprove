@@ -11,19 +11,28 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class KnowledgeBase:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(KnowledgeBase, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self, uri=None, user=None, password=None, ollama_interface=None):
-        uri = uri or os.getenv("NEO4J_URI", "bolt://localhost:7687")
-        user = user or os.getenv("NEO4J_USER", "neo4j")
-        password = password or os.getenv("NEO4J_PASSWORD", "12345678")
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
-        self.logger = logging.getLogger(__name__)
-        logging.basicConfig(level=logging.INFO)
-        self.initialize_database()
-        self.ollama = ollama_interface
-        self.longterm_memory = {}
-        self.base_directory = "knowledge_base_data"
-        if not os.path.exists(self.base_directory):
-            os.makedirs(self.base_directory)
+        if not hasattr(self, 'initialized'):
+            uri = uri or os.getenv("NEO4J_URI", "bolt://localhost:7687")
+            user = user or os.getenv("NEO4J_USER", "neo4j")
+            password = password or os.getenv("NEO4J_PASSWORD", "12345678")
+            self.driver = GraphDatabase.driver(uri, auth=(user, password))
+            self.logger = logging.getLogger(__name__)
+            logging.basicConfig(level=logging.INFO)
+            self.initialize_database()
+            self.ollama = ollama_interface
+            self.longterm_memory = {}
+            self.base_directory = "knowledge_base_data"
+            if not os.path.exists(self.base_directory):
+                os.makedirs(self.base_directory)
+            self.initialized = True
 
     def initialize_database(self):
         """Initialize the database with necessary nodes and relationships."""
