@@ -21,7 +21,7 @@ class SystemNarrative:
         self.logger = logging.getLogger("SystemNarrative")
         self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
         self.attention_mechanism = AttentionMechanism()
-        self.swarm_intelligence = SwarmIntelligence()
+        self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
