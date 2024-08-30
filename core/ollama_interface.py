@@ -418,9 +418,11 @@ class OllamaInterface:
         try:
             for param, value in details.items():
                 self.logger.info(f"Setting parameter {param} to {value}")
-                # Implement actual parameter adjustment logic here
-                # Example: Update configuration files or in-memory settings
-                # config[param] = value
+                # Example logic to update in-memory settings
+                if hasattr(self, param):
+                    setattr(self, param, value)
+                else:
+                    self.logger.warning(f"Parameter {param} not found in the current configuration.")
         except Exception as e:
             self.logger.error(f"Error adjusting parameters: {str(e)}")
 
