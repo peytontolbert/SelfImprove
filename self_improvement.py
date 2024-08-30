@@ -1,8 +1,10 @@
 import logging
 import subprocess
+import torch
 from core.ollama_interface import OllamaInterface
 from quantum_decision_maker import QuantumDecisionMaker
 from meta_learner import MetaLearner
+from simple_nn import GeneralNN
 from quantum_optimizer import QuantumOptimizer
 from knowledge_base import KnowledgeBase
 from core.improvement_manager import ImprovementManager
@@ -28,6 +30,7 @@ class SelfImprovement:
     - retry_ollama_call: Retries a function call with Ollama if the result is None.
     """
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
+        self.nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=torch.nn.ReLU)
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
         self.knowledge_base = knowledge_base
@@ -35,7 +38,15 @@ class SelfImprovement:
 
     async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
-        # Use swarm intelligence to optimize improvements
+        # Train the neural network model with performance data
+        train_loader = self.prepare_data_loader(metrics)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(self.nn_model.parameters())
+        self.nn_model.train_model(train_loader, criterion, optimizer, num_epochs=10)
+
+        # Use the trained model to predict improvements
+        predicted_improvements = self.predict_improvements(metrics)
+        improvements.extend(predicted_improvements)
         optimized_improvements = self.swarm_intelligence.optimize_decision({
             "actions": improvements,
             "system_state": metrics
@@ -74,7 +85,19 @@ class SelfImprovement:
         
         return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
 
-    async def generate_hypotheses(self, metrics):
+    def prepare_data_loader(self, metrics):
+        # Prepare data loader for training the neural network
+        # This is a placeholder implementation
+        # Replace with actual data preparation logic
+        data = [(torch.tensor([metric]), torch.tensor([0.0])) for metric in metrics.values()]
+        return torch.utils.data.DataLoader(data, batch_size=2)
+
+    def predict_improvements(self, metrics):
+        # Use the neural network model to predict improvements
+        inputs = torch.tensor([list(metrics.values())])
+        with torch.no_grad():
+            predictions = self.nn_model.predict(inputs)
+        return predictions.tolist()
         """Generate hypotheses for potential improvements."""
         prompt = f"Generate hypotheses for potential improvements based on these metrics: {metrics}"
         hypotheses = await self.ollama.query_ollama("hypothesis_generation", prompt, context={"metrics": metrics})
