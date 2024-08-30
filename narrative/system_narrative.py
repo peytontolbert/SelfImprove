@@ -303,22 +303,55 @@ class SystemNarrative:
         self.logger.info(f"Decision-making improvements: {decision_making_improvements}")
         await self.knowledge_base.add_entry("decision_making_improvements", decision_making_improvements)
 
-        # Advanced predictive analysis for future challenges
-        future_challenges = await self.ollama.query_ollama("future_challenges", "Predict future challenges and suggest preparation strategies.", context={"system_state": system_state})
-        self.logger.info(f"Future challenges and strategies: {future_challenges}")
-        await self.knowledge_base.add_entry("future_challenges", future_challenges)
+        # Advanced Predictive Analysis for Future Challenges
+        historical_data = await self.knowledge_base.get_entry("historical_metrics")
+        predictive_context = {**system_state, "historical_data": historical_data}
+        future_challenges = await self.ollama.query_ollama(
+            "advanced_predictive_analysis",
+            "Use advanced predictive analytics to anticipate future challenges and prepare strategies.",
+            context=predictive_context
+        )
+        self.logger.info(f"Advanced Future challenges and strategies: {future_challenges}")
+        await self.knowledge_base.add_entry("advanced_future_challenges", future_challenges)
 
-        # Dynamic resource allocation
-        resource_optimization = await self.ollama.query_ollama("resource_optimization", "Optimize resource allocation based on current and predicted demands.", context={"system_state": system_state})
-        dynamic_allocation = await self.ollama.query_ollama("dynamic_resource_allocation", "Adjust resource allocation dynamically based on real-time analysis.")
-        self.logger.info(f"Dynamic resource allocation: {dynamic_allocation}")
-        self.logger.info(f"Resource allocation optimization: {resource_optimization}")
-        await self.knowledge_base.add_entry("resource_optimization", resource_optimization)
+        # Advanced Resource Optimization
+        resource_optimization = await self.ollama.query_ollama(
+            "advanced_resource_optimization",
+            "Implement advanced dynamic resource allocation based on current and predicted demands.",
+            context={"system_state": system_state}
+        )
+        dynamic_allocation = await self.ollama.query_ollama(
+            "dynamic_resource_allocation",
+            "Adjust resource allocation dynamically using predictive analytics and real-time data."
+        )
+        self.logger.info(f"Advanced Dynamic resource allocation: {dynamic_allocation}")
+        self.logger.info(f"Advanced Resource allocation optimization: {resource_optimization}")
+        await self.knowledge_base.add_entry("advanced_resource_optimization", resource_optimization)
 
         # Enhanced feedback loops for rapid learning
         feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
         self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
         await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
+
+        # Structured Self-Reflection and Adaptation
+        self_reflection = await self.ollama.query_ollama(
+            "self_reflection",
+            "Reflect on recent performance and suggest structured adjustments.",
+            context={"system_state": system_state}
+        )
+        self.logger.info(f"Structured Self-reflection insights: {self_reflection}")
+        await self.knowledge_base.add_entry("structured_self_reflection", self_reflection)
+
+        # Enhanced Dynamic Goal Setting
+        current_goals = await self.knowledge_base.get_entry("current_goals")
+        performance_metrics = await si.get_system_metrics()
+        goal_adjustments = await self.ollama.query_ollama(
+            "goal_setting",
+            f"Adjust current goals based on system performance: {performance_metrics}",
+            context={"current_goals": current_goals, "performance_metrics": performance_metrics}
+        )
+        self.logger.info(f"Enhanced Goal adjustments: {goal_adjustments}")
+        await self.knowledge_base.add_entry("enhanced_goal_adjustments", goal_adjustments)
 
         # Deep learning insights for self-reflection
         deep_learning_insights = await self.ollama.query_ollama("deep_learning_insights", "Use deep learning to analyze past performance and suggest improvements.", context={"system_state": system_state})
