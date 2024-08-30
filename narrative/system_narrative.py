@@ -295,7 +295,30 @@ class SystemNarrative:
         self.logger.info(f"Decision-making improvements: {decision_making_improvements}")
         await self.knowledge_base.add_entry("decision_making_improvements", decision_making_improvements)
 
-        # Use the attention mechanism to prioritize actions based on system state and feedback
+        # Advanced predictive analysis for future challenges
+        future_challenges = await self.ollama.query_ollama("future_challenges", "Predict future challenges and suggest preparation strategies.", context={"system_state": system_state})
+        self.logger.info(f"Future challenges and strategies: {future_challenges}")
+        await self.knowledge_base.add_entry("future_challenges", future_challenges)
+
+        # Dynamic resource allocation
+        resource_optimization = await self.ollama.query_ollama("resource_optimization", "Optimize resource allocation based on current and predicted demands.", context={"system_state": system_state})
+        dynamic_allocation = await self.ollama.query_ollama("dynamic_resource_allocation", "Adjust resource allocation dynamically based on real-time analysis.")
+        self.logger.info(f"Dynamic resource allocation: {dynamic_allocation}")
+        self.logger.info(f"Resource allocation optimization: {resource_optimization}")
+        await self.knowledge_base.add_entry("resource_optimization", resource_optimization)
+
+        # Enhanced feedback loops for rapid learning
+        feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
+        self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
+        await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
+
+        # Self-reflection and adaptation
+        if improvement_cycle_count % 5 == 0:
+            self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
+            adaptation_strategies = await self.ollama.query_ollama("self_adaptation", "Adapt system strategies based on self-reflection insights.")
+            self.logger.info(f"Self-reflection insights: {self_reflection}")
+            self.logger.info(f"Self-adaptation strategies: {adaptation_strategies}")
+            await self.knowledge_base.add_entry("self_reflection", self_reflection)
         system_state = await self.ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         feedback = await self.ollama.query_ollama("feedback_analysis", "Analyze feedback for the current system state.", context={"system_state": system_state})
         context = {
