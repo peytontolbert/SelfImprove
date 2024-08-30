@@ -42,6 +42,7 @@ from tutorial_manager import TutorialManager
 from quantum_optimizer import QuantumOptimizer
 from quantum_decision_maker import QuantumDecisionMaker
 from attention_mechanism import ConsciousnessEmulator
+from simple_nn import GeneralNN
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -465,7 +466,12 @@ async def main():
     swarm_intelligence = components["swarm_intelligence"]
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
-    # Initialize configuration settings
+    # Example usage of GeneralNN
+    nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=nn.ReLU)
+    # Example: Train the model (assuming train_loader is defined)
+    # nn_model.train_model(train_loader, criterion=nn.MSELoss(), optimizer=optim.Adam(nn_model.parameters()), num_epochs=10)
+    # Example: Evaluate the model (assuming test_loader is defined)
+    # nn_model.evaluate_model(test_loader, criterion=nn.MSELoss())
     config = load_configuration()
     # Implement dynamic configuration updates
     config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
