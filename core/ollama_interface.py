@@ -7,6 +7,7 @@ from chat_with_ollama import ChatGPT
 from knowledge_base import KnowledgeBase
 from functools import lru_cache
 import time
+from tutorial_manager import TutorialManager
 
 class OllamaInterface:
     def __init__(self, max_retries: int = 3, knowledge_base: KnowledgeBase = None):
