@@ -216,43 +216,34 @@ class SystemNarrative:
         while True:
             improvement_cycle_count += 1
             try:
-                await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count), timeout=300)  # 5-minute timeout for the entire cycle
+                await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count), timeout=300)
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
             except Exception as e:
                 await self.handle_general_error(e, eh, ollama)
 
-            # Dynamic goal setting based on system performance
             await self.dynamic_goal_setting(ollama, system_state)
 
-            # Advanced predictive analysis for future challenges
             future_challenges = await self.ollama.query_ollama("future_challenges", "Predict future challenges and suggest preparation strategies.", context={"system_state": system_state})
             self.logger.info(f"Future challenges and strategies: {future_challenges}")
             await self.knowledge_base.add_entry("future_challenges", future_challenges)
 
-            # Feedback loop optimization
             feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
             self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
             await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
 
-            # Self-reflection mechanism
-            if improvement_cycle_count % 5 == 0:  # Every 5 cycles
+            if improvement_cycle_count % 5 == 0:
                 self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
                 self.logger.info(f"Self-reflection insights: {self_reflection}")
                 await self.knowledge_base.add_entry("self_reflection", self_reflection)
 
-            # Resource allocation optimization
             resource_optimization = await self.ollama.query_ollama("resource_optimization", "Optimize resource allocation based on current and predicted demands.", context={"system_state": system_state})
             self.logger.info(f"Resource allocation optimization: {resource_optimization}")
             await self.knowledge_base.add_entry("resource_optimization", resource_optimization)
 
-            # Adaptive learning and evolution
             learning_data = await self.ollama.query_ollama("adaptive_learning", "Analyze recent interactions and adapt strategies for future improvements.", context={"system_state": system_state})
             self.logger.info(f"Adaptive learning data: {learning_data}")
             await self.knowledge_base.add_entry("adaptive_learning", learning_data)
-            # Track the evolution of system capabilities
-            await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
-            # Track the evolution of system capabilities
             await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
 
 
