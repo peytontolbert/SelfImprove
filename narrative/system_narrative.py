@@ -246,6 +246,21 @@ class SystemNarrative:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        # Evaluate and enhance AI's interaction capabilities
+        interaction_capabilities = await self.ollama.query_ollama("interaction_capability_evaluation", "Evaluate and enhance AI's interaction capabilities.", context={"system_state": system_state})
+        self.logger.info(f"Interaction capabilities evaluation: {interaction_capabilities}")
+        await self.knowledge_base.add_entry("interaction_capabilities", interaction_capabilities)
+
+        # Integrate feedback from user interactions
+        user_feedback = await self.ollama.query_ollama("user_feedback_integration", "Integrate feedback from user interactions to refine AI's responses.", context={"system_state": system_state})
+        self.logger.info(f"User feedback integration: {user_feedback}")
+        await self.knowledge_base.add_entry("user_feedback", user_feedback)
+
+        # Track and improve AI's decision-making processes
+        decision_making_improvements = await self.ollama.query_ollama("decision_making_improvement", "Track and improve AI's decision-making processes.", context={"system_state": system_state})
+        self.logger.info(f"Decision-making improvements: {decision_making_improvements}")
+        await self.knowledge_base.add_entry("decision_making_improvements", decision_making_improvements)
+
         # Use the attention mechanism to prioritize actions based on system state and feedback
         system_state = await self.ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         feedback = await self.ollama.query_ollama("feedback_analysis", "Analyze feedback for the current system state.", context={"system_state": system_state})
