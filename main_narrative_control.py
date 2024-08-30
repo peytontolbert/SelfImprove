@@ -254,6 +254,7 @@ class SelfImprovement:
     """
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager, consciousness_emulator: ConsciousnessEmulator):
         self.consciousness_emulator = consciousness_emulator
+        self.quantum_decision_maker = QuantumDecisionMaker(self.ollama)
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
         self.knowledge_base = knowledge_base
@@ -261,7 +262,12 @@ class SelfImprovement:
 
     async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
-        # Use swarm intelligence and consciousness emulation to optimize improvements
+        # Use swarm intelligence, consciousness emulation, and quantum decision-making to optimize improvements
+        quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
+            "actions": improvements,
+            "system_state": metrics
+        })
+        self.logger.info(f"Quantum decisions: {quantum_decisions}")
         consciousness_insights = self.consciousness_emulator.emulate_consciousness(metrics)
         self.logger.info(f"Consciousness insights: {consciousness_insights}")
         optimized_improvements = self.swarm_intelligence.optimize_decision({
