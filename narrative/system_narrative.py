@@ -236,7 +236,7 @@ class SystemNarrative:
             "system_state": system_state,
             "feedback": feedback
         }
-        # Use swarm intelligence and quantum decision-making to optimize decision-making
+        # Use swarm intelligence, quantum decision-making, and consciousness emulation to optimize decision-making
         combined_decision = await self.swarm_intelligence.optimize_decision({
             "actions": context.get("actions", []),
             "system_state": system_state,
@@ -1221,8 +1221,8 @@ class OmniscientDataAbsorber:
         })
         self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
 
-        # Use the enhanced attention mechanism to prioritize actions
-        prioritized_actions = self.attention_mechanism.prioritize_actions(combined_decision)
+        # Use the consciousness emulator to prioritize actions
+        prioritized_actions = components["consciousness_emulator"].emulate_consciousness(combined_decision)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
