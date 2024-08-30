@@ -230,22 +230,13 @@ class KnowledgeBase:
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
 
-    def summarize_memory(self, memory, max_length=10000):
-        """Summarize or trim the memory to fit within the context limits."""
-        def extract_key_insights(data):
-            """Extract key insights from the data."""
-            if isinstance(data, dict):
-                return {k: extract_key_insights(v) for k, v in data.items() if v}
-            elif isinstance(data, list):
-                return [extract_key_insights(item) for item in data]
-            else:
-                return str(data)[:5000]  # Limit individual entries to 5000 characters
-
-        memory_str = json.dumps(extract_key_insights(memory))
-        if len(memory_str) > max_length:
-            # Implement a more sophisticated summarization strategy
-            return memory_str[:max_length] + "..."
-        return memory_str
+    async def summarize_memory_with_ollama(self, memory):
+        """Use Ollama to summarize memory entries."""
+        prompt = f"Summarize the following memory data: {json.dumps(memory)}"
+        summary_response = await self.ollama.query_ollama("memory_summarization", prompt)
+        summary = summary_response.get("summary", "No summary available")
+        self.logger.info(f"Memory summary: {summary}")
+        return summary
 
     async def get_longterm_memory(self):
         """Retrieve, refine, and manage long-term memory entries."""
