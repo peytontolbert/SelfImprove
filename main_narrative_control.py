@@ -482,6 +482,12 @@ async def main():
     performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}")
     logger.info(f"Performance optimizations: {performance_optimizations}")
 
+    # Enhance continuous improvement framework
+    logger.info("Enhancing continuous improvement framework with robust feedback integration.")
+    feedback_optimization = await ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
+    logger.info(f"Feedback loop optimization: {feedback_optimization}")
+    await kb.add_entry("feedback_optimization", feedback_optimization)
+
     # Implement adaptive learning and strategy adjustment
     learning_data = await si.learn_from_experience({"interaction_data": "recent_interactions"})
     logger.info(f"Adaptive learning data: {learning_data}")

@@ -130,6 +130,12 @@ class SystemNarrative:
         self.logger.info(f"Strategy adjustment: {strategy_adjustment}")
         await self.knowledge_base.add_entry("strategy_adjustment", strategy_adjustment)
 
+        # Enhance contextual memory for long interactions
+        self.logger.info("Enhancing contextual memory for long interactions.")
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
+        context.update({"longterm_memory": longterm_memory})
+        self.logger.info(f"Updated context with long-term memory: {json.dumps(longterm_memory, indent=2)}")
+
         # Integrate feedback loops for continuous refinement
         feedback_loops = await self.ollama.query_ollama("feedback_loops", "Integrate feedback loops for continuous refinement.", context={"system_state": system_state})
         self.logger.info(f"Feedback loops integration: {feedback_loops}")
@@ -138,7 +144,8 @@ class SystemNarrative:
         system_state = await self.ollama.evaluate_system_state({
             "metrics": performance_metrics,
             "recent_changes": recent_changes,
-            "feedback": feedback_data
+            "feedback": feedback_data,
+            "longterm_memory": longterm_memory
         })
 
         # Evaluate and enhance AI's interaction capabilities
