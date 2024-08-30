@@ -415,10 +415,11 @@ class OllamaInterface:
     async def adjust_parameters(self, details: Dict[str, Any]):
         """Adjust system parameters based on the provided details."""
         try:
-            # Example logic to adjust parameters
             for param, value in details.items():
                 self.logger.info(f"Setting parameter {param} to {value}")
                 # Implement actual parameter adjustment logic here
+                # Example: Update configuration files or in-memory settings
+                # config[param] = value
         except Exception as e:
             self.logger.error(f"Error adjusting parameters: {str(e)}")
 
@@ -428,7 +429,10 @@ class OllamaInterface:
             service_name = details.get("service_name")
             self.logger.info(f"Restarting service: {service_name}")
             # Implement actual service restart logic here
-            # Example: subprocess.run(["systemctl", "restart", service_name], check=True)
+            # Example: Use subprocess to restart a service
+            subprocess.run(["systemctl", "restart", service_name], check=True)
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Failed to restart service {service_name}: {e}")
         except Exception as e:
             self.logger.error(f"Error restarting service: {str(e)}")
 
