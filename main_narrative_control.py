@@ -16,6 +16,7 @@ Functions:
 - main: Initializes system components and starts the narrative-controlled improvement process.
 """
 import git
+import psutil
 import subprocess
 import random
 import logging
