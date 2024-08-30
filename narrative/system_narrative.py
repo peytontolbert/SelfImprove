@@ -31,7 +31,7 @@ class SystemNarrative:
         self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
 
     async def log_chain_of_thought(self, thought_processes):
-        """Log and enhance the chain of thought for system processes."""
+        """Log and implement the chain of thought for system processes."""
         # Retrieve long-term memory for context
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         
