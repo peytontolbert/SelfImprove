@@ -62,8 +62,9 @@ class KnowledgeBase:
     @staticmethod
     def _create_initial_nodes(tx):
         # Check if the constraint already exists before creating
-        result = tx.run("SHOW CONSTRAINTS WHERE entityType = 'NODE' AND labelsOrTypes = ['Node'] AND properties = ['name'] RETURN name")
-        if not result.single():
+        result = tx.run("SHOW CONSTRAINTS")
+        constraints = [record["name"] for record in result if "Node" in record["labelsOrTypes"] and "name" in record["properties"]]
+        if "constraint_bcaf404a" not in constraints:
             tx.run("CREATE CONSTRAINT FOR (n:Node) REQUIRE n.name IS UNIQUE")
 
     def add_nodes_batch(self, label, nodes):
