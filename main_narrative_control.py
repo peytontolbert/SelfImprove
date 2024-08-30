@@ -29,6 +29,7 @@ from error_handler import ErrorHandler
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
 import time
+from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative
 import json
@@ -339,7 +340,10 @@ class SelfImprovement:
         logger.info(f"Code change applied: {code_change}")
         return {"status": "success", "message": "Code change applied"}
 
-    async def apply_system_update(self, system_update):
+    async def meta_learn(self, performance_data):
+        meta_learner = MetaLearner()
+        optimized_strategies = await meta_learner.optimize_learning_strategies(self.ollama, performance_data)
+        await self.apply_learning_strategies(optimized_strategies)
         try:
             logger.info(f"Applying system update: {system_update}")
             # Execute the update command or script
