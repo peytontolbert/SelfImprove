@@ -397,8 +397,9 @@ async def initialize_components():
     improvement_manager = ImprovementManager(ollama)
     omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
     consciousness_emulator = ConsciousnessEmulator(ollama)
-    systemnarrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber, si=si)
+    systemnarrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber, si=None)
     si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator, systemnarrative)
+    systemnarrative.si = si
     components = {
         "consciousness_emulator": consciousness_emulator,
         "ollama": ollama,
