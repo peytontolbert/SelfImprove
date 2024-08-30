@@ -63,6 +63,10 @@ class SystemNarrative:
         predictive_thoughts = self.predictive_thought_modeling(refined_thoughts)
         self.logger.info(f"Predictive Thoughts: {predictive_thoughts}")
         
+        # Predictive thought modeling
+        predictive_thoughts = self.predictive_thought_modeling(refined_thoughts)
+        self.logger.info(f"Predictive Thoughts: {predictive_thoughts}")
+
         # Bias detection and mitigation
         unbiased_thoughts = self.detect_and_mitigate_bias(predictive_thoughts)
         self.logger.info(f"Unbiased Thoughts: {unbiased_thoughts}")
