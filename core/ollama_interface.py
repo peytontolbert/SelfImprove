@@ -137,16 +137,16 @@ class OllamaInterface:
         }
         log_name = f"ollama_interaction_{int(time.time())}"
         self.log_manager.save_log(log_name, log_data)
-        delay = initial_delay
-        for attempt in range(max_retries):
-            result = await func()
-            if result is not None:
-                return result
-            await asyncio.sleep(delay)
-            self.logger.warning(f"Attempt {attempt + 1} failed, retrying in {delay} seconds...")
-            delay *= 2
-        self.logger.error("All retry attempts failed. Returning None.")
-        return None
+    def log_interaction(self, system_prompt, prompt, response):
+        """Log the interaction with Ollama."""
+        log_data = {
+            "system_prompt": system_prompt,
+            "prompt": prompt,
+            "response": response,
+            "timestamp": time.time()
+        }
+        log_name = f"ollama_interaction_{int(time.time())}"
+        self.log_manager.save_log(log_name, log_data)
 
     async def refine_prompt(self, prompt: str, task: str) -> str:
         if task == "general":
