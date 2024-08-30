@@ -389,6 +389,7 @@ async def main():
     logger.info(f"Updated system prompt: {new_system_prompt}")
     longterm_memory = await kb.get_longterm_memory()
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
+    await kb.save_longterm_memory(longterm_memory)
     improvements = await si.analyze_performance({"metric": "value", "longterm_memory": longterm_memory}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
