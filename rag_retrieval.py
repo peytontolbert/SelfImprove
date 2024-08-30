@@ -1,14 +1,16 @@
 import logging
 from typing import List, Dict, Any
 from knowledge_base import KnowledgeBase
+from attention_mechanism import ConsciousnessEmulator
 
 class RAGRetrieval:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def __init__(self, knowledge_base: KnowledgeBase):
+    def __init__(self, knowledge_base: KnowledgeBase, consciousness_emulator: ConsciousnessEmulator):
         self.logger = logging.getLogger(__name__)
         self.knowledge_base = knowledge_base
+        self.consciousness_emulator = consciousness_emulator
 
     async def retrieve_documents(self, query: str, include_longterm_memory: bool = True) -> List[Dict[str, Any]]:
         """Retrieve relevant documents based on the query using the graph database, optionally including long-term memory insights."""
@@ -19,7 +21,12 @@ class RAGRetrieval:
             if include_longterm_memory:
                 longterm_memory = await self.knowledge_base.get_longterm_memory()
                 documents.extend(longterm_memory.get("insights", []))
-            self.logger.debug(f"Retrieved documents: {documents}")
+            # Enhance document retrieval with contextual awareness
+            context = {"query": query}
+            enhanced_context = self.consciousness_emulator.emulate_consciousness(context)
+            prioritized_documents = sorted(documents, key=lambda doc: enhanced_context.get("prioritized_actions", {}).get(doc['title'], 0), reverse=True)
+            self.logger.debug(f"Retrieved and prioritized documents: {prioritized_documents}")
+            return prioritized_documents
             return documents
         except Exception as e:
             self.logger.error(f"Error during document retrieval: {str(e)}")
