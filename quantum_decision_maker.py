@@ -1,11 +1,13 @@
 import logging
 from typing import Dict, Any, List
+from core.ollama_interface import OllamaInterface
 
 class QuantumDecisionMaker:
-    def __init__(self):
+    def __init__(self, ollama_interface: OllamaInterface):
         self.logger = logging.getLogger(__name__)
+        self.ollama = ollama_interface
 
-    def evaluate_possibilities(self, action, system_state, feedback) -> List[Dict[str, Any]]:
+    async def evaluate_possibilities(self, action, system_state, feedback) -> List[Dict[str, Any]]:
         """
         Evaluate multiple possibilities for a given action using quantum-inspired logic.
 
@@ -19,7 +21,7 @@ class QuantumDecisionMaker:
         """
         try:
             possible_outcomes = [
-                {"action": action, "score": self.calculate_score(action, system_state, feedback, variation)}
+                {"action": action, "score": await self.calculate_score(action, system_state, feedback, variation)}
                 for variation in range(5)
             ]
             self.logger.info(f"Evaluated possibilities for action '{action}': {possible_outcomes}")
@@ -28,7 +30,7 @@ class QuantumDecisionMaker:
             self.logger.error(f"Error evaluating possibilities for action '{action}': {e}")
             return []
 
-    def quantum_decision_tree(self, decision_space: Dict[str, Any]) -> Dict[str, Any]:
+    async def quantum_decision_tree(self, decision_space: Dict[str, Any]) -> Dict[str, Any]:
         """
         Use a quantum-inspired decision tree to make complex decisions.
 
@@ -44,7 +46,7 @@ class QuantumDecisionMaker:
         self.logger.info(f"Optimal decision made: {optimal_decision}")
         return optimal_decision
 
-    def calculate_score(self, action, system_state, feedback, variation) -> int:
+    async def calculate_score(self, action, system_state, feedback, variation) -> int:
         """
         Calculate a score for a given action variation.
 
@@ -59,6 +61,9 @@ class QuantumDecisionMaker:
         """
         # Example scoring logic based on variation
         base_score = feedback.get(action, {}).get("base_score", 1)
-        score = base_score + variation  # Simple example logic
+        # Integrate insights from OllamaInterface
+        insights = await self.ollama.query_ollama("decision_insights", f"Provide insights for action: {action}", context={"system_state": system_state})
+        insight_score = insights.get("insight_score", 0)
+        score = base_score + variation + insight_score  # Enhanced scoring logic
         self.logger.debug(f"Calculated score for action '{action}' variation {variation}: {score}")
         return score
