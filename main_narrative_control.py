@@ -420,19 +420,23 @@ class SelfImprovement:
         return None
 
 def initialize_components():
+    ollama = OllamaInterface()
+    kb = KnowledgeBase(ollama_interface=ollama)
+    improvement_manager = ImprovementManager(ollama)
+    omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb)
+
     components = {
-        "ollama": OllamaInterface(),
-        "ollama": OllamaInterface(),
+        "ollama": ollama,
         "rl_module": ReinforcementLearningModule(ollama),
         "task_queue": TaskQueue(ollama),
         "vcs": VersionControlSystem(),
         "ca": CodeAnalysis(),
         "tf": TestingFramework(),
         "dm": DeploymentManager(),
-        "kb": KnowledgeBase(ollama_interface=ollama),
-        "omniscient_data_absorber": OmniscientDataAbsorber(knowledge_base=kb),
+        "kb": kb,
+        "omniscient_data_absorber": omniscient_data_absorber,
         "narrative": SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber),
-        "improvement_manager": ImprovementManager(ollama),
+        "improvement_manager": improvement_manager,
         "si": SelfImprovement(ollama, kb, improvement_manager),
         "fs": FileSystem(),
         "pm": PromptManager(),
