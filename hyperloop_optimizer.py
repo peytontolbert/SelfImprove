@@ -5,7 +5,7 @@ class HyperloopOptimizer:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    async def optimize(self, problem_space: Dict[str, Any], dimensions: List[str]) -> Dict[str, Any]:
+    async def optimize(self, problem_space: Dict[str, Any], dimensions: List[str], feedback: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Perform hyperloop multidimensional optimization on the given problem space.
 
@@ -19,6 +19,11 @@ class HyperloopOptimizer:
         self.logger.info(f"Starting hyperloop optimization for dimensions: {dimensions}")
         try:
             # Implement a more sophisticated optimization algorithm
+            # Integrate feedback for adaptive learning
+            if feedback:
+                self.logger.info(f"Integrating feedback into optimization: {feedback}")
+                problem_space = self._adapt_problem_space(problem_space, feedback)
+
             optimized_solution = self._complex_optimization(problem_space, dimensions)
             self.logger.info(f"Optimized solution: {optimized_solution}")
             return optimized_solution

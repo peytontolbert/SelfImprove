@@ -565,7 +565,8 @@ async def main():
     problem_space = {"variables": ["x", "y", "z"], "constraints": ["x + y + z <= 30"]}
     dimensions = ["x", "y", "z"]
     await narrative.log_chain_of_thought("Applying hyperloop multidimensional optimization to complex problem spaces.")
-    optimized_solution = await hyperloop_optimizer.optimize(problem_space, dimensions)
+    feedback = {"x": 0.1, "y": -0.05, "z": 0.2}  # Example feedback
+    optimized_solution = await hyperloop_optimizer.optimize(problem_space, dimensions, feedback)
     logger.info(f"Hyperloop optimized solution: {optimized_solution}")
 
     # Quantum optimization for complex problem spaces
