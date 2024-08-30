@@ -1,4 +1,26 @@
 {
     "title": "Getting Started",
-    "content": "Welcome to the system! This tutorial will guide you through the initial setup and basic usage. First, ensure you have all the necessary dependencies installed. Then, run the main script to start the system. Familiarize yourself with the main components and their roles. Explore the documentation for detailed instructions on each feature."
+    "content": [
+        "Welcome to the system! This tutorial will guide you through the initial setup and basic usage.",
+        "Step 1: Ensure you have all the necessary dependencies installed. Use the following command to install them:",
+        "```",
+        "pip install -r requirements.txt",
+        "```",
+        "Step 2: Configure your environment variables. Create a `.env` file in the root directory with the following content:",
+        "```",
+        "NEO4J_URI=bolt://localhost:7687",
+        "NEO4J_USER=neo4j",
+        "NEO4J_PASSWORD=your_password",
+        "```",
+        "Step 3: Run the main script to start the system. Use the command:",
+        "```",
+        "python main_narrative_control.py",
+        "```",
+        "Step 4: Familiarize yourself with the main components and their roles. Key components include:",
+        "- OllamaInterface: Handles interactions with the AI model.",
+        "- KnowledgeBase: Manages the storage and retrieval of knowledge.",
+        "- ImprovementManager: Oversees the implementation of system improvements.",
+        "Step 5: Explore the documentation for detailed instructions on each feature. Access the documentation at `docs/index.html`.",
+        "Step 6: Engage with the tutorials provided in the `tutorials` directory to deepen your understanding of the system's capabilities."
+    ]
 }
