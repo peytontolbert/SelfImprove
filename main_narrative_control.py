@@ -33,6 +33,7 @@ from knowledge_base import KnowledgeBase
 from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
+from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 def setup_logging():
@@ -423,7 +424,7 @@ def initialize_components():
     ollama = OllamaInterface()
     kb = KnowledgeBase(ollama_interface=ollama)
     improvement_manager = ImprovementManager(ollama)
-    omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb)
+    omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
 
     components = {
         "ollama": ollama,
@@ -444,7 +445,7 @@ def initialize_components():
         "tutorial_manager": TutorialManager(),
         "meta_learner": MetaLearner(),
         "quantum_optimizer": QuantumOptimizer(),
-        "swarm_intelligence": SwarmIntelligence()
+        "swarm_intelligence": SwarmIntelligence(ollama)
     }
 
     # Load a tutorial on the first run
