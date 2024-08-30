@@ -20,7 +20,6 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.check_connection()
         self.initialize_database()
-        self.initialize_database()
         self.ollama = ollama_interface
         self.longterm_memory = {}  # Initialize with a fixed size limit
         self.memory_limit = 100  # Example limit for the number of entries
