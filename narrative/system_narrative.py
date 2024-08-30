@@ -10,7 +10,7 @@ import subprocess
 import json
 from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
-from attention_mechanism import AttentionMechanism
+from attention_mechanism import ConsciousnessEmulator
 from swarm_intelligence import SwarmIntelligence
 from self_improvement import SelfImprovement
 from quantum_decision_maker import QuantumDecisionMaker
@@ -23,7 +23,7 @@ class SystemNarrative:
         self.data_absorber = data_absorber
         self.logger = logging.getLogger("SystemNarrative")
         self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
-        self.attention_mechanism = AttentionMechanism()
+        self.consciousness_emulator = ConsciousnessEmulator()
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
 
@@ -188,7 +188,7 @@ class SystemNarrative:
         self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
 
         # Use the enhanced attention mechanism to prioritize actions
-        prioritized_actions = self.attention_mechanism.prioritize_actions(combined_decision)
+        prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
