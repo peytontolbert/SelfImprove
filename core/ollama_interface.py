@@ -25,6 +25,7 @@ class OllamaInterface:
         self.prompt_templates = {}
         self.conversation_contexts = {}
         self.log_manager = LogManager()
+        self.log_manager = LogManager()
 
     async def __aenter__(self):
         if not self.session:
@@ -86,6 +87,7 @@ class OllamaInterface:
         result = await self.retry_with_backoff(attempt_query)
         if result is None:
             self.log_interaction(system_prompt, prompt, result)
+            self.log_interaction(system_prompt, prompt, result)
             self.logger.error("No response received from Ollama after retries.")
             # Implement a fallback strategy
             fallback_response = {
@@ -96,6 +98,8 @@ class OllamaInterface:
             return fallback_response
 
         self.logger.debug(f"Request payload: {prompt}")
+
+        self.log_interaction(system_prompt, prompt, result)
 
         self.log_interaction(system_prompt, prompt, result)
 
