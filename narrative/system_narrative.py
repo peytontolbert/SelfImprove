@@ -11,6 +11,7 @@ from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
 from attention_mechanism import AttentionMechanism
 from swarm_intelligence import SwarmIntelligence
+from main import SelfImprovement
 from quantum_decision_maker import QuantumDecisionMaker
 
 class SystemNarrative:
