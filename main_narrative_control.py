@@ -429,10 +429,10 @@ async def initialize_components():
 async def main():
     components = await initialize_components()
     system_manager = SystemManager(components)
-    ollama = components["ollama"]
-    narrative = components["narrative"]
-    data_absorber = components["omniscient_data_absorber"]
-    consciousness_emulator = components["consciousness_emulator"]
+    ollama = components.components["ollama"]
+    narrative = components.components["narrative"]
+    data_absorber = components.components["omniscient_data_absorber"]
+    consciousness_emulator = components.components["consciousness_emulator"]
 
     await system_initialization(system_manager, ollama, narrative)
 
