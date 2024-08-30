@@ -45,6 +45,7 @@ class OllamaInterface:
             return {k: self.simplify_context_memory(v, max_depth, current_depth + 1) for k, v in context_memory.items() if v}
         return context_memory
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
+        context = context or {}
         if self.first_run:
             tutorial = self.tutorial_manager.load_tutorial("getting_started")
             context = {}
