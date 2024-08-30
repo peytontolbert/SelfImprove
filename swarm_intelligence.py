@@ -24,7 +24,11 @@ class SwarmIntelligence:
         try:
             quantum_optimized_actions = await self.analyze_quantum_behavior(actions, system_state, feedback)
             self.logger.info(f"Quantum-optimized actions: {quantum_optimized_actions}")
-            await self.system_narrative.log_chain_of_thought("Quantum decision-making process completed.")
+            await self.system_narrative.log_chain_of_thought({
+                "process": "Quantum decision-making",
+                "context": context,
+                "quantum_optimized_actions": quantum_optimized_actions
+            })
             return {"quantum_optimized_actions": quantum_optimized_actions}
         except Exception as e:
             self.logger.error(f"Error in quantum decision-making: {e}", exc_info=True)
