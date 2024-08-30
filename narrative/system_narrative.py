@@ -712,6 +712,8 @@ class QuantumPredictiveAnalyzer:
         try:
             self.logger.info("Starting quantum predictive analysis.")
             decision_space = self.prepare_decision_space(predictive_context)
+            if not isinstance(decision_space, dict):
+                raise TypeError("Decision space must be a dictionary.")
             self.logger.debug(f"Prepared decision space: {decision_space}")
             optimal_decision = await self.quantum_decision_maker.quantum_decision_tree(decision_space)
             self.logger.info(f"Quantum predictive analysis completed with decision: {optimal_decision}")
