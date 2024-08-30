@@ -286,6 +286,14 @@ class KnowledgeBase:
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
 
+    async def summarize_memory(self, memory):
+        """Summarize memory entries."""
+        self.logger.info(f"Summarizing memory: {memory}")
+        # Placeholder for actual summarization logic
+        summary = "Summary of memory data"
+        self.logger.info(f"Memory summary: {summary}")
+        return summary
+
     async def summarize_memory_with_ollama(self, memory):
         """Use Ollama to summarize memory entries."""
         prompt = f"Summarize the following memory data: {json.dumps(memory)}"
