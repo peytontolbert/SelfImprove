@@ -271,6 +271,10 @@ class SelfImprovement:
         self.logger.info(f"Quantum decisions: {quantum_decisions}")
         consciousness_insights = self.consciousness_emulator.emulate_consciousness(metrics)
         self.logger.info(f"Consciousness insights: {consciousness_insights}")
+        # Use reinforcement learning feedback to adapt improvements
+        rl_feedback = await rl_module.get_feedback(metrics)
+        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+        
         optimized_improvements = await self.swarm_intelligence.optimize_decision({
             "actions": improvements,
             "system_state": metrics,
