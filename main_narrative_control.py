@@ -411,6 +411,11 @@ def initialize_components():
         "meta_learner": MetaLearner(ollama, kb),
         "quantum_optimizer": QuantumOptimizer(ollama),
         "swarm_intelligence": SwarmIntelligence(ollama),
+        "predictive_analytics_engine": PredictiveAnalyticsEngine(ollama, kb),
+        "ethical_decision_making_module": EthicalDecisionMakingModule(ollama),
+        "resource_management_optimizer": ResourceManagementOptimizer(ollama),
+        "feedback_loop_enhancer": FeedbackLoopEnhancer(ollama),
+        "collaborative_learning_integrator": CollaborativeLearningIntegrator(ollama, kb),
     }
 
     # Load a tutorial on the first run
