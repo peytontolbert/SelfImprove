@@ -713,13 +713,6 @@ async def main():
     system_manager.manage_component("ollama", action="status")
 
     narrative = components["narrative"]
-    # Log the impact of ConsciousnessEmulator
-    await narrative.log_chain_of_thought({
-        "process": "Consciousness Emulation",
-        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
-        "prioritized_actions": prioritized_actions
-    })
-
     # Initialize and use components
     rl_module = components["rl_module"]
     si = components["si"]
@@ -729,10 +722,16 @@ async def main():
     logger.info(f"Reinforcement learning feedback: {rl_feedback}")
 
     # Use ConsciousnessEmulator to prioritize actions
-    prioritized_actions = await consciousness_emulator.emulate_consciousness(context)
     context = {"metrics": metrics, "rl_feedback": rl_feedback}
     prioritized_actions = await consciousness_emulator.emulate_consciousness(context)
     logger.info(f"Prioritized actions from ConsciousnessEmulator: {prioritized_actions}")
+
+    # Log the impact of ConsciousnessEmulator
+    await narrative.log_chain_of_thought({
+        "process": "Consciousness Emulation",
+        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
+        "prioritized_actions": prioritized_actions
+    })
 
     # Log the impact of ConsciousnessEmulator
     await narrative.log_chain_of_thought({

@@ -1243,6 +1243,10 @@ class OmniscientDataAbsorber:
         await self.knowledge_base.add_entry("feedback_loops", feedback_loops)
 
         # Enhance feedback loop with adaptive mechanisms
+        context = {
+            "rl_feedback": {},
+            "predictive_insights": {}
+        }
         rl_feedback = context.get("rl_feedback", {})
         predictive_insights = context.get("predictive_insights", {})
         feedback_optimization = await self.ollama.query_ollama(
