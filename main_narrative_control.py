@@ -20,6 +20,8 @@ import subprocess
 import random
 import logging
 import asyncio
+from skopt import gp_minimize
+from skopt.space import Real
 import os
 import aiohttp
 import json
@@ -439,7 +441,20 @@ class RefinementManager:
         return evaluation_results
 
     async def get_performance_metric(self, refinement):
-        # Implementation remains the same
+        self.logger.info(f"Getting performance metric for refinement: {refinement}")
+        # Simulate performance evaluation
+        performance_score = random.uniform(0, 1)
+        
+        # Use Ollama for advanced performance evaluation
+        evaluation_result = await self.ollama.query_ollama(
+            "performance_evaluation",
+            f"Evaluate the performance of this refinement: {refinement}",
+            context={"refinement": refinement, "initial_score": performance_score}
+        )
+        
+        final_score = evaluation_result.get("performance_score", performance_score)
+        self.logger.info(f"Performance metric for refinement: {final_score}")
+        return final_score
 
     async def apply_reinforcement_learning(self, strategy, feedback, performance_data):
         self.logger.info("Applying reinforcement learning to strategy refinement.")
@@ -455,7 +470,37 @@ class RefinementManager:
         return strategy
 
     async def apply_bayesian_optimization(self, strategy, performance_data):
-        # Implementation remains the same
+        self.logger.info("Applying Bayesian optimization to strategy refinement.")
+        
+        # Prepare data for Bayesian optimization
+        X = [[key, value] for key, value in performance_data.items()]
+        y = [strategy.get(key, 0) for key in performance_data.keys()]
+        
+        # Simple Bayesian optimization using scikit-optimize
+        from skopt import gp_minimize
+        from skopt.space import Real
+        
+        def objective(params):
+            return -sum(p * v for p, v in zip(params, y))
+        
+        space = [Real(0, 1, name=f'param_{i}') for i in range(len(X))]
+        
+        result = gp_minimize(objective, space, n_calls=50, random_state=0)
+        
+        optimized_strategy = {key: value for key, value in zip(performance_data.keys(), result.x)}
+        
+        # Use Ollama for advanced optimization insights
+        optimization_insights = await self.ollama.query_ollama(
+            "bayesian_optimization",
+            f"Provide insights on this Bayesian optimization result: {optimized_strategy}",
+            context={"original_strategy": strategy, "performance_data": performance_data}
+        )
+        
+        if optimization_insights.get("refined_strategy"):
+            optimized_strategy.update(optimization_insights["refined_strategy"])
+        
+        self.logger.info(f"Bayesian optimized strategy: {optimized_strategy}")
+        return optimized_strategy
 
     async def evaluate_refinement(self, refinement, performance_metric):
         self.logger.info(f"Evaluating refinement: {refinement}")
