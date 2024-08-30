@@ -52,6 +52,9 @@ class SelfImprovement:
         code_health = await self.ollama.query_ollama("code_health_monitoring", "Monitor the health and evolution of the codebase with feedback loop.", context={"metrics": metrics})
         self.logger.info(f"Code health monitoring with feedback loop: {code_health}")
 
+        # Integrate meta-learning and reinforcement learning for strategy adaptation
+        meta_learning_strategies = await self.meta_learn(metrics)
+        self.logger.info(f"Meta-learning strategies: {meta_learning_strategies}")
         # Generate and test hypotheses for self-improvement
         hypotheses = await self.generate_hypotheses(metrics)
         tested_hypotheses = await self.test_hypotheses(hypotheses)

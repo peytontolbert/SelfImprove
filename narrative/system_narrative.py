@@ -115,8 +115,12 @@ class SystemNarrative:
         self.logger.info(f"Quantum predictive insights: {quantum_insights}")
         await self.knowledge_base.add_entry("quantum_predictive_insights", quantum_insights)
 
-        # Advanced Resource Optimization
+        # Advanced Resource Optimization with predictive analytics
         resource_optimization = await self.ollama.query_ollama(
+            "predictive_resource_optimization",
+            "Use predictive analytics to optimize resource allocation based on anticipated demands.",
+            context={"system_state": system_state}
+        )
             "advanced_resource_optimization",
             "Implement advanced dynamic resource allocation based on current and predicted demands.",
             context={"system_state": system_state}
@@ -321,8 +325,12 @@ class SystemNarrative:
         self.logger.info(f"Advanced future challenges and strategies: {future_challenges}")
         await self.knowledge_base.add_entry("advanced_future_challenges", future_challenges)
 
-        # Evolve feedback loop for long-term evolution
+        # Evolve feedback loop for long-term evolution with adaptive mechanisms
         await self.evolve_feedback_loop(rl_feedback, predictive_insights)
+        # Continuously refine feedback based on historical data and real-time performance
+        refined_feedback = await self.ollama.query_ollama("refine_feedback", "Refine feedback using historical data and real-time performance metrics.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+        self.logger.info(f"Refined feedback: {refined_feedback}")
+        await self.knowledge_base.add_entry("refined_feedback", refined_feedback)
 
         # Enhance feedback loop with adaptive mechanisms
         feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Enhance feedback loops for rapid learning and adaptation using advanced machine learning models.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
