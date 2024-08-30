@@ -124,7 +124,8 @@ class SwarmIntelligence:
         pattern_score = 0
         if action in system_state.get("historical_actions", []):
             pattern_score += 2  # Increase score for repeated patterns
-        if feedback.get(action, {}).get("success_rate", 0) > 0.8:
+        action_name = action.get("name", "")
+        if feedback.get(action_name, {}).get("success_rate", 0) > 0.8:
             pattern_score += 3  # Increase score for high success rate
 
         self.logger.info(f"Pattern score for action '{action}': {pattern_score}")

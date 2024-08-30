@@ -600,7 +600,7 @@ class QuantumPredictiveAnalyzer:
             self.logger.info("Starting quantum predictive analysis.")
             decision_space = self.prepare_decision_space(predictive_context)
             self.logger.debug(f"Prepared decision space: {decision_space}")
-            optimal_decision = self.quantum_decision_maker.quantum_decision_tree(decision_space)
+            optimal_decision = await self.quantum_decision_maker.quantum_decision_tree(decision_space)
             self.logger.info(f"Quantum predictive analysis completed with decision: {optimal_decision}")
             return optimal_decision
         except Exception as e:
