@@ -616,10 +616,10 @@ class TemporalEngine:
             await asyncio.sleep(2)
 
 class OmniscientDataAbsorber:
-    def __init__(self, knowledge_base: KnowledgeBase):
+    def __init__(self, knowledge_base: KnowledgeBase, ollama_interface: OllamaInterface):
         self.knowledge_base = knowledge_base
         self.logger = logging.getLogger("OmniscientDataAbsorber")
-        self.quantum_decision_maker = QuantumDecisionMaker()
+        self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
 
     async def absorb_knowledge(self):
         """Absorb knowledge from various sources with prioritization."""
