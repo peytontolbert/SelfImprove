@@ -33,6 +33,7 @@ from logging_utils import log_with_ollama
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
+from core.task_manager import TaskQueue
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from prompts.management.prompt_manager import PromptManager
 from error_handler import ErrorHandler
