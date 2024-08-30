@@ -33,6 +33,7 @@ from logging_utils import log_with_ollama
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
+from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
 from error_handler import ErrorHandler
@@ -692,7 +693,10 @@ async def initialize_components():
 
 async def main():
     components = await initialize_components()
+    system_manager = SystemManager(components)
+    system_manager.log_system_state()
     ollama = components["ollama"]
+    system_manager.manage_component("ollama", action="status")
     rl_module = components["rl_module"]
     si = components["si"]
     metrics = await si.get_system_metrics()
@@ -714,6 +718,7 @@ async def main():
     quantum_optimizer = components["quantum_optimizer"]
     swarm_intelligence = components["swarm_intelligence"]
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
+    system_manager.manage_component("ollama", action="restart")
 
     # Example usage of GeneralNN
     nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=nn.ReLU)
