@@ -10,6 +10,7 @@ import json
 from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
 from attention_mechanism import AttentionMechanism
+from swarm_intelligence import SwarmIntelligence
 
 class TemporalEngine:
     def __init__(self):
@@ -83,6 +84,7 @@ class OmniscientDataAbsorber:
         self.rl_module = ReinforcementLearningModule(ollama_interface)
         self.temporal_engine = TemporalEngine()
         self.omniscient_data_absorber = OmniscientDataAbsorber(self.knowledge_base)
+        self.swarm_intelligence = SwarmIntelligence()
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     async def generate_thoughts(self, context=None):
@@ -444,12 +446,16 @@ class OmniscientDataAbsorber:
             "system_state": system_state,
             "feedback": feedback
         }
-        # Use the enhanced attention mechanism to prioritize actions
-        prioritized_actions = self.attention_mechanism.prioritize_actions({
+        # Use swarm intelligence to optimize decision-making
+        swarm_decision = self.swarm_intelligence.optimize_decision({
             "actions": context.get("actions", []),
             "system_state": system_state,
             "feedback": feedback
         })
+        self.logger.info(f"Swarm intelligence decision: {swarm_decision}")
+
+        # Use the enhanced attention mechanism to prioritize actions
+        prioritized_actions = self.attention_mechanism.prioritize_actions(swarm_decision)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])

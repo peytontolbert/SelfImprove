@@ -33,6 +33,7 @@ from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative
 import json
+from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 class QuantumOptimizer:
     def __init__(self):
@@ -421,10 +422,11 @@ def initialize_components():
 
     meta_learner = MetaLearner()
     quantum_optimizer = QuantumOptimizer()
-    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer
+    swarm_intelligence = SwarmIntelligence()
+    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence
 
 async def main():
-    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer = initialize_components()
+    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence = initialize_components()
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
     # Initialize configuration settings
