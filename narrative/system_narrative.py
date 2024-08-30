@@ -1442,7 +1442,8 @@ class OmniscientDataAbsorber:
             await self.log_state("Deployment deferred based on Ollama's decision", "Deployment decision", deployment_decision or {})
 
         # Perform version control operations
-        await self.log_state("Performing version control operations", "Version control execution", vcs or {})
+        context = context or {}
+        await self.log_state("Performing version control operations", "Version control execution", context)
         changes = "Recent system changes"
         await vcs.commit_changes(ollama, changes)
 
