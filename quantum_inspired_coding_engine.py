@@ -5,7 +5,7 @@ from qiskit.algorithms import VQE
 from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
 from qiskit.utils import QuantumInstance
 from qiskit.opflow import Z, I
-from scipy.optimize import minimize
+from scipy.optimize import minimize, COBYLA
 import ast
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
