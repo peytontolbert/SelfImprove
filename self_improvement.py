@@ -65,10 +65,10 @@ class SelfImprovement:
             context={"metrics": metrics, "longterm_memory": await self.knowledge_base.get_longterm_memory()}
         )
         self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
-        # Use reinforcement learning feedback to adapt improvements
-        rl_feedback = await rl_module.get_feedback(metrics)
-        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-        improvements.extend(rl_feedback)
+        # Integrate real-time feedback loop
+        real_time_feedback = await self.collect_real_time_feedback(metrics)
+        self.logger.info(f"Real-time feedback: {real_time_feedback}")
+        improvements.extend(real_time_feedback)
         performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
         
         # Monitor code health and evolution with feedback loop
@@ -78,8 +78,10 @@ class SelfImprovement:
         # Integrate meta-learning and reinforcement learning for strategy adaptation
         meta_learning_strategies = await self.meta_learn(metrics)
         self.logger.info(f"Meta-learning strategies: {meta_learning_strategies}")
-        # Generate and test hypotheses for self-improvement
-        hypotheses = await self.generate_hypotheses(metrics)
+        # Implement predictive analytics for proactive improvements
+        predictive_insights = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to anticipate future challenges and opportunities.", context={"metrics": metrics})
+        self.logger.info(f"Predictive insights: {predictive_insights}")
+        improvements.extend(predictive_insights.get("suggestions", []))
         tested_hypotheses = await self.test_hypotheses(hypotheses)
         self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
         
@@ -193,7 +195,10 @@ class SelfImprovement:
         self.logger.info(f"Prompt refinements suggested: {refinements}")
         return refinements
 
-    async def retry_ollama_call(self, func, *args, max_retries=2, **kwargs):
+    async def collect_real_time_feedback(self, metrics):
+        """Collect real-time feedback from user interactions."""
+        feedback = await self.ollama.query_ollama("real_time_feedback", "Collect real-time feedback based on current metrics.", context={"metrics": metrics})
+        return feedback.get("feedback", [])
         for attempt in range(max_retries):
             result = await func(*args, **kwargs)
             if result is not None:

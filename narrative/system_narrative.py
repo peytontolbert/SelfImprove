@@ -32,8 +32,10 @@ class SystemNarrative:
 
     async def log_chain_of_thought(self, thought_processes):
         """Log and implement the chain of thought for system processes."""
-        # Retrieve long-term memory for context
+        # Enhance contextual awareness with advanced memory systems
         longterm_memory = await self.knowledge_base.get_longterm_memory()
+        enhanced_memory = await self.ollama.query_ollama("enhance_memory", "Enhance memory systems for better contextual awareness.", context={"longterm_memory": longterm_memory})
+        self.logger.info(f"Enhanced memory: {enhanced_memory}")
         
         # Example of CoT for a simple math task
         cot_steps_math = [
