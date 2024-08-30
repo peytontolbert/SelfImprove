@@ -258,20 +258,15 @@ class KnowledgeBase:
         single_result = result.single()
         return single_result[0] if single_result else None
 
-    async def add_entry(self, entry_name, data):
-        """Add an entry to the knowledge base."""
-        file_path = os.path.join(self.base_directory, f"{entry_name}.json")
-        with open(file_path, 'w') as file:
-            json.dump(data, file)
-        self.logger.info(f"Entry added to knowledge base: {entry_name}")
-        decision = await self.ollama.query_ollama(self.ollama.system_prompt, f"Should I update this entry: {entry_name} with data: {data}", task="knowledge_base")
-        if decision.get('update_entry', False):
-            update_result = await self.add_entry(entry_name, data)
-            self.logger.info(f"Entry updated: {entry_name}")
-            if update_result:
-                await self.save_longterm_memory({entry_name: data})
-            return update_result
-        return False
+    def add_node(self, label, properties):
+        """Add a node to the graph database."""
+        with self.driver.session() as session:
+            session.write_transaction(self._create_node, label, properties)
+
+    @staticmethod
+    def _create_node(tx, label, properties):
+        query = f"MERGE (n:{label} {{name: $name}}) SET n += $properties"
+        tx.run(query, name=properties.get("name"), properties=properties)
 
     async def list_entries(self):
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
