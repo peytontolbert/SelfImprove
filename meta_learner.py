@@ -37,12 +37,30 @@ class MetaLearner:
 
     async def evolve_longterm_strategies(self, historical_data: Dict[str, Any]) -> Dict[str, Any]:
         self.logger.info("Evolving long-term strategies using historical data.")
-        evolution_suggestions = await self.ollama.query_ollama(
-            "longterm_evolution",
-            "Suggest long-term evolution strategies based on historical data",
+        
+        # Integrate advanced predictive analytics
+        predictive_analytics = await self.ollama.query_ollama(
+            "advanced_predictive_analytics",
+            "Use advanced predictive analytics to anticipate future challenges and opportunities.",
             context={"historical_data": historical_data}
         )
-        self.logger.info(f"Evolution suggestions: {evolution_suggestions}")
+        self.logger.info(f"Predictive analytics insights: {predictive_analytics}")
+        
+        # Leverage collaborative learning insights
+        collaborative_insights = await self.ollama.query_ollama(
+            "collaborative_learning",
+            "Incorporate insights from multiple AI systems to refine strategies.",
+            context={"historical_data": historical_data}
+        )
+        self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
+        
+        # Combine insights for adaptive strategy development
+        evolution_suggestions = {
+            **predictive_analytics,
+            **collaborative_insights
+        }
+        self.logger.info(f"Combined evolution suggestions: {evolution_suggestions}")
+        
         await self.knowledge_base.add_entry("longterm_evolution_suggestions", evolution_suggestions)
         return evolution_suggestions
 
