@@ -29,7 +29,7 @@ class SwarmIntelligence:
             self.logger.error(f"Error in quantum decision-making: {e}")
             return {"quantum_optimized_actions": []}
 
-    def analyze_quantum_behavior(self, actions, system_state, feedback):
+    async def analyze_quantum_behavior(self, actions, system_state, feedback):
         """
         Analyze quantum behavior to optimize actions.
 
