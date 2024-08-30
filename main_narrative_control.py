@@ -659,7 +659,7 @@ async def initialize_components():
     si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator)
     systemnarrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber, si=si)
     si.system_narrative = systemnarrative
-    refinement_manager = RefinementManager()
+    refinement_manager = RefinementManager(ollama, kb, improvement_manager, consciousness_emulator)
     components = SystemManager({
         "consciousness_emulator": consciousness_emulator,
         "ollama": ollama,
