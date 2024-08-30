@@ -332,6 +332,14 @@ class SystemNarrative:
         self.logger.info(f"Refined visualization with long-term evolution insights: {refined_visualization}")
 
         # Use the enhanced attention mechanism to prioritize actions
+        # Ensure optimized_decisions is defined before use
+        optimized_decisions = self.swarm_intelligence.optimize_decision({
+            "actions": context.get("actions", []),
+            "system_state": system_state,
+            "feedback": feedback
+        })
+        self.logger.info(f"Optimized decisions using swarm intelligence: {optimized_decisions}")
+
         prioritized_actions = self.consciousness_emulator.emulate_consciousness(optimized_decisions)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
@@ -1336,7 +1344,7 @@ class OmniscientDataAbsorber:
         self.logger.info(f"Optimized decisions using swarm intelligence: {optimized_decisions}")
 
         # Use the consciousness emulator to prioritize actions
-        prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
+        prioritized_actions = self.consciousness_emulator.emulate_consciousness(optimized_decisions)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
