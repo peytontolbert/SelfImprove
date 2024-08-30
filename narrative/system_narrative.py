@@ -44,7 +44,7 @@ class SystemNarrative:
         # Further enhancement logic can be added here
         return combined_thought
 
-    async def log_state(self, message, thought_process, context=None):
+    async def log_state(self, message, thought_process="Default thought process", context=None):
         if context is None:
             context = {}
         # Extract relevant elements from the context
@@ -504,12 +504,12 @@ class SystemNarrative:
         await vcs.commit_changes(ollama, changes)
 
     async def manage_prompts_and_errors(self, pm, eh, ollama):
-        await self.log_state("Managing prompts", "Prompt management")
+        await self.log_state("Managing prompts", "Prompt management", context or {})
         new_prompts = await pm.generate_new_prompts(ollama)
         for prompt_name, prompt_content in new_prompts.items():
             pm.save_prompt(prompt_name, prompt_content)
 
-        await self.log_state("Checking for system errors", "System error checking")
+        await self.log_state("Checking for system errors", "System error checking", context or {})
         system_errors = await eh.check_for_errors(ollama)
         if system_errors:
             for error in system_errors:
@@ -588,7 +588,7 @@ class SystemNarrative:
         self.logger.info(f"Predictive recovery strategies: {predictive_recovery}")
         if recovery_suggestion and recovery_suggestion.get('decompose_task', False):
             subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
-            await self.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
+            await self.log_state("Decomposed task into subtasks", "Task decomposition", {"subtasks": subtasks})
         else:
             await self.log_error("No valid recovery suggestion received from Ollama.", {"error": str(e)})
 
@@ -1277,7 +1277,7 @@ class OmniscientDataAbsorber:
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", context)
+        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", "Improvement cycle initiation", context or {})
         # Log the start of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the start of an improvement cycle in the knowledge base
@@ -1285,7 +1285,7 @@ class OmniscientDataAbsorber:
         
         # System state analysis
         context = context if 'context' in locals() else {}
-        await self.log_state("Analyzing current system state", context)
+        await self.log_state("Analyzing current system state", "System state analysis", context or {})
         system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
 
@@ -1296,7 +1296,7 @@ class OmniscientDataAbsorber:
 
         # Generate and apply improvements in parallel
         context = context if 'context' in locals() else {}
-        await self.log_state("Generating improvement suggestions", context)
+        await self.log_state("Generating improvement suggestions", "Improvement suggestion generation", context or {})
         # Retrieve insights from the knowledge base for generating improvements
         insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
         self.logger.info(f"Retrieved insights for improvement: {insights}")
@@ -1371,7 +1371,7 @@ class OmniscientDataAbsorber:
             longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
             self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
         context = context if 'context' in locals() else {}
-        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}", context)
+        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}", "Improvement cycle completion", context or {})
         # Log the completion of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the completion of an improvement cycle in the knowledge base
@@ -1416,7 +1416,7 @@ class OmniscientDataAbsorber:
         })
 
     async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si):
-        await self.log_state("Performing additional system improvement tasks", context={})
+        await self.log_state("Performing additional system improvement tasks", "Additional tasks execution", context or {})
         await task_queue.manage_orchestration()
         
         # Analyze code and suggest improvements
@@ -1435,12 +1435,12 @@ class OmniscientDataAbsorber:
         # Deploy code if approved
         deployment_decision = await si.retry_ollama_call(dm.deploy_code, ollama)
         if deployment_decision and deployment_decision.get('deploy', False):
-            await self.log_state("Deployment approved by Ollama")
+            await self.log_state("Deployment approved by Ollama", "Deployment decision", context or {})
         else:
-            await self.log_state("Deployment deferred based on Ollama's decision")
+            await self.log_state("Deployment deferred based on Ollama's decision", "Deployment decision", context or {})
 
         # Perform version control operations
-        await self.log_state("Performing version control operations")
+        await self.log_state("Performing version control operations", "Version control execution", context or {})
         changes = "Recent system changes"
         await vcs.commit_changes(ollama, changes)
 
@@ -1499,7 +1499,7 @@ class OmniscientDataAbsorber:
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"High urgency implication in {category}: {description}", context)
+        await self.log_state(f"High urgency implication in {category}: {description}", "High urgency handling", context or {})
         # You might want to add a method to alert administrators or trigger an immediate response
 
     async def handle_medium_high_urgency_implication(self, category, description):
@@ -1511,7 +1511,7 @@ class OmniscientDataAbsorber:
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"Medium-high urgency implication in {category}: {description}", context)
+        await self.log_state(f"Medium-high urgency implication in {category}: {description}", "Medium-high urgency handling", context or {})
         # You might want to add a method to schedule a review or add to a priority task list
 
     async def handle_low_medium_urgency_implication(self, category, description):
@@ -1523,7 +1523,7 @@ class OmniscientDataAbsorber:
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"Low-medium urgency implication in {category}: {description}", context)
+        await self.log_state(f"Low-medium urgency implication in {category}: {description}", "Low-medium urgency handling", context or {})
         # You might want to add a method to add this to a monitoring list or schedule a future review
 
     async def handle_timeout_error(self):
@@ -1562,7 +1562,7 @@ class OmniscientDataAbsorber:
         context = {"system_state": "current_system_state_placeholder"}
         reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed", context=context)
         if reset_command.get('reset', False):
-            await self.log_state("Resetting system state as per command", context={})
+            await self.log_state("Resetting system state as per command", "System reset execution", context or {})
             try:
                 subprocess.run(["./reset.sh"], check=True)
                 self.logger.info("System reset executed successfully.")
@@ -1578,7 +1578,7 @@ class OmniscientDataAbsorber:
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state("Timeout recovery initiated", "Recovery process started", context)
+        await self.log_state("Timeout recovery initiated", "Recovery process started", context or {})
 
         # 1. Save the current state
         current_state = await self.ollama.evaluate_system_state({})
@@ -1618,7 +1618,7 @@ class OmniscientDataAbsorber:
         # For example: self.timeout_duration = new_timeout
 
         context = context if 'context' in locals() else {}
-        await self.log_state("Timeout recovery completed", "Recovery process finished", context)
+        await self.log_state("Timeout recovery completed", "Recovery process finished", context or {})
         # Example usage of TemporalEngine
         objectives = ["Optimize performance", "Enhance user experience"]
         await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})
