@@ -479,7 +479,10 @@ async def main():
     await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
-    await narrative.log_chain_of_thought("Initializing system components with detailed logging and context management.")
+    await narrative.log_chain_of_thought({
+        "process": "Initialization",
+        "description": "Initializing system components with detailed logging and context management."
+    })
     await narrative.log_chain_of_thought("Starting main narrative control process.")
     await narrative.log_state("System components initialized successfully", "Initialization complete")
     
