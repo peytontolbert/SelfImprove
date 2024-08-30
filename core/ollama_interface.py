@@ -175,9 +175,9 @@ class OllamaInterface:
         if task == "general":
             refinement_prompt = (
                 f"Refine the following prompt for assessing alignment implications:\n\n"
-                f"Assess the alignment implications of recent changes to the software assistant. "
-                f"Take into account the nuanced behaviors of users and the specific objectives of the organization. "
-                f"Focus on how these changes enhance complex task management and optimize resource utilization."
+                f"Evaluate the alignment implications of recent modifications to the software assistant. "
+                f"Consider user behavior nuances and organizational objectives. "
+                f"Emphasize how these changes improve complex task management and resource optimization."
             )
         else:
             refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
