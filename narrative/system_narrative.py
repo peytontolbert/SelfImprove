@@ -86,12 +86,13 @@ class OmniscientDataAbsorber:
         # Use the quantum-inspired decision tree
         optimal_decision = self.quantum_decision_maker.quantum_decision_tree(enhanced_decision_space)
 
-        self.logger.info(f"Complex decision made: {optimal_decision}")
-
-        # Log the decision and its rationale
-        await self.log_decision(optimal_decision, "Made using quantum-inspired decision tree")
-
-        return optimal_decision
+        try:
+            self.logger.info(f"Complex decision made: {optimal_decision}")
+            await self.log_decision(optimal_decision, "Made using quantum-inspired decision tree")
+            return optimal_decision
+        except Exception as e:
+            self.logger.error(f"Error in making complex decision: {e}")
+            return None
 
     async def enrich_decision_space(self, decision_space):
         """Enrich the decision space with additional context and data."""

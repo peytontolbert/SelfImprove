@@ -17,13 +17,16 @@ class QuantumDecisionMaker:
         Returns:
         - A list of possible outcomes with their scores.
         """
-        # Simulate quantum superposition by considering multiple outcomes
-        possible_outcomes = [
-            {"action": action, "score": self.calculate_score(action, system_state, feedback, variation)}
-            for variation in range(5)  # Increase variations for more comprehensive evaluation
-        ]
-        self.logger.info(f"Evaluated possibilities for action '{action}': {possible_outcomes}")
-        return possible_outcomes
+        try:
+            possible_outcomes = [
+                {"action": action, "score": self.calculate_score(action, system_state, feedback, variation)}
+                for variation in range(5)
+            ]
+            self.logger.info(f"Evaluated possibilities for action '{action}': {possible_outcomes}")
+            return possible_outcomes
+        except Exception as e:
+            self.logger.error(f"Error evaluating possibilities for action '{action}': {e}")
+            return []
 
     def quantum_decision_tree(self, decision_space: Dict[str, Any]) -> Dict[str, Any]:
         """

@@ -40,17 +40,19 @@ class QuantumOptimizer:
         self.logger = logging.getLogger(__name__)
 
     async def quantum_optimize(self, ollama, problem_space):
-        if not self.validate_problem_space(problem_space):
-            self.logger.error("Invalid problem space provided for quantum optimization.")
+        try:
+            if not self.validate_problem_space(problem_space):
+                raise ValueError("Invalid problem space provided for quantum optimization.")
+
+            self.logger.info("Starting quantum optimization process.")
+            quantum_solution = await self.quantum_optimize_logic(problem_space)
+            self.logger.info("Quantum optimization process completed.")
+
+            self.analyze_results(quantum_solution)
+            return quantum_solution
+        except Exception as e:
+            self.logger.error(f"Quantum optimization failed: {e}")
             return None
-
-        self.logger.info("Starting quantum optimization process.")
-        # Implement quantum-inspired optimization logic
-        quantum_solution = await self.quantum_optimize_logic(problem_space)
-        self.logger.info("Quantum optimization process completed.")
-
-        self.analyze_results(quantum_solution)
-        return quantum_solution
 
     def validate_problem_space(self, problem_space):
         """Validate the problem space for quantum optimization."""
