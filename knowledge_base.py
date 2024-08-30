@@ -257,6 +257,9 @@ class KnowledgeBase:
             self.longterm_memory[entry_name] = data
         if self.longterm_memory:
             self.logger.info(f"Retrieved long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
+            # Log metrics for reinforcement learning
+            if "metrics" in self.longterm_memory:
+                self.logger.info(f"Metrics for reinforcement learning: {json.dumps(self.longterm_memory['metrics'], indent=2)}")
             # Continuously provide necessary context from long-term memory
             await self.provide_context_from_memory()
         else:
