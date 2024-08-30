@@ -40,6 +40,7 @@ from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 from quantum_optimizer import QuantumOptimizer
+from version_control_system import VersionControlSystem  # Assuming this is the correct import path
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -455,7 +456,8 @@ async def main():
     longterm_memory = await kb.get_longterm_memory()
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
     await kb.save_longterm_memory(longterm_memory)
-    # Initialize the neural network
+    # Retrieve or define metrics before using them
+    metrics = await si.get_system_metrics()
     input_size = len(metrics)
     hidden_size = 10
     output_size = 1
