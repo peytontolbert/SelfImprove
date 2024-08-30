@@ -50,6 +50,9 @@ class SwarmIntelligence:
             if not possible_outcomes:
                 self.logger.error("No possible outcomes to evaluate.")
                 return None
+            if not possible_outcomes:
+                self.logger.error("No possible outcomes to evaluate.")
+                return []
             optimal_outcome = max(possible_outcomes, key=lambda outcome: outcome.get("score", 0))
             quantum_optimized_actions.append(optimal_outcome)
 
