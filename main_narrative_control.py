@@ -16,6 +16,7 @@ Functions:
 - main: Initializes system components and starts the narrative-controlled improvement process.
 """
 import subprocess
+import random
 import logging
 import asyncio
 import os
@@ -292,7 +293,7 @@ class SystemManager:
         self.logger.info(f"Updating component: {component_name}")
         # Placeholder for component update logic
 
-    def monitor_performance(self):
+    async def monitor_performance(self):
         self.logger.info("Monitoring system performance in real-time.")
         import random
 
