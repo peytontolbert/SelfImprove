@@ -474,7 +474,8 @@ class SystemNarrative:
             "after": new_metrics
         })
 
-    async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si):
+    async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si, context=None):
+        context = context or {}
         await self.log_state("Performing additional system improvement tasks", "Additional tasks execution")
         await task_queue.manage_orchestration()
         
@@ -503,7 +504,8 @@ class SystemNarrative:
         changes = "Recent system changes"
         await vcs.commit_changes(ollama, changes)
 
-    async def manage_prompts_and_errors(self, pm, eh, ollama):
+    async def manage_prompts_and_errors(self, pm, eh, ollama, context=None):
+        context = context or {}
         await self.log_state("Managing prompts", "Prompt management", context or {})
         new_prompts = await pm.generate_new_prompts(ollama)
         for prompt_name, prompt_content in new_prompts.items():
