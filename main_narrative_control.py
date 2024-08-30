@@ -514,7 +514,7 @@ async def main():
     longterm_memory = await kb.get_longterm_memory()
     summarized_memory = await kb.summarize_memory(longterm_memory)
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
-    await kb.save_longterm_memory(longterm_memory)
+    await kb.save_longterm_memory(summarized_memory)
     await narrative.log_chain_of_thought("Analyzing system performance to suggest improvements.")
     improvements = await si.analyze_performance({"metric": "value", "longterm_memory": longterm_memory}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
