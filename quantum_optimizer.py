@@ -68,14 +68,12 @@ class QuantumOptimizer:
         self.logger.info(f"Quantum optimization logic applied: {optimal_solution}")
         return {"optimal_solution": optimal_solution}
 
-    def evaluate_quantum_state(self, variable, constraints):
     def evaluate_quantum_state(self, variable: str, constraints: list) -> str:
         # Implement quantum-inspired logic to evaluate the state
         self.logger.debug(f"Evaluating quantum state for variable: {variable} with constraints: {constraints}")
         # Placeholder for quantum evaluation logic
         return "optimal_value_based_on_quantum_logic"
 
-    def analyze_results(self, quantum_solution):
     def analyze_results(self, quantum_solution: dict):
         if quantum_solution:
             self.logger.info(f"Optimization results: {quantum_solution}")
