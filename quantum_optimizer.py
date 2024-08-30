@@ -7,7 +7,7 @@ class QuantumOptimizer:
         self.ollama = ollama_interface
         self.logger = logging.getLogger(__name__)
 
-    async def quantum_optimize(self, problem_space):
+    async def quantum_optimize(self, problem_space: dict) -> dict:
         try:
             self.logger.info("Starting quantum optimization process.")
             
@@ -37,7 +37,7 @@ class QuantumOptimizer:
         )
         self.logger.info(f"Refined problem space: {refined_problem_space}")
         return refined_problem_space
-        """Validate the problem space for quantum optimization."""
+    def validate_problem_space(self, problem_space: dict) -> bool:
         if not problem_space:
             self.logger.error("Problem space is empty.")
             return False
@@ -54,7 +54,7 @@ class QuantumOptimizer:
         return True
 
     async def quantum_optimize_logic(self, problem_space):
-        """Apply quantum-inspired logic to optimize the problem space."""
+    async def quantum_optimize_logic(self, problem_space: dict) -> dict:
         # Enhanced logic: Evaluate multiple possibilities using quantum superposition
         self.logger.info("Applying quantum-inspired logic to optimize the problem space.")
         variables = problem_space.get("variables", [])
@@ -70,14 +70,14 @@ class QuantumOptimizer:
         return {"optimal_solution": optimal_solution}
 
     def evaluate_quantum_state(self, variable, constraints):
-        """Evaluate the quantum state for a given variable."""
+    def evaluate_quantum_state(self, variable: str, constraints: list) -> str:
         # Implement quantum-inspired logic to evaluate the state
         self.logger.debug(f"Evaluating quantum state for variable: {variable} with constraints: {constraints}")
         # Placeholder for quantum evaluation logic
         return "optimal_value_based_on_quantum_logic"
 
     def analyze_results(self, quantum_solution):
-        """Analyze the optimization results."""
+    def analyze_results(self, quantum_solution: dict):
         if quantum_solution:
             self.logger.info(f"Optimization results: {quantum_solution}")
             # Example analysis: Check if the solution meets certain criteria
