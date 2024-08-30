@@ -30,6 +30,11 @@ class SystemNarrative:
         self.request_log = []
         self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
 
+    async def log_chain_of_thought(self, thought_process):
+        """Log the chain of thought for system processes."""
+        self.logger.info(f"Chain of Thought: {thought_process}")
+        await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}")
+
     async def log_state(self, message, thought_process, context=None):
         if context is None:
             context = {}
