@@ -139,8 +139,6 @@ class KnowledgeBase:
             self.logger.info("Synchronized data between spreadsheet and graph database.")
         except Exception as e:
             self.logger.error(f"Error synchronizing data: {e}")
-        if 'context' in locals():
-            data.update({"context": context})
 
         # Evaluate the relevance of the data
         relevance_decision = await self.evaluate_relevance(entry_name, data)
