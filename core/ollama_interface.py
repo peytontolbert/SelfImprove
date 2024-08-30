@@ -73,7 +73,9 @@ class OllamaInterface:
             essential_context.update({"context_memory": summarized_memory})
         
         if refine and task not in ["logging", "categorization"]:
-            refined_prompt = await self.adaptive_refine_prompt(prompt, task, feedback=context.get("feedback"))
+            # Incorporate historical feedback for adaptive refinement
+            historical_feedback = await self.knowledge_base.get_entry("historical_feedback")
+            refined_prompt = await self.adaptive_refine_prompt(prompt, task, feedback={**context.get("feedback", {}), **historical_feedback})
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
         

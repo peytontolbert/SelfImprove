@@ -21,9 +21,12 @@ class TemporalEngine:
             return
 
         self.logger.info(f"Processing objective: {objective} at depth {depth}")
-        # Simulate processing time
+        # Simulate processing time and gather feedback
         await asyncio.sleep(1)
-        # Example recursive call
+        feedback = await self.ollama.query_ollama("temporal_feedback", f"Gather feedback for objective: {objective} at depth {depth}", context=context)
+        # Adjust based on feedback
+        if feedback.get("adjustment_needed"):
+            self.logger.info(f"Adjusting objective: {objective} based on feedback")
         await self.temporal_recursion(objective, context, depth + 1, max_depth)
 
     async def temporal_loop(self, objectives, context, iterations=3):
@@ -454,7 +457,10 @@ class SystemNarrative:
 
             learning_data = await self.ollama.query_ollama("adaptive_learning", "Analyze recent interactions and adapt strategies for future improvements.", context={"system_state": system_state})
             self.logger.info(f"Adaptive learning data: {learning_data}")
-            await self.knowledge_base.add_entry("adaptive_learning", learning_data)
+            # Integrate long-term evolution strategies
+            evolution_strategy = await self.ollama.query_ollama("long_term_evolution", "Suggest strategies for long-term evolution based on current learning data.", context={"learning_data": learning_data})
+            self.logger.info(f"Long-term evolution strategy: {evolution_strategy}")
+            await self.knowledge_base.add_entry("long_term_evolution_strategy", evolution_strategy)
             await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
 
 
