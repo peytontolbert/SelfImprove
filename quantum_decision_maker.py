@@ -5,7 +5,25 @@ from simple_nn import GeneralNN
 import torch
 from core.ollama_interface import OllamaInterface
 from knowledge_base import KnowledgeBase
+
 class QuantumDecisionMaker:
+    async def calculate_score(self, action, system_state, feedback, variation) -> float:
+        """
+        Calculate a score for a given action, system state, feedback, and variation.
+
+        Parameters:
+        - action: The action to evaluate.
+        - system_state: Current state of the system.
+        - feedback: Feedback data to consider.
+        - variation: A variation factor to adjust the score.
+
+        Returns:
+        - A calculated score as a float.
+        """
+        # Example logic for score calculation
+        base_score = system_state.get('metric', 0) + feedback.get('metric', 0)
+        score = base_score * (1 + variation * 0.1)
+        return score
     def __init__(self, ollama_interface: OllamaInterface):
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama_interface
