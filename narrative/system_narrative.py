@@ -1,4 +1,5 @@
 import logging
+import aiohttp
 from knowledge_base import KnowledgeBase
 from core.ollama_interface import OllamaInterface
 import asyncio
