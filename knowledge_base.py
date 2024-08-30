@@ -290,7 +290,7 @@ class KnowledgeBase:
         """Summarize memory entries."""
         self.logger.info(f"Summarizing memory: {memory}")
         # Placeholder for actual summarization logic
-        summary = "Summary of memory data"
+        summary = await self.ollama.query_ollama("memory_summarization", f"Summarize the following memory data: {json.dumps(memory)}")
         self.logger.info(f"Memory summary: {summary}")
         return summary
 
