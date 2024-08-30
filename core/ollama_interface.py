@@ -74,11 +74,10 @@ class OllamaInterface:
                 prompt = refined_prompt.strip()
         if not context:
             self.logger.warning("No specific context provided. Using default context.")
-        self.logger.info(f"Querying Ollama with context: {json.dumps(context, indent=2)}")
-        # Monitor software assistantperformance and log decisions
         context.update({"timestamp": time.time()})
         context_str = json.dumps(context, indent=2)
         prompt = f"Context: {context_str}\n\n{prompt}"
+        self.logger.info(f"Querying Ollama with prompt: {prompt}")
 
         async def attempt_query():
             try:
@@ -87,18 +86,20 @@ class OllamaInterface:
                 self.logger.error(f"Error querying Ollama: {str(e)}")
                 return None
 
-        result = await self.retry_with_backoff(attempt_query)
-        if result is None:
-            self.log_interaction(system_prompt, prompt, result)
-            self.log_interaction(system_prompt, prompt, result)
-            self.logger.error("No response received from Ollama after retries.")
-            # Implement a fallback strategy
-            fallback_response = {
-                "error": "No response from Ollama",
-                "suggestion": "Consider checking network connectivity or contacting support."
-            }
-            self.logger.info(f"Fallback response: {fallback_response}")
-            return fallback_response
+        try:
+            result = await self.retry_with_backoff(attempt_query)
+            if result is None:
+                self.logger.error("No response received from Ollama after retries.")
+                # Implement a fallback strategy
+                fallback_response = {
+                    "error": "No response from Ollama",
+                    "suggestion": "Consider checking network connectivity or contacting support."
+                }
+                self.logger.info(f"Fallback response: {fallback_response}")
+                return fallback_response
+        except Exception as e:
+            self.logger.error(f"Exception during Ollama interaction: {str(e)}")
+            return {"error": "Exception during Ollama interaction", "details": str(e)}
 
         self.logger.debug(f"Request payload: {prompt}")
 
