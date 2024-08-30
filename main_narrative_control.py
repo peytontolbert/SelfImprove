@@ -32,6 +32,7 @@ import time
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative
 import json
+from tutorial_manager import TutorialManager
 # Set up logging with a more detailed format
 logging.basicConfig(
     level=logging.INFO,
@@ -346,10 +347,11 @@ def initialize_components():
     fs = FileSystem()
     pm = PromptManager()
     eh = ErrorHandler()
-    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh
+    tutorial_manager = TutorialManager()
+    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager
 
 async def main():
-    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh = initialize_components()
+    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager = initialize_components()
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
     # Initialize configuration settings

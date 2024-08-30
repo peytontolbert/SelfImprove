@@ -14,6 +14,7 @@ class OllamaInterface:
         self.max_retries = max_retries
         self.session = None
         self.knowledge_base = knowledge_base or KnowledgeBase(ollama_interface=self)
+        self.first_run = True
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
         self.system_prompt = "Default system prompt"
@@ -40,7 +41,12 @@ class OllamaInterface:
             return {k: self.simplify_context_memory(v, max_depth, current_depth + 1) for k, v in context_memory.items() if v}
         return context_memory
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
-        if context is None:
+        if self.first_run:
+            tutorial = self.knowledge_base.load_tutorial("getting_started")
+            if tutorial:
+                self.logger.info(f"Loaded tutorial: {tutorial}")
+                context.update({"tutorial": tutorial})
+            self.first_run = False
             context = {}
         # Clarify the meaning of "system" in the context
         context.update({"system_definition": "The term 'system' refers to the project and its capabilities for complex software development assistant tasks."})
