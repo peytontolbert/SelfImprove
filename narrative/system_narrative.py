@@ -98,10 +98,38 @@ class SystemNarrative:
                 await self.handle_file_operation(details)
             elif action_type == "system_update":
                 await self.handle_system_update(details)
+            elif action_type == "network_operation":
+                await self.handle_network_operation(details)
+            elif action_type == "database_update":
+                await self.handle_database_update(details)
             else:
-                self.logger.warning(f"Unknown action type: {action_type}")
+                self.logger.error(f"Unknown action type: {action_type}. Please check the action details.")
 
-    async def handle_file_operation(self, details):
+    async def handle_network_operation(self, details):
+        """Handle network operations such as API calls."""
+        url = details.get("url")
+        method = details.get("method", "GET")
+        data = details.get("data", {})
+        try:
+            self.logger.info(f"Performing network operation: {method} {url}")
+            async with aiohttp.ClientSession() as session:
+                async with session.request(method, url, json=data) as response:
+                    response_data = await response.json()
+                    self.logger.info(f"Network operation successful: {response_data}")
+        except Exception as e:
+            self.logger.error(f"Error performing network operation: {str(e)}")
+
+    async def handle_database_update(self, details):
+        """Handle database updates."""
+        query = details.get("query")
+        try:
+            self.logger.info(f"Executing database update: {query}")
+            # Implement database update logic here
+            # For example, using an async database client
+            # await database_client.execute(query)
+            self.logger.info("Database update executed successfully.")
+        except Exception as e:
+            self.logger.error(f"Error executing database update: {str(e)}")
         """Handle file operations such as create, edit, or delete."""
         operation = details.get("operation")
         filename = details.get("filename")
