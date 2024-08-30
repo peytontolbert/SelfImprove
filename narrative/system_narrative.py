@@ -35,19 +35,19 @@ class SystemNarrative:
         # Retrieve long-term memory for context
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         
-        # Example of CoT for a simple task
-        cot_steps = [
-            "Let's add the first number, 5.",
-            "Then, add the second number, 3, to the previously obtained sum.",
-            "The answer is the final sum."
+        # Example of CoT for a simple math task
+        cot_steps_math = [
+            "Step 1: Identify the numbers involved in the addition task.",
+            "Step 2: Add the first number, 5, to the second number, 3.",
+            "Step 3: Calculate the sum to get the final answer."
         ]
-        self.logger.info(f"Chain of Thought Steps: {cot_steps}")
+        self.logger.info(f"Chain of Thought Steps for Math Task: {cot_steps_math}")
 
         # Example of CoT for a factual question
         cot_steps_factual = [
-            "The moon landing happened in 1969.",
-            "We need to identify the astronaut who first stepped onto the moon during that mission.",
-            "Based on historical records, Neil Armstrong was the first person to walk on the moon."
+            "Step 1: Recall the year of the moon landing, which is 1969.",
+            "Step 2: Determine the astronaut who first stepped onto the moon during that mission.",
+            "Step 3: Confirm that Neil Armstrong was the first person to walk on the moon based on historical records."
         ]
         self.logger.info(f"Chain of Thought Steps for Factual Question: {cot_steps_factual}")
 
