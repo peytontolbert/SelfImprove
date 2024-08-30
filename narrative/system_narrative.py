@@ -201,7 +201,7 @@ class SystemNarrative:
             self.logger.error(f"Error during log state operation: {str(e)}")
         # Initialize system_state and other required variables
         improvement_cycle_count = 0
-        performance_metrics = await self.si.get_system_metrics()
+        performance_metrics = self.si.get_system_metrics()
         recent_changes = await self.knowledge_base.get_entry("recent_changes")
         feedback_data = await self.knowledge_base.get_entry("user_feedback")
         system_state = await self.ollama.evaluate_system_state({
