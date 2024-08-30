@@ -59,6 +59,7 @@ class ConsciousnessEmulator:
         # Limit the history size to prevent memory issues
         if len(self.context_history) > 100:
             self.context_history.pop(0)
+    def calculate_composite_scores(self, actions, system_state, feedback, longterm_memory, context):
         """
         Calculate a composite score for each action based on multiple factors.
 
