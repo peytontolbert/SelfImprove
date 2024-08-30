@@ -39,6 +39,7 @@ from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
+from hyperloop_optimizer import HyperloopOptimizer
 from quantum_optimizer import QuantumOptimizer
 from quantum_decision_maker import QuantumDecisionMaker
 from attention_mechanism import ConsciousnessEmulator
@@ -430,6 +431,7 @@ async def initialize_components():
         "meta_learner": MetaLearner(ollama, kb),
         "quantum_optimizer": QuantumOptimizer(ollama),
         "swarm_intelligence": SwarmIntelligence(ollama),
+        "hyperloop_optimizer": HyperloopOptimizer(),
     }
 
     # Load a tutorial on the first run
@@ -557,6 +559,14 @@ async def main():
     # Meta-learning for strategy optimization
     optimized_strategies = await meta_learner.optimize_learning_strategies(ollama, {"performance_data": "current_performance_data"})
     logger.info(f"Optimized learning strategies: {optimized_strategies}")
+
+    # Hyperloop multidimensional optimization
+    hyperloop_optimizer = components["hyperloop_optimizer"]
+    problem_space = {"variables": ["x", "y", "z"], "constraints": ["x + y + z <= 30"]}
+    dimensions = ["x", "y", "z"]
+    await narrative.log_chain_of_thought("Applying hyperloop multidimensional optimization to complex problem spaces.")
+    optimized_solution = await hyperloop_optimizer.optimize(problem_space, dimensions)
+    logger.info(f"Hyperloop optimized solution: {optimized_solution}")
 
     # Quantum optimization for complex problem spaces
     problem_space = {"variables": ["x", "y"], "constraints": ["x + y <= 10"]}
