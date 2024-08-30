@@ -61,12 +61,8 @@ class SystemNarrative:
             self.logger.info(f"CoT Step for Factual Question: {step}")
         
         # Provide contextual information
-        context_info_response = await self.ollama.query_ollama(
-            "context_provision",
-            "Provide contextual information for the thought processes.",
-            context={"thoughts": thought_processes, "longterm_memory": longterm_memory}
-        )
-        context_info = context_info_response.get("context_info", self.provide_context(thought_processes))
+        # Use provide_context to generate contextual information
+        context_info = self.provide_context(thought_processes)
         self.logger.info(f"Contextual Information: {context_info}")
         
         # Include intermediate checks
