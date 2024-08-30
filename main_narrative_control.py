@@ -255,7 +255,7 @@ class SelfImprovement:
     """
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager, consciousness_emulator: ConsciousnessEmulator):
         self.consciousness_emulator = consciousness_emulator
-        self.quantum_decision_maker = QuantumDecisionMaker(self.ollama)
+        self.quantum_decision_maker = QuantumDecisionMaker(ollama)
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
         self.knowledge_base = knowledge_base
