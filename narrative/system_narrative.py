@@ -113,8 +113,11 @@ class SystemNarrative:
         predictive_context = {**system_state, "historical_data": historical_data}
         quantum_analyzer = QuantumPredictiveAnalyzer(ollama_interface=self.ollama)
         quantum_insights = await quantum_analyzer.perform_quantum_analysis(predictive_context)
-        self.logger.info(f"Quantum predictive insights: {quantum_insights}")
-        await self.knowledge_base.add_entry("quantum_predictive_insights", quantum_insights)
+        if isinstance(quantum_insights, dict):
+            self.logger.info(f"Quantum predictive insights: {quantum_insights}")
+            await self.knowledge_base.add_entry("quantum_predictive_insights", quantum_insights)
+        else:
+            self.logger.error("Quantum predictive insights is not a dictionary.")
 
         # Advanced Resource Optimization with predictive analytics
         resource_optimization = await self.ollama.query_ollama(
