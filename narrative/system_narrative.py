@@ -275,10 +275,16 @@ class SystemNarrative:
         context.update({"longterm_memory": longterm_memory})
         self.logger.info(f"Updated context with long-term memory: {json.dumps(longterm_memory, indent=2)}")
 
-        # Integrate feedback loops for continuous refinement
-        feedback_loops = await self.ollama.query_ollama("feedback_loops", "Integrate feedback loops for continuous refinement.", context={"system_state": system_state})
-        self.logger.info(f"Feedback loops integration: {feedback_loops}")
-        await self.knowledge_base.add_entry("feedback_loops", feedback_loops)
+        # Enhanced feedback loops for continuous refinement
+        feedback_sources = ["user_feedback", "system_performance", "external_data"]
+        feedback_data = {source: await self.knowledge_base.get_entry(source) for source in feedback_sources}
+        feedback_loops = await self.ollama.query_ollama(
+            "enhanced_feedback_loops",
+            "Integrate enhanced feedback loops using diverse data sources for continuous refinement.",
+            context={"system_state": system_state, "feedback_data": feedback_data}
+        )
+        self.logger.info(f"Enhanced feedback loops integration: {feedback_loops}")
+        await self.knowledge_base.add_entry("enhanced_feedback_loops", feedback_loops)
 
         system_state = await self.ollama.evaluate_system_state({
             "metrics": performance_metrics,
@@ -1308,13 +1314,17 @@ class OmniscientDataAbsorber:
         self.logger.info(f"Decision-making improvements: {decision_making_improvements}")
         await self.knowledge_base.add_entry("decision_making_improvements", decision_making_improvements)
 
-        # Advanced Predictive Analysis for Future Challenges
+        # Advanced Predictive Analytics for Future Challenges
         historical_data = await self.knowledge_base.get_entry("historical_metrics")
         predictive_context = {**system_state, "historical_data": historical_data}
-        quantum_analyzer = QuantumPredictiveAnalyzer()
-        quantum_insights = await quantum_analyzer.perform_quantum_analysis(predictive_context)
-        self.logger.info(f"Quantum predictive insights: {quantum_insights}")
-        await self.knowledge_base.add_entry("quantum_predictive_insights", quantum_insights)
+        predictive_models = ["time_series_forecasting", "anomaly_detection", "trend_analysis"]
+        predictive_insights = await self.ollama.query_ollama(
+            "advanced_predictive_analytics",
+            "Utilize advanced predictive models to anticipate future challenges and opportunities.",
+            context={"predictive_context": predictive_context, "models": predictive_models}
+        )
+        self.logger.info(f"Advanced predictive insights: {predictive_insights}")
+        await self.knowledge_base.add_entry("advanced_predictive_insights", predictive_insights)
 
         # Advanced Resource Optimization
         resource_optimization = await self.ollama.query_ollama(
