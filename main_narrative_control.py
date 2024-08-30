@@ -734,6 +734,10 @@ async def main():
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
     system_manager.manage_component("ollama", action="restart")
 
+    # Integrate system narrative deeply into the main loop
+    await narrative.log_chain_of_thought("Starting main narrative control process.")
+    await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, components)
+
     # Example usage of GeneralNN
     nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=nn.ReLU)
     # Example: Train the model (assuming train_loader is defined)
