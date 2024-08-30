@@ -380,8 +380,18 @@ class SelfImprovement:
         return learning
 
     async def get_system_metrics(self):
+        # Query Ollama for the most effective metrics to capture
+        metric_suggestions = await self.ollama.query_ollama("metric_suggestions", "Suggest the most effective metrics to capture for system performance.")
+        self.logger.info(f"Suggested metrics: {metric_suggestions}")
+
+        # Capture the suggested metrics
         response = await self.ollama.query_ollama("system_metrics", "Provide an overview of the current system capabilities and performance.")
-        return response.get("metrics", {})
+        current_metrics = response.get("metrics", {})
+
+        # Filter and update metrics based on suggestions
+        effective_metrics = {key: current_metrics[key] for key in metric_suggestions.get("effective_metrics", []) if key in current_metrics}
+        self.logger.info(f"Effective metrics captured: {effective_metrics}")
+        return effective_metrics
 
     async def suggest_prompt_refinements(self):
         current_prompts = await self.knowledge_base.get_entry("system_prompts")
