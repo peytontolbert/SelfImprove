@@ -163,7 +163,6 @@ class SystemNarrative:
                 self.logger.error(f"Error during log state operation: {str(e)}")
             self.spreadsheet_manager.write_data((5, 1), [["State"], [thought_process]], sheet_name="SystemData")
             await log_with_ollama(self.ollama, thought_process, relevant_context)
-            await log_with_ollama(self.ollama, thought_process, relevant_context)
             # Generate and log thoughts about the current state
             await self.generate_detailed_thoughts(relevant_context)
             # Analyze feedback and suggest improvements
