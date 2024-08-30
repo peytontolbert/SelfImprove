@@ -246,11 +246,25 @@ class SystemNarrative:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
-        # Use the attention mechanism to prioritize actions based on system state and feedback
-        # Enhance system_state with additional metrics and context
-        performance_metrics = await si.get_system_metrics()
-        recent_changes = await self.knowledge_base.get_entry("recent_changes")
-        feedback_data = await self.knowledge_base.get_entry("user_feedback")
+        # Set and track short-term goals for incremental improvement
+        short_term_goals = await self.ollama.query_ollama("goal_setting", "Define short-term goals for incremental improvement.", context={"system_state": system_state})
+        self.logger.info(f"Short-term goals: {short_term_goals}")
+        await self.knowledge_base.add_entry("short_term_goals", short_term_goals)
+
+        # Evaluate progress towards short-term goals
+        progress_evaluation = await self.ollama.query_ollama("progress_evaluation", "Evaluate progress towards short-term goals.", context={"system_state": system_state, "short_term_goals": short_term_goals})
+        self.logger.info(f"Progress evaluation: {progress_evaluation}")
+        await self.knowledge_base.add_entry("progress_evaluation", progress_evaluation)
+
+        # Adjust strategies based on progress evaluation
+        strategy_adjustment = await self.ollama.query_ollama("strategy_adjustment", "Adjust strategies based on progress evaluation.", context={"system_state": system_state, "progress_evaluation": progress_evaluation})
+        self.logger.info(f"Strategy adjustment: {strategy_adjustment}")
+        await self.knowledge_base.add_entry("strategy_adjustment", strategy_adjustment)
+
+        # Integrate feedback loops for continuous refinement
+        feedback_loops = await self.ollama.query_ollama("feedback_loops", "Integrate feedback loops for continuous refinement.", context={"system_state": system_state})
+        self.logger.info(f"Feedback loops integration: {feedback_loops}")
+        await self.knowledge_base.add_entry("feedback_loops", feedback_loops)
 
         system_state = await self.ollama.evaluate_system_state({
             "metrics": performance_metrics,
