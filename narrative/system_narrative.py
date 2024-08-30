@@ -30,7 +30,18 @@ class SystemNarrative:
         self.request_log = []
         self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
 
-    async def log_chain_of_thought(self, thought_processes):
+    async def collect_user_feedback(self):
+        """Collect real-time user feedback and log it for analysis."""
+        try:
+            # Simulate collecting feedback from users
+            feedback = await self.ollama.query_ollama("user_feedback_collection", "Collect real-time user feedback on system performance.")
+            self.logger.info(f"Collected user feedback: {feedback}")
+
+            # Log the feedback for further analysis
+            await self.knowledge_base.add_entry("user_feedback", feedback)
+            self.logger.info("User feedback logged successfully.")
+        except Exception as e:
+            self.logger.error(f"Error collecting user feedback: {e}")
         """Log and implement the chain of thought for system processes."""
         # Enhance contextual awareness with advanced memory systems
         longterm_memory = await self.knowledge_base.get_longterm_memory()
