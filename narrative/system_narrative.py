@@ -246,7 +246,15 @@ class SystemNarrative:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
-        # Set and track short-term goals for incremental improvement
+        # Initialize system_state and other required variables
+        performance_metrics = await si.get_system_metrics()
+        recent_changes = await self.knowledge_base.get_entry("recent_changes")
+        feedback_data = await self.knowledge_base.get_entry("user_feedback")
+        system_state = await self.ollama.evaluate_system_state({
+            "metrics": performance_metrics,
+            "recent_changes": recent_changes,
+            "feedback": feedback_data
+        })
         short_term_goals = await self.ollama.query_ollama("goal_setting", "Define short-term goals for incremental improvement.", context={"system_state": system_state})
         self.logger.info(f"Short-term goals: {short_term_goals}")
         await self.knowledge_base.add_entry("short_term_goals", short_term_goals)
