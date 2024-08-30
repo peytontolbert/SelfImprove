@@ -77,13 +77,16 @@ class SystemNarrative:
         self.logger.info(f"Intermediate Checks: {checks}")
         
         # Add example-driven approach
-        examples_response = await self.ollama.query_ollama(
-            "example_provision",
-            "Provide examples for each step in the thought process.",
-            context={"thoughts": thought_processes}
-        )
-        examples = examples_response.get("examples", self.provide_examples(thought_processes))
-        self.logger.info(f"Example-Driven Steps: {examples}")
+        # Generate examples using Ollama if not already provided
+        if not thought_processes.get("examples"):
+            examples_response = await self.ollama.query_ollama(
+                "example_provision",
+                "Provide examples for each step in the thought process.",
+                context={"thoughts": thought_processes}
+            )
+            examples = examples_response.get("examples", self.provide_examples(thought_processes))
+            thought_processes["examples"] = examples
+        self.logger.info(f"Example-Driven Steps: {thought_processes['examples']}")
         
         # Dynamic contextual adaptation
         adapted_thoughts_response = await self.ollama.query_ollama(
