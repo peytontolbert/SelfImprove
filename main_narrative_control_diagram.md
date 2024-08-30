@@ -23,9 +23,9 @@ graph TD;
     Q -->|Logs| V[State and Decisions]
     Q -->|Handles| W[Errors]
     Q -->|Assesses| X[Alignment Implications]
-    Q -->|Uses| Y[Reinforcement Learning Feedback]
-    Q -->|Integrates| Z[Predictive Analysis]
-    Q -->|Evolves| AA[Long-term Evolution]
+    Q -->|Uses| Y[Reinforcement Learning Feedback and Ollama Insights]
+    Q -->|Integrates| Z[Predictive Analysis and Ollama-Driven Strategies]
+    Q -->|Evolves| AA[Long-term Evolution with Ollama Guidance]
     R -->|Feedback| D
     S -->|Validation| J
     T -->|Application| K
@@ -36,4 +36,6 @@ graph TD;
     Y -->|Optimize| F
     Z -->|Enhance| G
     AA -->|Refine| Q
+    Q -->|Consults| AB[Ollama for Ethical and Alignment Considerations]
+    Q -->|Refines| AC[Feedback Loop Optimization with Ollama]
 ```

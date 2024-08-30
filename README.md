@@ -6,13 +6,15 @@ This project is an ambitious attempt to create a fully automated end-to-end soft
 
 ## Key Features
 
-- Ollama-driven task management and orchestration.
-- AI-powered code analysis and generation.
-- Automated testing and enhanced error handling with adaptive strategies.
-- Self-improving architecture using reinforcement learning feedback.
-- Natural language understanding for user interactions.
-- Version control with AI-generated commit messages and strategies.
-- Spreadsheet-based logging and tracking for system improvements and metrics.
+- Ollama-driven task management and orchestration, ensuring deep integration in decision-making.
+- AI-powered code analysis and generation, with Ollama as the primary reviewer.
+- Automated testing and enhanced error handling with adaptive strategies guided by Ollama.
+- Self-improving architecture using reinforcement learning feedback and Ollama's insights.
+- Natural language understanding for user interactions, continuously refined by Ollama.
+- Version control with AI-generated commit messages and strategies, reviewed by Ollama.
+- Spreadsheet-based logging and tracking for system improvements and metrics, with Ollama's input.
+- Continuous feedback loop optimization and adaptive learning strategies driven by Ollama.
+- Ethical AI development and alignment considerations, regularly consulted with Ollama.
 
 ## System Requirements
 
