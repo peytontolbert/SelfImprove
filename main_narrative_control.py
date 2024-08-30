@@ -701,7 +701,12 @@ async def main():
     system_manager = SystemManager(components)
     system_manager.log_system_state()
     ollama = components["ollama"]
+    # Log initial system state
+    system_manager.log_system_state()
+
+    # Manage and verify the status of critical components
     system_manager.manage_component("ollama", action="status")
+
     # Initialize and use components
     rl_module = components["rl_module"]
     si = components["si"]
@@ -723,7 +728,11 @@ async def main():
     meta_learner = components["meta_learner"]
     quantum_optimizer = components["quantum_optimizer"]
     swarm_intelligence = components["swarm_intelligence"]
-    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
+
+    # Ensure OllamaInterface is fully initialized
+    await ollama.__aenter__()
+
+    # Restart critical components if necessary
     system_manager.manage_component("ollama", action="restart")
 
     # Integrate system narrative deeply into the main loop
