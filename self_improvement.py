@@ -101,7 +101,21 @@ class SelfImprovement:
         results = await self.improvement_manager.apply_improvements(improvements)
         return results
 
-    async def apply_code_change(self, code_change):
+    def get_system_metrics(self):
+        """
+        Retrieve current system metrics.
+
+        Returns:
+        - A dictionary containing system metrics.
+        """
+        # Placeholder implementation for system metrics
+        metrics = {
+            "cpu_usage": 50,  # Example metric
+            "memory_usage": 2048,  # Example metric in MB
+            "disk_space": 50000  # Example metric in MB
+        }
+        self.logger.info(f"Retrieved system metrics: {metrics}")
+        return metrics
         self.logger.info(f"Code change applied: {code_change}")
         return {"status": "success", "message": "Code change applied"}
 
