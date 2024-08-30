@@ -947,9 +947,6 @@ class OmniscientDataAbsorber:
         if context:
             prompt += f" | Context: {context}"
         await self.ollama.query_ollama("logging", prompt, refine=False)
-        status = "successful" if success else "failed"
-        self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
-        await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         self.si = si
