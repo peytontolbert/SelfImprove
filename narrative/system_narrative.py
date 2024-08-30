@@ -26,6 +26,7 @@ class SystemNarrative:
         self.logger = logging.getLogger("SystemNarrative")
         self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
         self.consciousness_emulator = ConsciousnessEmulator(ollama_interface)
+        self.omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base, ollama_interface)
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
         self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
@@ -57,7 +58,9 @@ class SystemNarrative:
         review = review_response.get("review", "No review available")
         self.logger.info(f"Thought process review: {review}")
 
-        # Log the summarized and reviewed thought process
+        # Use insights from OmniscientDataAbsorber
+        knowledge_insights = await self.omniscient_data_absorber.absorb_knowledge()
+        self.logger.info(f"Knowledge insights: {knowledge_insights}")
         self.logger.info("Logged summarized and reviewed thought process with Ollama integration.")
         
     def detect_and_mitigate_bias(self, thoughts):
@@ -891,6 +894,7 @@ class OmniscientDataAbsorber:
         self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
+        self.consciousness_emulator = ConsciousnessEmulator(ollama_interface)
 
     async def absorb_knowledge(self):
         """Absorb knowledge from various sources with prioritization."""
@@ -901,6 +905,9 @@ class OmniscientDataAbsorber:
                 if await self.is_relevant(file, data):
                     await self.save_knowledge(file, data)
             self.logger.info("Knowledge absorbed from prioritized files.")
+            # Integrate with ConsciousnessEmulator for enriched context
+            context = await self.consciousness_emulator.emulate_consciousness({"knowledge": data})
+            self.logger.info(f"Enriched context from ConsciousnessEmulator: {context}")
             await self.disseminate_knowledge()
         except Exception as e:
             self.logger.error(f"Error absorbing knowledge: {e}")
