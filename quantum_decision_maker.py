@@ -3,12 +3,10 @@ from typing import Dict, Any, List
 from simple_nn import SimpleNN
 import torch
 from core.ollama_interface import OllamaInterface
-from some_ml_library import SomeModel  # Import the model class
 
 class QuantumDecisionMaker:
     def __init__(self, ollama_interface: OllamaInterface):
         self.logger = logging.getLogger(__name__)
-        self.model = SomeModel()  # Initialize the model
         self.ollama = ollama_interface
 
     async def evaluate_possibilities(self, action, system_state, feedback) -> List[Dict[str, Any]]:
