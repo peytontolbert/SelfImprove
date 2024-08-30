@@ -44,6 +44,9 @@ class ConsciousnessEmulator:
             )
             action["composite_score"] = composite_score
 
+        # Update action scores based on real-time feedback
+        self.update_action_scores(actions, feedback)
+
         # Sort actions by composite score
         prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
 
@@ -52,3 +55,17 @@ class ConsciousnessEmulator:
         refinement_suggestions = self.ollama.query_ollama("consciousness_refinement", "Refine consciousness emulation based on current context.")
         self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
         return {"enhanced_awareness": context, "prioritized_actions": prioritized_actions}
+
+    def update_action_scores(self, actions, feedback):
+        """
+        Update action scores based on real-time feedback.
+
+        Parameters:
+        - actions: List of actions to update.
+        - feedback: Real-time feedback data to consider.
+        """
+        for action in actions:
+            action_name = action.get("name", "")
+            real_time_feedback = feedback.get(action_name, {}).get("real_time_score", 0)
+            action["composite_score"] += real_time_feedback
+            self.logger.debug(f"Updated composite score for action '{action_name}': {action['composite_score']}")
