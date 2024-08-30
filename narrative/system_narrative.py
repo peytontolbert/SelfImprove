@@ -106,6 +106,8 @@ class OmniscientDataAbsorber:
         }
 
         return enhanced_space
+
+    async def disseminate_knowledge(self):
         """Disseminate absorbed knowledge for decision-making."""
         try:
             entries = await self.knowledge_base.list_entries()
