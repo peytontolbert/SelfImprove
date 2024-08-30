@@ -337,7 +337,9 @@ class SystemManager:
         self.logger.info(f"Restarting component: {component_name}")
         # Implement component restart logic using subprocess
         try:
-            subprocess.run(["systemctl", "restart", component_name], check=True)
+            # Use a Windows-compatible command to restart a service
+            subprocess.run(["net", "stop", component_name], check=True)
+            subprocess.run(["net", "start", component_name], check=True)
             self.logger.info(f"Component {component_name} restarted successfully.")
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Failed to restart component {component_name}: {e}")
@@ -437,24 +439,28 @@ async def main():
     await system_initialization(system_manager, ollama, narrative)
 
     async def main_loop():
-        while True:
-            try:
-                await data_absorber.absorb_knowledge()
-                initial_context = await ollama.evaluate_system_state({})
-                consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
-                context = consciousness_result["enhanced_awareness"]
-                context.update(consciousness_result)
+        session = aiohttp.ClientSession()
+        try:
+            while True:
+                try:
+                    await data_absorber.absorb_knowledge()
+                    initial_context = await ollama.evaluate_system_state({})
+                    consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
+                    context = consciousness_result["enhanced_awareness"]
+                    context.update(consciousness_result)
 
-                await process_tasks(components, context)
-                await manage_prompts(components, context)
-                await analyze_and_improve_system(components, context)
-                await optimize_system(components, context)
-                await handle_complex_tasks(components, context)
+                    await process_tasks(components, context)
+                    await manage_prompts(components, context)
+                    await analyze_and_improve_system(components, context)
+                    await optimize_system(components, context)
+                    await handle_complex_tasks(components, context)
 
-                await narrative.log_chain_of_thought("Completed main loop iteration")
-                await asyncio.sleep(60)  # Adjust the sleep time as needed
-            except Exception as e:
-                await error_handling_and_recovery(components, e)
+                    await narrative.log_chain_of_thought("Completed main loop iteration")
+                    await asyncio.sleep(60)  # Adjust the sleep time as needed
+                except Exception as e:
+                    await error_handling_and_recovery(components, e)
+        finally:
+            await session.close()
 
 async def system_initialization(system_manager, ollama, narrative):
     system_manager.log_system_state()
