@@ -73,7 +73,7 @@ class SystemNarrative:
             "Include intermediate checks for the thought processes.",
             context={"thoughts": thought_processes}
         )
-        checks = checks_response.get("checks", self.intermediate_checks(thought_processes))
+        checks = checks_response.get("checks", [])
         self.logger.info(f"Intermediate Checks: {checks}")
         
         # Add example-driven approach
