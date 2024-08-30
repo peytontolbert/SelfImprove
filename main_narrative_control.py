@@ -35,6 +35,7 @@ from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
+from quantum_optimizer import QuantumOptimizer
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
