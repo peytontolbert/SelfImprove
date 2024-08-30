@@ -48,7 +48,11 @@ class SelfImprovement:
         })
         validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
         # Analyze code for potential performance bottlenecks
-        performance_optimizations = await self.ollama.query_ollama("performance_optimization", f"Suggest performance optimizations for these metrics: {metrics}", context={"metrics": metrics})
+        performance_optimizations = await self.ollama.query_ollama(
+            "performance_optimization",
+            f"Suggest performance optimizations for these metrics: {metrics}",
+            context={"metrics": metrics, "longterm_memory": await self.knowledge_base.get_longterm_memory()}
+        )
         self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
         # Use reinforcement learning feedback to adapt improvements
         rl_feedback = await rl_module.get_feedback(metrics)
