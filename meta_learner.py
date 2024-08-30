@@ -2,19 +2,26 @@ import logging
 from typing import Dict, Any
 from core.ollama_interface import OllamaInterface
 from knowledge_base import KnowledgeBase
+from quantum_decision_maker import QuantumDecisionMaker
 
 class MetaLearner:
     def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase):
         self.ollama = ollama
         self.knowledge_base = knowledge_base
         self.logger = logging.getLogger(__name__)
+        self.quantum_decision_maker = QuantumDecisionMaker(ollama)
 
     async def optimize_learning_strategies(self, performance_data: Dict[str, Any]) -> Dict[str, Any]:
         self.logger.info("Optimizing learning strategies based on performance data.")
+        quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
+            "actions": performance_data.get("actions", []),
+            "system_state": performance_data.get("system_state", {})
+        })
+        self.logger.info(f"Quantum decisions: {quantum_decisions}")
         strategies = await self.ollama.query_ollama(
             "meta_learning",
             "Optimize learning strategies based on performance data",
-            context={"performance_data": performance_data}
+            context={"performance_data": performance_data, "quantum_decisions": quantum_decisions}
         )
         self.logger.info(f"Optimized strategies: {strategies}")
         await self.knowledge_base.add_entry("optimized_strategies", strategies)
