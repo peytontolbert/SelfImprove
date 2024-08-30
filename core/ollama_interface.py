@@ -54,7 +54,7 @@ class OllamaInterface:
                 context.update({"tutorial": tutorial})
             self.first_run = False
         # Clarify the meaning of "system" in the context
-        context.update({"system_definition": "The term 'software assistant' refers to the project and its capabilities for complex software development assistant tasks."})
+        context.update({"system_definition": "The term 'system' refers to the project and its capabilities for complex software development assistant tasks."})
         
         if use_contextual_memory:
             if "longterm_memory" not in context:
@@ -69,7 +69,7 @@ class OllamaInterface:
         if not context:
             self.logger.warning("No specific context provided. Using default context.")
         self.logger.info(f"Querying Ollama with context: {json.dumps(context, indent=2)}")
-        # Monitor system performance and log decisions
+        # Monitor software assistantperformance and log decisions
         context.update({"timestamp": time.time()})
         context_str = json.dumps(context, indent=2)
         prompt = f"Context: {context_str}\n\n{prompt}"
@@ -134,7 +134,7 @@ class OllamaInterface:
         if task == "general":
             refinement_prompt = (
                 f"Refine the following prompt for assessing alignment implications:\n\n"
-                f"Assess the alignment implications of recent system changes. "
+                f"Assess the alignment implications of recent software assistantchanges. "
                 f"Consider user behavior nuances and organizational goals."
             )
         else:
@@ -196,12 +196,12 @@ class OllamaInterface:
         return response.get("suggestions", []) + scaling_suggestions.get("scaling_suggestions", [])
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
-        prompt = f"Implement this improvement: {improvement}. Consider the system's current architecture and capabilities. Provide a detailed plan for implementation."
+        prompt = f"Implement this improvement: {improvement}. Consider the software assistants current architecture and capabilities. Provide a detailed plan for implementation."
         context = {"improvement": improvement}
         return await self.query_ollama(self.system_prompt, prompt, task="improvement_implementation", context=context)
 
     async def validate_improvement(self, improvement: str) -> Dict[str, Any]:
-        prompt = f"Validate the following improvement suggestion: {improvement}. Consider potential risks, conflicts with existing system architecture, and alignment with project goals."
+        prompt = f"Validate the following improvement suggestion: {improvement}. Consider potential risks, conflicts with existing software assistantarchitecture, and alignment with project goals."
         context = {"improvement": improvement}
         return await self.query_ollama(self.system_prompt, prompt, task="improvement_validation", context=context)
 
@@ -225,7 +225,7 @@ class OllamaInterface:
         return self.conversation_history
 
     async def evaluate_system_state(self, system_state: Dict[str, Any]) -> Dict[str, Any]:
-        prompt = f"Evaluate the current system state: {json.dumps(system_state)}. Identify potential issues, bottlenecks, and areas for optimization."
+        prompt = f"Evaluate the current software assistantstate: {json.dumps(system_state)}. Identify potential issues, bottlenecks, and areas for optimization."
         context = {
             "system_state": system_state,
             "recent_changes": "recent_system_changes_placeholder",
@@ -234,15 +234,15 @@ class OllamaInterface:
         return await self.query_ollama(prompt, {"task": "system_evaluation"}, context=context)
 
     async def update_system_prompt(self, new_prompt: str) -> None:
-        """Update the system prompt dynamically."""
+        """Update the software assistantprompt dynamically."""
         self.system_prompt = new_prompt
         if new_prompt:
             self.system_prompt = new_prompt
-            self.logger.info(f"System prompt updated: {new_prompt}")
+            self.logger.info(f"software assistantprompt updated: {new_prompt}")
             # Save the updated prompt to the knowledge base
             await self.knowledge_base.add_entry("system_prompt", {"prompt": new_prompt})
         else:
-            self.logger.warning("Received empty prompt. Retaining the default system prompt.")
+            self.logger.warning("Received empty prompt. Retaining the default software assistantprompt.")
 
     async def cached_query(self, prompt: str, task: str) -> Dict[str, Any]:
         """Cache frequently used prompts to reduce API calls."""
@@ -329,7 +329,7 @@ class OllamaInterface:
         recovery_strategy = await self.query_ollama(self.system_prompt, error_prompt, context=context)
         if 'dynamic_recovery' in recovery_strategy:
             self.logger.info("Implementing dynamic recovery strategy as suggested by Ollama.")
-            # Example dynamic recovery logic: Adjust system parameters or restart services
+            # Example dynamic recovery logic: Adjust software assistantparameters or restart services
             await self.dynamic_recovery(recovery_strategy['dynamic_recovery'], error)
         
         if 'retry' in recovery_strategy:
