@@ -419,10 +419,12 @@ def initialize_components():
     tutorial_manager.save_tutorial("advanced_features", new_tutorial_content)
     logger.info("New tutorial saved: Advanced Features")
 
-    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager
+    meta_learner = MetaLearner()
+    quantum_optimizer = QuantumOptimizer()
+    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer
 
 async def main():
-    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager = initialize_components()
+    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer = initialize_components()
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
     # Initialize configuration settings
@@ -470,7 +472,14 @@ async def main():
     # Implement adaptive learning and evolution
     learning_data = await si.learn_from_experience({"interaction_data": "recent_interactions"})
     logger.info(f"Adaptive learning data: {learning_data}")
-    # Ollama-driven task decomposition
+    # Meta-learning for strategy optimization
+    optimized_strategies = await meta_learner.optimize_learning_strategies(ollama, {"performance_data": "current_performance_data"})
+    logger.info(f"Optimized learning strategies: {optimized_strategies}")
+
+    # Quantum optimization for complex problem spaces
+    problem_space = {"variables": ["x", "y"], "constraints": ["x + y <= 10"]}
+    optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
+    logger.info(f"Quantum optimized solution: {optimized_solution}")
     complex_tasks = ["Optimize system architecture", "Enhance user experience"]
     subtasks_results = await asyncio.gather(
         *[ollama.query_ollama("task_decomposition", f"Decompose the task: {task}") for task in complex_tasks]
