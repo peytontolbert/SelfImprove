@@ -19,7 +19,6 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.check_connection()
         self.initialize_database()
-        self.initialize_database()
         self.ollama = ollama_interface
         self.longterm_memory = {}
         self.base_directory = "knowledge_base_data"
