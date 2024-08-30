@@ -31,6 +31,5 @@ class DimensionalCodeVisualizer:
         """
         # Implement detailed visualization logic here
         visualization_details = f"Visualizing {len(codebase)} components with dependencies and interactions."
+        self.logger.info(f"Visualization result: {visualization_details}")
         return visualization_details
-        self.logger.info(f"Visualization result: {visualization}")
-        return visualization
