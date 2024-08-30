@@ -16,6 +16,8 @@ from self_improvement import SelfImprovement
 from quantum_decision_maker import QuantumDecisionMaker
 from visualization.dimensional_code_visualizer import DimensionalCodeVisualizer
 
+import os
+
 class SystemNarrative:
     def __init__(self, ollama_interface: OllamaInterface, knowledge_base: KnowledgeBase, data_absorber: 'OmniscientDataAbsorber', si: SelfImprovement):
         self.si = si
@@ -374,6 +376,30 @@ class SystemNarrative:
             "timestamp": time.time()
         })
         self.logger.info(f"Tracked request for task '{task}' with expected response: {expected_response}")
+
+    async def create_new_component(self, component_name, component_description):
+        """Create a new component with the specified name and description."""
+        self.logger.info(f"Creating new component: {component_name}")
+        component_code = f'''
+class {component_name}:
+    """
+    {component_description}
+    """
+
+    def __init__(self):
+        self.logger = logging.getLogger("{component_name}")
+
+    def perform_action(self):
+        self.logger.info("Performing action in {component_name}")
+        # Implement component-specific logic here
+        '''
+
+        # Save the new component to a file
+        component_file_path = os.path.join("components", f"{component_name.lower()}.py")
+        os.makedirs(os.path.dirname(component_file_path), exist_ok=True)
+        with open(component_file_path, 'w') as component_file:
+            component_file.write(component_code)
+        self.logger.info(f"New component {component_name} created at {component_file_path}")
 
     async def execute_actions(self, actions):
         """Execute a list of actions derived from thoughts and improvements."""
