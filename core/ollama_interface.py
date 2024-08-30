@@ -80,12 +80,14 @@ class OllamaInterface:
 
         result = await self.retry_with_backoff(attempt_query)
         if result is None:
-            recovery_suggestion = await self.suggest_error_recovery(Exception("Max retries reached"))
-            self.logger.warning(f"Max retries reached. Recovery suggestion: {recovery_suggestion}")
-            return {
-                "recoveryStrategy": "Fallback strategy: Restart the system and contact support if the issue persists.",
-                "recoverySuggestion": recovery_suggestion
+            self.logger.error("No response received from Ollama after retries.")
+            # Implement a fallback strategy
+            fallback_response = {
+                "error": "No response from Ollama",
+                "suggestion": "Consider checking network connectivity or contacting support."
             }
+            self.logger.info(f"Fallback response: {fallback_response}")
+            return fallback_response
 
         self.logger.debug(f"Request payload: {prompt}")
 
@@ -120,7 +122,9 @@ class OllamaInterface:
             if result is not None:
                 return result
             await asyncio.sleep(delay)
-            delay *= 2
+                self.logger.warning(f"Attempt {attempt + 1} failed, retrying in {delay} seconds...")
+                delay *= 2
+        self.logger.error("All retry attempts failed. Returning None.")
         return None
 
     async def refine_prompt(self, prompt: str, task: str) -> str:
