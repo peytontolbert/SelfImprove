@@ -19,7 +19,6 @@ class KnowledgeBase:
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
         self.check_connection()
-        self._initialized = False
         if not self._initialized:
             self.initialize_database()
             self._initialized = True
