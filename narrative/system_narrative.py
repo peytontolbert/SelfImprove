@@ -45,9 +45,6 @@ class SystemNarrative:
         return combined_thought
 
     async def log_state(self, message, thought_process="Default thought process", context=None):
-        if context is None:
-            context = {}
-        # Ensure context is initialized
         context = context or {}
         relevant_context = {
             "system_status": context.get("system_status", "Current system status"),
@@ -1420,7 +1417,7 @@ class OmniscientDataAbsorber:
 
     async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si, context=None):
         context = context or {}
-        await self.log_state("Performing additional system improvement tasks", "Additional tasks execution", task_queue or {})
+        await self.log_state("Performing additional system improvement tasks", "Additional tasks execution", context)
         await task_queue.manage_orchestration()
         
         # Analyze code and suggest improvements
