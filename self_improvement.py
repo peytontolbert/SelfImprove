@@ -48,9 +48,9 @@ class SelfImprovement:
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
         performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
         
-        # Monitor code health and evolution
-        code_health = await self.ollama.query_ollama("code_health_monitoring", "Monitor the health and evolution of the codebase.", context={"metrics": metrics})
-        self.logger.info(f"Code health monitoring: {code_health}")
+        # Monitor code health and evolution with feedback loop
+        code_health = await self.ollama.query_ollama("code_health_monitoring", "Monitor the health and evolution of the codebase with feedback loop.", context={"metrics": metrics})
+        self.logger.info(f"Code health monitoring with feedback loop: {code_health}")
 
         # Generate and test hypotheses for self-improvement
         hypotheses = await self.generate_hypotheses(metrics)

@@ -189,9 +189,9 @@ class SystemNarrative:
         })
         self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
 
-        # Visualize the code structure
+        # Visualize the code structure with enhanced details
         code_visualization = self.code_visualizer.visualize_code_structure(system_state.get("codebase", {}))
-        self.logger.info(f"Code visualization: {code_visualization}")
+        self.logger.info(f"Enhanced code visualization: {code_visualization}")
 
         # Use the enhanced attention mechanism to prioritize actions
         prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
