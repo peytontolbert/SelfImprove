@@ -40,4 +40,6 @@ graph TD;
     AC -->|Refine| S
     S -->|Consults| AD[Ollama for Ethical and Alignment Considerations]
     S -->|Refines| AE[Feedback Loop Optimization with Ollama]
+    S -->|Incorporates| AF[Quantum Decision Making and Consciousness Emulation]
+    S -->|Adapts| AG[Adaptive Learning and Strategy Adjustment]
 ```
