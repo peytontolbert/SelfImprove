@@ -24,7 +24,29 @@ class SystemNarrative:
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
 
-    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+    async def log_state(self, message, context=None):
+        if context is None:
+            context = {}
+        # Extract relevant elements from the context
+        relevant_context = {
+            "system_status": context.get("system_status", "Current system status"),
+            "recent_changes": context.get("recent_changes", "Recent changes in the system"),
+            "longterm_memory": context.get("longterm_memory", {}).get("thoughts", {}),
+            "current_tasks": context.get("current_tasks", "List of current tasks"),
+            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {})
+        }
+        try:
+            self.logger.info(f"System State: {message} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
+            self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
+            await self.log_with_ollama(message, relevant_context)
+            # Generate and log thoughts about the current state
+            await self.generate_thoughts(relevant_context)
+            # Analyze feedback and suggest improvements
+            self.track_request("feedback_analysis", f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", "feedback")
+            feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
+            self.logger.info(f"Feedback analysis: {feedback}")
+        except Exception as e:
+            self.logger.error(f"Error during log state operation: {str(e)}")
         # Initialize system_state and other required variables
         improvement_cycle_count = 0
         performance_metrics = await si.get_system_metrics()
