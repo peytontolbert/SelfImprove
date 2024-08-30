@@ -261,7 +261,15 @@ class SystemNarrative:
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
 
-    async def execute_actions(self, actions):
+    def track_request(self, task, prompt, expected_response):
+        """Track requests made to Ollama and the expected responses."""
+        self.request_log.append({
+            "task": task,
+            "prompt": prompt,
+            "expected_response": expected_response,
+            "timestamp": time.time()
+        })
+        self.logger.info(f"Tracked request for task '{task}' with expected response: {expected_response}")
         """Execute a list of actions derived from thoughts and improvements."""
         try:
             for action in actions:
@@ -696,6 +704,7 @@ class SystemNarrative:
 class QuantumPredictiveAnalyzer:
     def __init__(self, ollama_interface: OllamaInterface):
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
+        self.request_log = []
         self.logger = logging.getLogger("QuantumPredictiveAnalyzer")
 
     async def perform_quantum_analysis(self, predictive_context):
