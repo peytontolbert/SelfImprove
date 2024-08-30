@@ -301,7 +301,7 @@ class SystemManager:
         self.logger = logging.getLogger(__name__)
 
     def manage_component(self, component_name, action="status"):
-        component = self.components.get(component_name)
+        component = self.components.components.get(component_name)
         if component:
             self.logger.info(f"Managing component: {component_name} with action: {action}")
             if action == "status":
