@@ -35,22 +35,28 @@ class SystemNarrative:
         # Retrieve long-term memory for context
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         
-        # Enhance the chain of thought by synthesizing multiple thoughts
-        enhanced_thought_response = await self.ollama.query_ollama(
-            "thought_synthesis",
-            "Synthesize multiple thoughts into a cohesive thought.",
-            context={"thoughts": thought_processes, "longterm_memory": longterm_memory}
-        )
-        enhanced_thought = enhanced_thought_response.get("synthesized_thought", self.synthesize_thoughts(thought_processes))
+        # Example of CoT for a simple task
+        cot_steps = [
+            "Let's add the first number, 5.",
+            "Then, add the second number, 3, to the previously obtained sum.",
+            "The answer is the final sum."
+        ]
+        self.logger.info(f"Chain of Thought Steps: {cot_steps}")
+
+        # Example of CoT for a factual question
+        cot_steps_factual = [
+            "The moon landing happened in 1969.",
+            "We need to identify the astronaut who first stepped onto the moon during that mission.",
+            "Based on historical records, Neil Armstrong was the first person to walk on the moon."
+        ]
+        self.logger.info(f"Chain of Thought Steps for Factual Question: {cot_steps_factual}")
+
+        # Log the CoT steps
+        for step in cot_steps:
+            self.logger.info(f"CoT Step: {step}")
         
-        # Add explicit step-by-step guidance
-        steps_response = await self.ollama.query_ollama(
-            "thought_breakdown",
-            "Break down thoughts into explicit steps.",
-            context={"thoughts": thought_processes}
-        )
-        steps = steps_response.get("steps", self.break_down_thoughts(thought_processes))
-        self.logger.info(f"Step-by-step guidance: {steps}")
+        for step in cot_steps_factual:
+            self.logger.info(f"CoT Step for Factual Question: {step}")
         
         # Provide contextual information
         context_info_response = await self.ollama.query_ollama(
