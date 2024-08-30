@@ -574,6 +574,14 @@ async def main():
     await narrative.log_chain_of_thought("Applying quantum optimization to complex problem spaces.")
     quantum_optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
     logger.info(f"Quantum optimized solution: {quantum_optimized_solution}")
+    
+    # Example usage of quantum_optimized_solution in decision-making
+    if quantum_optimized_solution:
+        await narrative.log_chain_of_thought("Applying quantum optimized solution to system processes.")
+        # Integrate the solution into system processes or decision-making
+        # Example: Use the solution to adjust system parameters or strategies
+        # system_parameters.update(quantum_optimized_solution)
+
     complex_tasks = ["Optimize system architecture", "Enhance user experience"]
     subtasks_results = await asyncio.gather(
         *[ollama.query_ollama("task_decomposition", f"Decompose the task: {task}") for task in complex_tasks]
