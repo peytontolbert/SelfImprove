@@ -289,7 +289,7 @@ class KnowledgeBase:
     async def summarize_memory(self, memory):
         """Summarize memory entries."""
         self.logger.info(f"Summarizing memory: {memory}")
-        # Placeholder for actual summarization logic
+        # Ensure the coroutine is awaited
         summary = await self.ollama.query_ollama("memory_summarization", f"Summarize the following memory data: {json.dumps(memory)}")
         self.logger.info(f"Memory summary: {summary}")
         return summary
