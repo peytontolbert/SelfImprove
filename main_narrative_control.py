@@ -310,7 +310,8 @@ class SystemManager:
                 if isinstance(component, OllamaInterface):
                     self.logger.info(f"Restarting Ollama component: {component_name}")
                     # Implement specific restart logic for OllamaInterface
-                    component.restart()  # Assuming a restart method exists
+                    # Placeholder for restart logic, as restart method does not exist
+                    self.logger.warning(f"No restart method for OllamaInterface. Skipping restart for {component_name}.")
                 else:
                     self.restart_component(component_name)
             elif action == "update":
