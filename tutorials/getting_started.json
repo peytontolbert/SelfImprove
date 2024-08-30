@@ -1,26 +1,14 @@
 {
-    "title": "Getting Started",
+    "title": "Getting Started with Self-Improvement",
     "content": [
-        "Welcome to the system! This tutorial will guide you through the initial setup and basic usage.",
-        "Step 1: Ensure you have all the necessary dependencies installed. Use the following command to install them:",
-        "```",
-        "pip install -r requirements.txt",
-        "```",
-        "Step 2: Configure your environment variables. Create a `.env` file in the root directory with the following content:",
-        "```",
-        "NEO4J_URI=bolt://localhost:7687",
-        "NEO4J_USER=neo4j",
-        "NEO4J_PASSWORD=your_password",
-        "```",
-        "Step 3: Run the main script to start the system. Use the command:",
-        "```",
-        "python main_narrative_control.py",
-        "```",
-        "Step 4: Familiarize yourself with the main components and their roles. Key components include:",
-        "- OllamaInterface: Handles interactions with the AI model.",
-        "- KnowledgeBase: Manages the storage and retrieval of knowledge.",
-        "- ImprovementManager: Oversees the implementation of system improvements.",
-        "Step 5: Explore the documentation for detailed instructions on each feature. Access the documentation at `docs/index.html`.",
-        "Step 6: Engage with the tutorials provided in the `tutorials` directory to deepen your understanding of the system's capabilities."
+        "Welcome to the Self-Improvement Guide! This tutorial will help you leverage the system's capabilities for continuous self-improvement.",
+        "Step 1: Understand the Self-Improvement Process - Familiarize yourself with the system's self-improvement capabilities, including performance analysis, hypothesis generation, and feedback loops.",
+        "Step 2: Analyze Performance - Use the system to analyze current performance metrics and identify areas for improvement.",
+        "Step 3: Generate Hypotheses - Formulate hypotheses for potential improvements based on performance analysis.",
+        "Step 4: Test Hypotheses - Implement and test hypotheses in a controlled environment to validate their effectiveness.",
+        "Step 5: Apply Validated Improvements - Once validated, apply improvements to the system and monitor their impact.",
+        "Step 6: Learn from Experience - Use the system to learn from past experiences and refine future strategies.",
+        "Step 7: Engage with Continuous Learning - Continuously engage with the system's learning mechanisms to adapt and evolve over time.",
+        "By following these steps, you can effectively utilize the system for ongoing self-improvement and optimization."
     ]
 }
