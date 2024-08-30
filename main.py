@@ -8,13 +8,27 @@ from main_narrative_control import TestingFramework
 from knowledge_base import KnowledgeBase
 
 class SelfImprovingAssistant:
-    def __init__(self, workspace_dir="workspace"):
+    def __init__(self, workspace_dir="workspace", json_file="json"):
         self.workspace_dir = workspace_dir
         self.ollama = OllamaInterface()
         self.logger = logging.getLogger("SelfImprovingAssistant")
         self.knowledge_base = KnowledgeBase()
         self.testing_framework = TestingFramework()
         os.makedirs(self.workspace_dir, exist_ok=True)
+        self.guides = self.load_json_guides(json_file)
+
+    def load_json_guides(self, json_file):
+        try:
+            with open(json_file, 'r') as file:
+                content = file.read()
+                guides = [json.loads(guide) for guide in content.split('\n') if guide.strip()]
+            return guides
+        except Exception as e:
+            self.logger.error(f"Error loading JSON guides: {e}")
+            return []
+
+    def get_guide_by_title(self, title):
+        return next((guide for guide in self.guides if guide['title'] == title), None)
 
     async def self_improvement_loop(self):
         while True:
@@ -22,6 +36,14 @@ class SelfImprovingAssistant:
                 # Evaluate current state
                 state = await self.evaluate_state()
                 self.logger.info(f"Current state: {state}")
+
+                # Apply AI's Guide to Coding
+                coding_guide = self.get_guide_by_title("AI's Guide to Coding")
+                if coding_guide:
+                    self.logger.info("Applying AI's Guide to Coding")
+                    for step in coding_guide['content']:
+                        self.logger.info(f"Step: {step}")
+                        # Here you would implement logic to apply each step
 
                 # Generate improvements
                 improvements = await self.ollama.query_ollama("generate_improvements", "Suggest improvements for the current state.", context={"state": state})
@@ -33,6 +55,14 @@ class SelfImprovingAssistant:
 
                 # Validate improvements
                 await self.run_tests()
+
+                # Apply Maintaining and Scaling guide
+                scaling_guide = self.get_guide_by_title("Maintaining and Scaling Your AI Software Assistant")
+                if scaling_guide:
+                    self.logger.info("Applying Maintaining and Scaling guide")
+                    for step in scaling_guide['content']:
+                        self.logger.info(f"Step: {step}")
+                        # Here you would implement logic to apply each step
 
                 # Wait before next iteration
                 await asyncio.sleep(60)
