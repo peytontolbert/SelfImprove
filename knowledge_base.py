@@ -334,7 +334,7 @@ class KnowledgeBase:
         prioritized_entries = sorted(self.longterm_memory.items(), key=lambda item: item[1].get('relevance', 0), reverse=True)
         self.longterm_memory = dict(prioritized_entries[:100])  # Keep top 100 relevant entries
 
-    def summarize_less_relevant_data(self):
+    async def summarize_less_relevant_data(self):
         """Summarize or compress less relevant data."""
         for entry_name, data in self.longterm_memory.items():
             if data.get('relevance', 0) < 5:  # Example threshold
