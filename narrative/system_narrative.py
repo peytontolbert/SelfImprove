@@ -1077,11 +1077,11 @@ class OmniscientDataAbsorber:
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
         await self.knowledge_base.save_longterm_memory(longterm_memory)
-        with open('longterm.json', 'w') as f:
+        with open('narrative_data/longterm.json', 'w') as f:
             json.dump(longterm_memory, f, indent=2)
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
-        with open('narrative_data.json', 'w') as f:
+        with open('narrative_data/narrative_data.json', 'w') as f:
             json.dump({"thoughts": thoughts}, f, indent=2)
         return thoughts
 
