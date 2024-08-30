@@ -553,21 +553,21 @@ class SystemNarrative:
         self.logger.warning(f"High urgency implication detected in category: {category}. Immediate action required.")
         # Implement logic to handle high urgency implications
         # For example, trigger an immediate review or alert the system administrators
-        await self.log_state(f"High urgency implication in {category}: {description}", "High urgency implication handling")
+        await self.log_state(f"High urgency implication in {category}: {description}", context={})
         # You might want to add a method to alert administrators or trigger an immediate response
 
     async def handle_medium_high_urgency_implication(self, category, description):
         self.logger.info(f"Medium-high urgency implication detected in category: {category}. Prioritize for review.")
         # Implement logic to handle medium-high urgency implications
         # For example, add to a priority queue for review
-        await self.log_state(f"Medium-high urgency implication in {category}: {description}", "Medium-high urgency implication handling")
+        await self.log_state(f"Medium-high urgency implication in {category}: {description}", context={})
         # You might want to add a method to schedule a review or add to a priority task list
 
     async def handle_low_medium_urgency_implication(self, category, description):
         self.logger.info(f"Low-medium urgency implication detected in category: {category}. Monitor and review as needed.")
         # Implement logic to handle low-medium urgency implications
         # For example, add to a monitoring list
-        await self.log_state(f"Low-medium urgency implication in {category}: {description}", "Low-medium urgency implication handling")
+        await self.log_state(f"Low-medium urgency implication in {category}: {description}", context={})
         # You might want to add a method to add this to a monitoring list or schedule a future review
 
     async def handle_timeout_error(self):
@@ -639,7 +639,7 @@ class SystemNarrative:
         except Exception as e:
             self.logger.error(f"Error during adaptive learning: {e}")
         self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
-        await self.log_state("Timeout recovery initiated", "Recovery process started")
+        await self.log_state("Timeout recovery initiated", context={})
 
         # 1. Save the current state
         current_state = await self.ollama.evaluate_system_state({})
@@ -678,7 +678,7 @@ class SystemNarrative:
         # Implement timeout adjustment logic here
         # For example: self.timeout_duration = new_timeout
 
-        await self.log_state("Timeout recovery completed", "Recovery process completed")
+        await self.log_state("Timeout recovery completed", context={})
         # Example usage of TemporalEngine
         objectives = ["Optimize performance", "Enhance user experience"]
         await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})
