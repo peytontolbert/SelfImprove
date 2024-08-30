@@ -14,6 +14,7 @@ from attention_mechanism import ConsciousnessEmulator
 from swarm_intelligence import SwarmIntelligence
 from self_improvement import SelfImprovement
 from quantum_decision_maker import QuantumDecisionMaker
+from visualization.dimensional_code_visualizer import DimensionalCodeVisualizer
 
 class SystemNarrative:
     def __init__(self, ollama_interface: OllamaInterface, knowledge_base: KnowledgeBase, data_absorber: 'OmniscientDataAbsorber', si: SelfImprovement):
@@ -26,6 +27,7 @@ class SystemNarrative:
         self.consciousness_emulator = ConsciousnessEmulator()
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
+        self.code_visualizer = DimensionalCodeVisualizer()
 
     async def log_chain_of_thought(self, thought_process, context=None):
         """Log detailed reasoning before executing a step."""
@@ -186,6 +188,10 @@ class SystemNarrative:
             "feedback": feedback
         })
         self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
+
+        # Visualize the code structure
+        code_visualization = self.code_visualizer.visualize_code_structure(system_state.get("codebase", {}))
+        self.logger.info(f"Code visualization: {code_visualization}")
 
         # Use the enhanced attention mechanism to prioritize actions
         prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
