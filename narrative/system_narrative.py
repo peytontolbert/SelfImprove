@@ -1148,13 +1148,15 @@ class OmniscientDataAbsorber:
         try:
             if operation == "create":
                 self.logger.info(f"Creating file: {filename}")
-                self.fs.create_file(filename, content)
+                with open(filename, 'w') as f:
+                    f.write(content)
             elif operation == "edit":
                 self.logger.info(f"Editing file: {filename}")
-                self.fs.edit_file(filename, content)
+                with open(filename, 'a') as f:
+                    f.write(content)
             elif operation == "delete":
                 self.logger.info(f"Deleting file: {filename}")
-                self.fs.delete_file(filename)
+                os.remove(filename)
             else:
                 self.logger.warning(f"Unknown file operation: {operation}")
         except Exception as e:
