@@ -107,7 +107,7 @@ class SystemNarrative:
         # Advanced Predictive Analysis for Future Challenges
         historical_data = await self.knowledge_base.get_entry("historical_metrics")
         predictive_context = {**system_state, "historical_data": historical_data}
-        quantum_analyzer = QuantumPredictiveAnalyzer()
+        quantum_analyzer = QuantumPredictiveAnalyzer(ollama_interface=self.ollama)
         quantum_insights = await quantum_analyzer.perform_quantum_analysis(predictive_context)
         self.logger.info(f"Quantum predictive insights: {quantum_insights}")
         await self.knowledge_base.add_entry("quantum_predictive_insights", quantum_insights)
