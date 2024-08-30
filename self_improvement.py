@@ -92,7 +92,7 @@ class SelfImprovement:
         data = [(torch.tensor([metric]), torch.tensor([0.0])) for metric in metrics.values()]
         return torch.utils.data.DataLoader(data, batch_size=2)
 
-    def predict_improvements(self, metrics):
+    async def generate_hypotheses(self, metrics):
         # Use the neural network model to predict improvements
         inputs = torch.tensor([list(metrics.values())])
         with torch.no_grad():
