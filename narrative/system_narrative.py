@@ -1335,19 +1335,20 @@ class OmniscientDataAbsorber:
             "system_state": system_state,
             "feedback": feedback
         }
-        # Use swarm intelligence to optimize decisions based on current state and feedback
-        optimized_decisions = self.swarm_intelligence.optimize_decision({
+        # Optimize decisions using swarm intelligence
+        optimized_decisions = await self.swarm_intelligence.optimize_decision({
             "actions": context.get("actions", []),
             "system_state": system_state,
             "feedback": feedback
         })
         self.logger.info(f"Optimized decisions using swarm intelligence: {optimized_decisions}")
 
-        # Use the consciousness emulator to prioritize actions
-        prioritized_actions = self.consciousness_emulator.emulate_consciousness(optimized_decisions)
+        # Prioritize actions using consciousness emulator
+        prioritized_actions = await self.consciousness_emulator.emulate_consciousness(optimized_decisions)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
+
         # Execute prioritized actions
-        await self.execute_actions(prioritized_actions["prioritized_actions"])
+        await self.execute_actions(prioritized_actions.get("prioritized_actions", []))
         await self.self_optimization(ollama, kb)
         system_state = {}
         improvement_cycle_count = 0

@@ -544,14 +544,14 @@ class RefinementManager:
         strategies = []
         
         # Use the RefinementManager to refine strategies
-        refined_strategies = await refinement_manager.refine_strategy(improvements, rl_feedback, metrics, strategies)
+        refined_strategies = await refinement_manager.refine_strategy(improvements, rl_feedback, metrics)
         self.logger.info(f"Refined strategies: {refined_strategies}")
 
         # Evaluate the effectiveness of the refinements
-        evaluation_results = await refinement_manager.evaluate_refinements(refined_strategies, strategies)
+        evaluation_results = await refinement_manager.evaluate_refinements(refined_strategies)
         self.logger.info(f"Evaluation results of refinements: {evaluation_results}")
 
-        return final_results + evaluation_results
+        return final_results + evaluation_results + refined_strategies
 
     async def generate_hypotheses(self, metrics):
         """Generate hypotheses for potential improvements."""
@@ -827,12 +827,10 @@ async def main():
     optimized_solution = await hyperloop_optimizer.optimize(problem_space, dimensions, feedback)
     logger.info(f"Hyperloop optimized solution: {optimized_solution}")
     
-    # Example usage of hyperloop optimized solution in decision-making
+    # Apply hyperloop optimized solution to system processes
     if optimized_solution:
         await narrative.log_chain_of_thought("Applying hyperloop optimized solution to system processes.")
-        # Integrate the solution into system processes or decision-making
-        # Example: Use the solution to adjust system parameters or strategies
-        system_parameters = {}  # Assuming system_parameters is a dictionary
+        system_parameters = components.get("system_parameters", {})
         system_parameters.update(optimized_solution)
         logger.info(f"System parameters updated with hyperloop optimized solution: {system_parameters}")
 
@@ -842,12 +840,10 @@ async def main():
     quantum_optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
     logger.info(f"Quantum optimized solution: {quantum_optimized_solution}")
     
-    # Example usage of quantum_optimized_solution in decision-making
+    # Apply quantum optimized solution to system processes
     if quantum_optimized_solution:
         await narrative.log_chain_of_thought("Applying quantum optimized solution to system processes.")
-        # Integrate the solution into system processes or decision-making
-        # Example: Use the solution to adjust system parameters or strategies
-        system_strategies = {}  # Assuming system_strategies is a dictionary
+        system_strategies = components.get("system_strategies", {})
         system_strategies.update(quantum_optimized_solution)
         logger.info(f"System strategies updated with quantum optimized solution: {system_strategies}")
 
