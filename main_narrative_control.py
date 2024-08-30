@@ -330,7 +330,7 @@ class SystemManager:
 
     def log_system_state(self):
         self.logger.info("Logging system state for all components.")
-        for name, component in self.components.items():
+        for name, component in self.components.components.items():
             self.logger.info(f"Component {name}: {component}")
 
     def restart_component(self, component_name):
