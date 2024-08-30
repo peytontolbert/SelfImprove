@@ -1072,6 +1072,9 @@ class OmniscientDataAbsorber:
         await log_with_ollama(self.ollama, f"Error: {error}", context)
         # Log error to spreadsheet
         self.spreadsheet_manager.write_data((15, 1), [["Error", "Context"], [str(error), json.dumps(context or {})]])
+        # Save error to a file
+        with open("error_log.txt", "a") as error_file:
+            error_file.write(f"Error: {error} | Context: {json.dumps(error_context, indent=2)}\n")
         # Suggest and log recovery strategies
         recovery_strategy = await self.suggest_recovery_strategy(error)
         self.logger.info(f"Recovery Strategy: {recovery_strategy}", extra={"recovery_strategy": recovery_strategy})
