@@ -4,7 +4,7 @@ import torch
 from core.ollama_interface import OllamaInterface
 from quantum_decision_maker import QuantumDecisionMaker
 from meta_learner import MetaLearner
-from narrative.system_narrative import SystemNarrative
+# Delay the import of SystemNarrative to avoid circular import issues
 from simple_nn import GeneralNN
 from swarm_intelligence import SwarmIntelligence
 from quantum_optimizer import QuantumOptimizer
@@ -35,6 +35,7 @@ class SelfImprovement:
         self.nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=torch.nn.ReLU)
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
+        from narrative.system_narrative import SystemNarrative
         self.system_narrative: SystemNarrative
         self.swarm_intelligence = SwarmIntelligence()
         self.knowledge_base = knowledge_base
