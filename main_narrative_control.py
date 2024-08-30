@@ -276,24 +276,25 @@ class SelfImprovement:
         self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
         improvements.extend(collaborative_insights.get("suggestions", []))
 
+        # Combine quantum decisions and reinforcement learning feedback
         quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
             "actions": improvements,
             "system_state": metrics
         }, context={"metrics": metrics})
         self.logger.info(f"Quantum decisions: {quantum_decisions}")
 
-        consciousness_insights = await self.consciousness_emulator.emulate_consciousness(metrics)
-        self.logger.info(f"Consciousness insights: {consciousness_insights}")
-
         rl_feedback = await rl_module.get_feedback(metrics)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
 
-        optimized_improvements = await self.swarm_intelligence.optimize_decision({
-            "actions": improvements,
+        # Integrate both strategies to influence actions
+        combined_insights = {
+            "actions": improvements + quantum_decisions.get("suggestions", []),
             "system_state": metrics,
             "feedback": rl_feedback
-        })
-        self.logger.info(f"Optimized improvements: {optimized_improvements}")
+        }
+
+        optimized_improvements = await self.swarm_intelligence.optimize_decision(combined_insights)
+        self.logger.info(f"Optimized improvements with combined insights: {optimized_improvements}")
 
         validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
         self.logger.info(f"Validated improvements: {validated_improvements}")
