@@ -20,6 +20,8 @@ import logging
 import asyncio
 import os
 import aiohttp
+import json
+import time
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager
@@ -28,13 +30,19 @@ from prompts.management.prompt_manager import PromptManager
 from error_handler import ErrorHandler
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
-import time
 from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
-import json
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
+def setup_logging():
+    """Set up logging with a detailed format."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    return logging.getLogger(__name__)
+
 class QuantumOptimizer:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -101,12 +109,6 @@ class QuantumOptimizer:
         else:
             self.logger.warning("No solution was found during optimization.")
 
-# Set up logging with a more detailed format
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 class VersionControlSystem:
     """
@@ -416,40 +418,57 @@ class SelfImprovement:
         return None
 
 def initialize_components():
-    ollama = OllamaInterface()
-    rl_module = ReinforcementLearningModule(ollama)
-    task_queue = TaskQueue(ollama)
-    vcs = VersionControlSystem()
-    ca = CodeAnalysis()
-    tf = TestingFramework()
-    dm = DeploymentManager()
-    kb = KnowledgeBase(ollama_interface=ollama)
-    omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb)
-    narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber)
-    improvement_manager = ImprovementManager(ollama)
-    si = SelfImprovement(ollama, kb, improvement_manager)
-    fs = FileSystem()
-    pm = PromptManager()
-    eh = ErrorHandler()
-    tutorial_manager = TutorialManager()
+    components = {
+        "ollama": OllamaInterface(),
+        "rl_module": ReinforcementLearningModule(ollama),
+        "task_queue": TaskQueue(ollama),
+        "vcs": VersionControlSystem(),
+        "ca": CodeAnalysis(),
+        "tf": TestingFramework(),
+        "dm": DeploymentManager(),
+        "kb": KnowledgeBase(ollama_interface=ollama),
+        "omniscient_data_absorber": OmniscientDataAbsorber(knowledge_base=kb),
+        "narrative": SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber),
+        "improvement_manager": ImprovementManager(ollama),
+        "si": SelfImprovement(ollama, kb, improvement_manager),
+        "fs": FileSystem(),
+        "pm": PromptManager(),
+        "eh": ErrorHandler(),
+        "tutorial_manager": TutorialManager(),
+        "meta_learner": MetaLearner(),
+        "quantum_optimizer": QuantumOptimizer(),
+        "swarm_intelligence": SwarmIntelligence()
+    }
+
     # Load a tutorial on the first run
-    if ollama.first_run:
-        tutorial = tutorial_manager.load_tutorial("getting_started")
+    if components["ollama"].first_run:
+        tutorial = components["tutorial_manager"].load_tutorial("getting_started")
         if tutorial:
             logger.info(f"Loaded tutorial: {tutorial}")
-            # Use the tutorial content as needed
-    # Example of saving a new tutorial
-    new_tutorial_content = {"title": "Advanced Features", "content": "Learn about advanced features..."}
-    tutorial_manager.save_tutorial("advanced_features", new_tutorial_content)
-    logger.info("New tutorial saved: Advanced Features")
+        components["tutorial_manager"].save_tutorial("advanced_features", {"title": "Advanced Features", "content": "Learn about advanced features..."})
+        logger.info("New tutorial saved: Advanced Features")
 
-    meta_learner = MetaLearner()
-    quantum_optimizer = QuantumOptimizer()
-    swarm_intelligence = SwarmIntelligence()
-    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence, omniscient_data_absorber
+    return components
 
 async def main():
-    ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence = initialize_components()
+    components = initialize_components()
+    ollama = components["ollama"]
+    rl_module = components["rl_module"]
+    task_queue = components["task_queue"]
+    vcs = components["vcs"]
+    ca = components["ca"]
+    tf = components["tf"]
+    dm = components["dm"]
+    kb = components["kb"]
+    narrative = components["narrative"]
+    si = components["si"]
+    fs = components["fs"]
+    pm = components["pm"]
+    eh = components["eh"]
+    tutorial_manager = components["tutorial_manager"]
+    meta_learner = components["meta_learner"]
+    quantum_optimizer = components["quantum_optimizer"]
+    swarm_intelligence = components["swarm_intelligence"]
     await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
     # Initialize configuration settings
