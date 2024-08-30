@@ -31,7 +31,7 @@ from knowledge_base import KnowledgeBase
 import time
 from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
-from narrative.system_narrative import SystemNarrative
+from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 import json
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
@@ -422,7 +422,8 @@ def initialize_components():
     tf = TestingFramework()
     dm = DeploymentManager()
     kb = KnowledgeBase(ollama_interface=ollama)
-    narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb)
+    omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb)
+    narrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber)
     improvement_manager = ImprovementManager(ollama)
     si = SelfImprovement(ollama, kb, improvement_manager)
     fs = FileSystem()
@@ -443,7 +444,7 @@ def initialize_components():
     meta_learner = MetaLearner()
     quantum_optimizer = QuantumOptimizer()
     swarm_intelligence = SwarmIntelligence()
-    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence
+    return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence, omniscient_data_absorber
 
 async def main():
     ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager, meta_learner, quantum_optimizer, swarm_intelligence = initialize_components()
