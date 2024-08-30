@@ -313,7 +313,20 @@ class SystemNarrative:
         self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
         await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
 
-        # Self-reflection and adaptation
+        # Deep learning insights for self-reflection
+        deep_learning_insights = await self.ollama.query_ollama("deep_learning_insights", "Use deep learning to analyze past performance and suggest improvements.", context={"system_state": system_state})
+        self.logger.info(f"Deep learning insights: {deep_learning_insights}")
+        await self.knowledge_base.add_entry("deep_learning_insights", deep_learning_insights)
+
+        # Adaptive learning for strategy adjustment
+        adaptive_learning_strategies = await self.ollama.query_ollama("adaptive_learning", "Implement adaptive learning techniques to adjust strategies based on real-time feedback.", context={"system_state": system_state})
+        self.logger.info(f"Adaptive learning strategies: {adaptive_learning_strategies}")
+        await self.knowledge_base.add_entry("adaptive_learning_strategies", adaptive_learning_strategies)
+
+        # Collaborative feedback integration
+        collaborative_feedback = await self.ollama.query_ollama("collaborative_feedback", "Integrate feedback from multiple AI systems to refine decision-making processes.", context={"system_state": system_state})
+        self.logger.info(f"Collaborative feedback: {collaborative_feedback}")
+        await self.knowledge_base.add_entry("collaborative_feedback", collaborative_feedback)
         if improvement_cycle_count % 5 == 0:
             self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
             adaptation_strategies = await self.ollama.query_ollama("self_adaptation", "Adapt system strategies based on self-reflection insights.")
