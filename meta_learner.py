@@ -24,6 +24,14 @@ class MetaLearner:
             context={"performance_data": performance_data, "quantum_decisions": quantum_decisions}
         )
         self.logger.info(f"Optimized strategies: {strategies}")
+        # Integrate collaborative learning insights
+        collaborative_insights = await self.ollama.query_ollama(
+            "collaborative_learning",
+            "Leverage insights from multiple AI systems to enhance learning strategies.",
+            context={"performance_data": performance_data}
+        )
+        self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
+        strategies.update(collaborative_insights)
         await self.knowledge_base.add_entry("optimized_strategies", strategies)
         return strategies
 
