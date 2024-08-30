@@ -3,7 +3,7 @@ Main Narrative Control Module
 
 This module orchestrates the narrative-driven improvement process of the system.
 It integrates various components such as OllamaInterface, ImprovementManager, TaskQueue,
-and others to facilitate continuous system enhancement.
+and others to facilitate continuous enhancement of AI software assistant capabilities.
 
 Classes:
 - VersionControlSystem: Manages version control operations including commit and readiness assessment.
