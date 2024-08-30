@@ -394,6 +394,10 @@ class OllamaInterface:
         except Exception as e:
             self.logger.error(f"Error during dynamic recovery: {str(e)}")
         
+        recovery_strategy = recovery_actions.get('strategy', {})
+        error_prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
+        context = {"error": str(error)}
+
         if 'retry' in recovery_strategy:
             # Implement retry logic
             self.logger.info("Retrying the operation as suggested by Ollama.")
