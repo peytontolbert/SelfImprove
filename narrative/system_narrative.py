@@ -116,7 +116,7 @@ class SystemNarrative:
         self.logger.info(f"Unbiased Thoughts: {unbiased_thoughts}")
 
         # Log the entire thought process using OllamaInterface
-        await self.ollama.log_chain_of_thought("Logged thought process with Ollama integration.")
+        await self.log_chain_of_thought("Logged thought process with Ollama integration.")
         
     def detect_and_mitigate_bias(self, thoughts):
         """Detect and mitigate bias in the thought processes."""
@@ -144,7 +144,7 @@ class SystemNarrative:
         # Example logic for predictive modeling
         predictive_thoughts = [f"Predictive {thought}" for thought in thought_processes]
         # Log predictive thought modeling
-        await self.ollama.log_chain_of_thought("Predictive thought modeling completed.")
+        await self.log_chain_of_thought("Predictive thought modeling completed.")
         return predictive_thoughts
 
     def provide_examples(self, thought_processes):
