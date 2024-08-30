@@ -11,7 +11,7 @@ from spreadsheet_manager import SpreadsheetManager
 from attention_mechanism import AttentionMechanism
 
 class SystemNarrative:
-    def __init__(self, ollama_interface=None, knowledge_base=None):
+    def __init__(self, ollama_interface: OllamaInterface = None, knowledge_base: KnowledgeBase = None):
         self.attention_mechanism = AttentionMechanism()
         self.request_log = []  # Initialize a log to track requests and expected responses
         self.logger = logging.getLogger("SystemNarrative")
@@ -19,36 +19,40 @@ class SystemNarrative:
         self.knowledge_base = knowledge_base or KnowledgeBase()
         self.spreadsheet_manager = SpreadsheetManager("narrative_data.xlsx")
         self.rl_module = ReinforcementLearningModule(ollama_interface)
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     async def generate_thoughts(self, context=None):
         """Generate detailed thoughts or insights about the current state and tasks."""
-        longterm_memory = await self.knowledge_base.get_longterm_memory()
-        self.logger.info(f"Using long-term memory: {json.dumps(longterm_memory, indent=2)}")
-        context["longterm_memory"] = longterm_memory
-        prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
-        if context:
-            prompt += f" | Context: {context}"
-        if longterm_memory:
-            prompt += f" | Long-term Memory: {longterm_memory}"
-        context = context or {}
-        context["current_tasks"] = "List of current tasks"
-        context["system_status"] = "Current system status"
-        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
-        await self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
-        self.track_request("thought_generation", prompt, "thoughts")
-        ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
-        thoughts = ollama_response.get('thoughts', 'No thoughts generated')
-        self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
-        # Update long-term memory with generated thoughts
-        if thoughts != 'No thoughts generated':
-            longterm_memory.update({"thoughts": thoughts})
-        else:
-            self.logger.warning("No new thoughts generated to update long-term memory.")
-        await self.knowledge_base.save_longterm_memory(longterm_memory)
-        # Log thoughts to spreadsheet
-        self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
-        return thoughts
+        try:
+            longterm_memory = await self.knowledge_base.get_longterm_memory()
+            self.logger.info(f"Using long-term memory: {json.dumps(longterm_memory, indent=2)}")
+            context = context or {}
+            context.update({
+                "longterm_memory": longterm_memory,
+                "current_tasks": "List of current tasks",
+                "system_status": "Current system status"
+            })
+            prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
+            if context:
+                prompt += f" | Context: {context}"
+            self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+            await self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+            self.track_request("thought_generation", prompt, "thoughts")
+            ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
+            thoughts = ollama_response.get('thoughts', 'No thoughts generated')
+            self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
+            # Update long-term memory with generated thoughts
+            if thoughts != 'No thoughts generated':
+                longterm_memory.update({"thoughts": thoughts})
+            else:
+                self.logger.warning("No new thoughts generated to update long-term memory.")
+            await self.knowledge_base.save_longterm_memory(longterm_memory)
+            # Log thoughts to spreadsheet
+            self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
+            return thoughts
+        except Exception as e:
+            self.logger.error(f"Error generating thoughts: {e}")
+            return "Error generating thoughts"
 
     async def creative_problem_solving(self, problem_description):
         """Generate novel solutions to complex problems."""
@@ -95,21 +99,24 @@ class SystemNarrative:
 
     async def execute_actions(self, actions):
         """Execute a list of actions derived from thoughts and improvements."""
-        for action in actions:
-            action_type = action.get("type")
-            details = action.get("details", {})
-            if action_type == "file_operation":
-                await self.handle_file_operation(details)
-            elif action_type == "system_update":
-                await self.handle_system_update(details)
-            elif action_type == "network_operation":
-                await self.handle_network_operation(details)
-            elif action_type == "database_update":
-                await self.handle_database_update(details)
-            else:
-                self.logger.error(f"Unknown action type: {action_type}. Please check the action details.")
-        # Log the execution of actions
-        self.logger.info(f"Executed actions: {actions}")
+        try:
+            for action in actions:
+                action_type = action.get("type")
+                details = action.get("details", {})
+                if action_type == "file_operation":
+                    await self.handle_file_operation(details)
+                elif action_type == "system_update":
+                    await self.handle_system_update(details)
+                elif action_type == "network_operation":
+                    await self.handle_network_operation(details)
+                elif action_type == "database_update":
+                    await self.handle_database_update(details)
+                else:
+                    self.logger.error(f"Unknown action type: {action_type}. Please check the action details.")
+            # Log the execution of actions
+            self.logger.info(f"Executed actions: {actions}")
+        except Exception as e:
+            self.logger.error(f"Error executing actions: {e}")
 
     async def handle_network_operation(self, details):
         """Handle network operations such as API calls."""
