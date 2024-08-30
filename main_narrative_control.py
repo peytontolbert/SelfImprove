@@ -483,7 +483,7 @@ async def main():
         "process": "Initialization",
         "description": "Initializing system components with detailed logging and context management."
     })
-    await narrative.log_chain_of_thought("Starting main narrative control process.")
+    await narrative.log_chain_of_thought({"process": "Starting main narrative control process."})
     await narrative.log_state("System components initialized successfully", "Initialization complete")
     
     # Initialize prompt manager for versioning and A/B testing
