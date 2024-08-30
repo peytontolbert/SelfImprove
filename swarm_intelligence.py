@@ -45,7 +45,7 @@ class SwarmIntelligence:
         quantum_optimized_actions = []
         for action in actions:
             # Simulate quantum superposition by considering multiple outcomes
-            possible_outcomes = self.quantum_decision_maker.evaluate_possibilities(action, system_state, feedback)
+            possible_outcomes = await self.quantum_decision_maker.evaluate_possibilities(action, system_state, feedback)
             # Choose the optimal outcome based on quantum evaluation
             optimal_outcome = max(possible_outcomes, key=lambda outcome: outcome.get("score", 0))
             quantum_optimized_actions.append(optimal_outcome)
