@@ -384,37 +384,51 @@ class OllamaInterface:
                 details = action.get('details', {})
                 if action_type == "adjust_parameters":
                     self.logger.info(f"Adjusting parameters: {details}")
-                    # Implement parameter adjustment logic here
+                    await self.adjust_parameters(details)
                 elif action_type == "restart_service":
                     self.logger.info(f"Restarting service: {details}")
-                    # Implement service restart logic here
+                    await self.restart_service(details)
                 else:
                     self.logger.warning(f"Unknown recovery action type: {action_type}")
             self.logger.info("Dynamic recovery actions completed successfully.")
         except Exception as e:
             self.logger.error(f"Error during dynamic recovery: {str(e)}")
-        
+
         recovery_strategy = recovery_actions.get('strategy', {})
         error_prompt = f"An error occurred: {str(error)}. Suggest a recovery strategy."
         context = {"error": str(error)}
 
         if 'retry' in recovery_strategy:
-            # Implement retry logic
             self.logger.info("Retrying the operation as suggested by Ollama.")
-            # Example retry logic: Call the function again
             return await self.query_ollama(self.system_prompt, error_prompt, context=context)
         elif 'alternate_approach' in recovery_strategy:
-            # Implement alternate approach
             self.logger.info("Considering an alternate approach as suggested by Ollama.")
-            # Example alternate approach logic: Modify the context or prompt
             context['alternate'] = True
             return await self.query_ollama(self.system_prompt, error_prompt, context=context)
         elif 'human_intervention' in recovery_strategy:
-            # Request human intervention
             self.logger.info("Requesting human intervention as suggested by Ollama.")
-            # Example human intervention logic: Log the error and notify a human
             self.logger.error(f"Human intervention required for error: {str(error)}")
             return {"status": "human_intervention_required"}
-        
+
         return recovery_strategy
+
+    async def adjust_parameters(self, details: Dict[str, Any]):
+        """Adjust system parameters based on the provided details."""
+        try:
+            # Example logic to adjust parameters
+            for param, value in details.items():
+                self.logger.info(f"Setting parameter {param} to {value}")
+                # Implement actual parameter adjustment logic here
+        except Exception as e:
+            self.logger.error(f"Error adjusting parameters: {str(e)}")
+
+    async def restart_service(self, details: Dict[str, Any]):
+        """Restart a service based on the provided details."""
+        try:
+            service_name = details.get("service_name")
+            self.logger.info(f"Restarting service: {service_name}")
+            # Implement actual service restart logic here
+            # Example: subprocess.run(["systemctl", "restart", service_name], check=True)
+        except Exception as e:
+            self.logger.error(f"Error restarting service: {str(e)}")
 
