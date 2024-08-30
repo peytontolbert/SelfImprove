@@ -116,7 +116,7 @@ class SystemNarrative:
         self.logger.info(f"Unbiased Thoughts: {unbiased_thoughts}")
 
         # Log the entire thought process using OllamaInterface
-        await self.log_chain_of_thought("Logged thought process with Ollama integration.")
+        self.logger.info("Logged thought process with Ollama integration.")
         
     def detect_and_mitigate_bias(self, thoughts):
         """Detect and mitigate bias in the thought processes."""
