@@ -1010,8 +1010,7 @@ class OmniscientDataAbsorber:
             self.logger.debug(f"Update error output: {e.stderr}")
 
     async def log_state(self, message, thought_process="Default thought process", context=None):
-        if context is None:
-            context = {}
+        context = context or {}
         # Extract relevant elements from the context
         relevant_context = {
             "system_status": context.get("system_status", "Current system status"),
