@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any
-import subprocess
+from file_system import FileSystem
 class ImprovementManager:
     def __init__(self, ollama_interface):
         self.ollama = ollama_interface
@@ -75,16 +75,15 @@ class ImprovementManager:
             return {"status": "failure", "message": f"Code change failed: {str(e)}"}
 
     async def apply_system_update(self, system_update: str) -> Dict[str, Any]:
+        fs = FileSystem()
         try:
             self.logger.info(f"Updating system: {system_update}")
-            # Ensure the update script is executed
-            result = subprocess.run(["./apply_system_update.sh", system_update], check=True, capture_output=True, text=True)
-            self.logger.info(f"System update executed successfully: {system_update}")
-            self.logger.debug(f"Update script output: {result.stdout}")
-            return {"status": "success", "message": "System update applied successfully"}
-        except subprocess.CalledProcessError as e:
-            self.logger.error(f"Failed to update system: {str(e)}")
-            self.logger.debug(f"Update script error output: {e.stderr}")
+            # Write the system update details to a file
+            fs.write_to_file("system_update.txt", system_update)
+            self.logger.info(f"System update details written to file: {system_update}")
+            return {"status": "success", "message": "System update details written successfully"}
+        except Exception as e:
+            self.logger.error(f"Failed to write system update details: {str(e)}")
             return {"status": "failure", "message": f"System update failed: {str(e)}"}
     async def proactive_monitoring(self):
         """Monitor system metrics and detect potential issues proactively."""
