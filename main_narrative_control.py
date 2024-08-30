@@ -290,7 +290,12 @@ class SelfImprovement:
 
     async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
-        validated_improvements = await self.improvement_manager.validate_improvements(improvements)
+        # Use swarm intelligence to optimize improvements
+        optimized_improvements = self.swarm_intelligence.optimize_decision({
+            "actions": improvements,
+            "system_state": metrics
+        })
+        validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
         # Analyze code for potential performance bottlenecks
         performance_optimizations = await self.ollama.query_ollama("performance_optimization", f"Suggest performance optimizations for these metrics: {metrics}", context={"metrics": metrics})
         self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")

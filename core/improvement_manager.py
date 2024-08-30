@@ -17,10 +17,13 @@ class ImprovementManager:
             )
             response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="improvement_suggestion")
             suggestions = response.get("suggestions", [])
-            self.logger.info(f"Suggested improvements: {suggestions}")
-            # Log the suggestions for future analysis
-            self.logger.info(f"Suggested improvements: {suggestions}")
-            return suggestions
+            # Use swarm intelligence to optimize suggestions
+            optimized_suggestions = self.swarm_intelligence.optimize_decision({
+                "actions": suggestions,
+                "system_state": system_state
+            })
+            self.logger.info(f"Optimized improvements using swarm intelligence: {optimized_suggestions}")
+            return optimized_suggestions
         except Exception as e:
             self.logger.error(f"Error suggesting improvements: {str(e)}")
             # Consider retrying the suggestion process or notifying an admin
