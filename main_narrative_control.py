@@ -390,7 +390,7 @@ class SelfImprovement:
         await self.narrative.log_error("All attempts failed", {"function": func.__name__, "args": args, "kwargs": kwargs})
         return None
 
-def initialize_components():
+async def initialize_components():
     ollama = OllamaInterface()
     kb = KnowledgeBase(ollama_interface=ollama)
     improvement_manager = ImprovementManager(ollama)
