@@ -38,7 +38,6 @@ from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
-from quantum_inspired_coding_engine import QuantumMultidimensionalCodingEngine
 from tutorial_manager import TutorialManager
 from quantum_optimizer import QuantumOptimizer
 logging.basicConfig(
@@ -362,9 +361,7 @@ def initialize_components():
     improvement_manager = ImprovementManager(ollama)
     omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
     si = SelfImprovement(ollama, kb, improvement_manager)
-    quantum_engine = QuantumMultidimensionalCodingEngine(ollama)
     components = {
-        "quantum_engine": quantum_engine,
         "ollama": ollama,
         "rl_module": ReinforcementLearningModule(ollama),
         "task_queue": TaskQueue(ollama),
@@ -464,8 +461,6 @@ async def main():
     # Ollama-centric performance optimization
     await narrative.log_chain_of_thought("Performing quantum-inspired code analysis and optimization.")
     code_snippet = "def example_function(x): return x * 2"
-    analysis_insights = await components["quantum_engine"].multidimensional_code_analysis(code_snippet)
-    logger.info(f"Quantum code analysis insights: {analysis_insights}")
     performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}")
     logger.info(f"Performance optimizations: {performance_optimizations}")
 
