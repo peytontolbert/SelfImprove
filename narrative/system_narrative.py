@@ -53,6 +53,8 @@ class SystemNarrative:
         self.logger.info(f"Creative solutions generated: {solutions}")
         await self.knowledge_base.add_entry("creative_solutions", solutions)
         return solutions
+
+    async def generate_detailed_thoughts(self, context=None):
         """Generate detailed thoughts or insights about the current state and tasks."""
         longterm_memory = await self.knowledge_base.get_longterm_memory()
         prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
@@ -67,7 +69,7 @@ class SystemNarrative:
             "system_status": "Current system status"
         })
         self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
-        self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+        await self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
         self.track_request("thought_generation", prompt, "thoughts")
         ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
