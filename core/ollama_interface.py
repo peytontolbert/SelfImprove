@@ -218,21 +218,26 @@ class OllamaInterface:
         return response if response else {"error": "No response from Ollama"}
 
     async def get_reinforcement_feedback(self, metrics: Dict[str, Any], context: Dict[str, Any] = None) -> Dict[str, Any]:
-        prompt = f"Provide reinforcement learning feedback based on these metrics: {json.dumps(metrics, indent=2)}"
         if context is None:
             context = {}
         context.update({"metrics": metrics})
-        response = await self.query_ollama("reinforcement_learning", prompt, context=context)
-        return response if response else {"feedback": []}
+
+        # Get reinforcement learning feedback
+        prompt = f"Provide reinforcement learning feedback based on these metrics: {json.dumps(metrics, indent=2)}"
+        feedback_response = await self.query_ollama("reinforcement_learning", prompt, context=context)
+        feedback = feedback_response.get("feedback", [])
+
+        # Analyze performance metrics and suggest improvements
         prompt = f"Analyze these performance metrics and suggest improvements:\n\n{json.dumps(metrics, indent=2)}"
-        if context is None:
-            context = {}
-        context.update({"performance_metrics": metrics})
-        response = await self.query_ollama("system_improvement", prompt, context=context)
+        improvement_response = await self.query_ollama("system_improvement", prompt, context=context)
+        suggestions = improvement_response.get("suggestions", [])
+
         # Suggest resource allocation and scaling strategies
-        context = {"performance_metrics": metrics}
-        scaling_suggestions = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {metrics}", context=context)
-        return response.get("suggestions", []) + scaling_suggestions.get("scaling_suggestions", [])
+        scaling_suggestions_response = await self.query_ollama("resource_optimization", f"Suggest resource allocation and scaling strategies based on these metrics: {metrics}", context=context)
+        scaling_suggestions = scaling_suggestions_response.get("scaling_suggestions", [])
+
+        # Combine all feedback and suggestions
+        return {"feedback": feedback, "suggestions": suggestions + scaling_suggestions}
 
     async def implement_improvement(self, improvement: str) -> Dict[str, Any]:
         prompt = f"Implement this improvement: {improvement}. Consider the software assistants current architecture and capabilities. Provide a detailed plan for implementation."
