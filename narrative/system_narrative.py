@@ -1857,7 +1857,7 @@ class OmniscientDataAbsorber:
         try:
             self.logger.critical(f"Notifying administrators: {message}")
             # Example logic to send an email notification
-            subprocess.run(["sendmail", "admin@example.com"], input=message.encode(), check=True)
+            subprocess.run(["sendmail", "email@peytontolbert.com"], input=message.encode(), check=True)
             self.logger.info("Administrators notified successfully.")
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Failed to notify administrators: {e}")
