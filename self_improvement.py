@@ -92,12 +92,14 @@ class SelfImprovement:
         data = [(torch.tensor([metric]), torch.tensor([0.0])) for metric in metrics.values()]
         return torch.utils.data.DataLoader(data, batch_size=2)
 
-    async def generate_hypotheses(self, metrics):
+    def predict_improvements(self, metrics):
         # Use the neural network model to predict improvements
         inputs = torch.tensor([list(metrics.values())])
         with torch.no_grad():
             predictions = self.nn_model.predict(inputs)
         return predictions.tolist()
+
+    async def generate_hypotheses(self, metrics):
         """Generate hypotheses for potential improvements."""
         prompt = f"Generate hypotheses for potential improvements based on these metrics: {metrics}"
         hypotheses = await self.ollama.query_ollama("hypothesis_generation", prompt, context={"metrics": metrics})
