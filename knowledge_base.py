@@ -22,7 +22,8 @@ class KnowledgeBase:
         self.initialize_database()
         self.initialize_database()
         self.ollama = ollama_interface
-        self.longterm_memory = {}
+        self.longterm_memory = {}  # Initialize with a fixed size limit
+        self.memory_limit = 100  # Example limit for the number of entries
         self.base_directory = "knowledge_base_data"
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
@@ -355,7 +356,7 @@ class KnowledgeBase:
         """Prioritize memory entries based on relevance and usage frequency."""
         # Example logic to prioritize entries
         prioritized_entries = sorted(self.longterm_memory.items(), key=lambda item: item[1].get('relevance', 0), reverse=True)
-        self.longterm_memory = dict(prioritized_entries[:100])  # Keep top 100 relevant entries
+        self.longterm_memory = dict(prioritized_entries[:self.memory_limit])  # Keep top entries within the limit
 
     async def summarize_less_relevant_data(self):
         """Summarize or compress less relevant data."""
@@ -379,7 +380,11 @@ class KnowledgeBase:
     async def save_longterm_memory(self, longterm_memory):
         """Save long-term memory to a file."""
         # Ensure long-term memory is updated with new data
+        # Update long-term memory with a limit
         self.longterm_memory.update({str(k): v for k, v in longterm_memory.items() if v})
+        if len(self.longterm_memory) > self.memory_limit:
+            # Remove the least relevant entries
+            self.prioritize_memory_entries()
         for entry_name, data in longterm_memory.items():
             self.add_node("LongTermMemory", {"name": entry_name, "data": data})
         file_path = os.path.join(self.base_directory, "longterm_memory.json")
