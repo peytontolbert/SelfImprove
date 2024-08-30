@@ -684,6 +684,11 @@ async def initialize_components():
         "hyperloop_optimizer": HyperloopOptimizer(),
     })
 
+    # Ensure all components are initialized
+    for component_name, component in components.components.items():
+        if hasattr(component, 'initialize'):
+            await component.initialize()
+
     # Load a tutorial on the first run
     tutorial_manager = components["tutorial_manager"]
     if components["ollama"].first_run:
@@ -707,6 +712,13 @@ async def main():
     # Manage and verify the status of critical components
     system_manager.manage_component("ollama", action="status")
 
+    # Log the impact of ConsciousnessEmulator
+    await narrative.log_chain_of_thought({
+        "process": "Consciousness Emulation",
+        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
+        "prioritized_actions": prioritized_actions
+    })
+
     # Initialize and use components
     rl_module = components["rl_module"]
     si = components["si"]
@@ -719,6 +731,13 @@ async def main():
     context = {"metrics": metrics, "rl_feedback": rl_feedback}
     prioritized_actions = await consciousness_emulator.emulate_consciousness(context)
     logger.info(f"Prioritized actions from ConsciousnessEmulator: {prioritized_actions}")
+
+    # Log the impact of ConsciousnessEmulator
+    await narrative.log_chain_of_thought({
+        "process": "Consciousness Emulation",
+        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
+        "prioritized_actions": prioritized_actions
+    })
 
     task_queue = components["task_queue"]
     vcs = components["vcs"]
