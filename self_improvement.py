@@ -102,8 +102,12 @@ class SelfImprovement:
     async def generate_hypotheses(self, metrics):
         """Generate hypotheses for potential improvements."""
         prompt = f"Generate hypotheses for potential improvements based on these metrics: {metrics}"
-        hypotheses = await self.ollama.query_ollama("hypothesis_generation", prompt, context={"metrics": metrics})
-        self.logger.info(f"Generated hypotheses: {hypotheses}")
+        try:
+            hypotheses = await self.ollama.query_ollama("hypothesis_generation", prompt, context={"metrics": metrics})
+        except Exception as e:
+            self.logger.error(f"Error generating hypotheses: {e}")
+            return []
+        self.logger.debug(f"Generated hypotheses: {hypotheses}")
         return hypotheses.get("hypotheses", [])
 
     async def test_hypotheses(self, hypotheses):
