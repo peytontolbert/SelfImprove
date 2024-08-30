@@ -10,6 +10,31 @@ from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
 from attention_mechanism import AttentionMechanism
 
+class TemporalEngine:
+    def __init__(self):
+        self.logger = logging.getLogger("TemporalEngine")
+
+    async def temporal_recursion(self, objective, context, depth=0, max_depth=5):
+        """Recursively process an objective over time."""
+        if depth >= max_depth:
+            self.logger.warning(f"Max recursion depth reached for objective: {objective}")
+            return
+
+        self.logger.info(f"Processing objective: {objective} at depth {depth}")
+        # Simulate processing time
+        await asyncio.sleep(1)
+        # Example recursive call
+        await self.temporal_recursion(objective, context, depth + 1, max_depth)
+
+    async def temporal_loop(self, objectives, context, iterations=3):
+        """Loop through objectives over time."""
+        for i in range(iterations):
+            self.logger.info(f"Iteration {i+1} for objectives: {objectives}")
+            for objective in objectives:
+                await self.temporal_recursion(objective, context)
+            # Simulate processing time
+            await asyncio.sleep(2)
+
 class SystemNarrative:
     def __init__(self, ollama_interface: OllamaInterface = None, knowledge_base: KnowledgeBase = None):
         self.attention_mechanism = AttentionMechanism()
@@ -19,6 +44,7 @@ class SystemNarrative:
         self.knowledge_base = knowledge_base or KnowledgeBase()
         self.spreadsheet_manager = SpreadsheetManager("narrative_data.xlsx")
         self.rl_module = ReinforcementLearningModule(ollama_interface)
+        self.temporal_engine = TemporalEngine()
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     async def generate_thoughts(self, context=None):
@@ -759,4 +785,7 @@ class SystemNarrative:
         # For example: self.timeout_duration = new_timeout
 
         await self.log_state("Timeout recovery completed")
+        # Example usage of TemporalEngine
+        objectives = ["Optimize performance", "Enhance user experience"]
+        await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})
         return recovery_actions
