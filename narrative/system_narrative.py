@@ -75,7 +75,7 @@ class OmniscientDataAbsorber:
         enhanced_decision_space = await self.enrich_decision_space(decision_space)
 
         # Use the quantum-inspired decision tree
-        optimal_decision = await self.quantum_decision_maker.quantum_decision_tree(enhanced_decision_space)
+        optimal_decision = self.quantum_decision_maker.quantum_decision_tree(enhanced_decision_space)
 
         self.logger.info(f"Complex decision made: {optimal_decision}")
 

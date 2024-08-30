@@ -110,8 +110,6 @@ class OllamaInterface:
 
         self.log_interaction(system_prompt, prompt, result)
 
-        self.log_interaction(system_prompt, prompt, result)
-
         if isinstance(result, str):
             try:
                 response_data = json.loads(result)
