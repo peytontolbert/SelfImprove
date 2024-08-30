@@ -186,7 +186,7 @@ class KnowledgeBase:
         self.logger.info(f"Entries listed: {categorized_entries}")
         return categorized_entries
 
-    def summarize_memory(self, memory, max_length=1000):
+    def summarize_memory(self, memory, max_length=4000):
         """Summarize or trim the memory to fit within the context limits."""
         def extract_key_insights(data):
             """Extract key insights from the data."""
@@ -195,7 +195,7 @@ class KnowledgeBase:
             elif isinstance(data, list):
                 return [extract_key_insights(item) for item in data]
             else:
-                return str(data)[:500]  # Limit individual entries to 50 characters
+                return str(data)[:2000]  # Limit individual entries to 50 characters
 
         memory_str = json.dumps(extract_key_insights(memory))
         if len(memory_str) > max_length:
