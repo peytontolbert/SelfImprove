@@ -1079,7 +1079,7 @@ class OmniscientDataAbsorber:
                 # For example: await self.execute_recovery_step(step)
 
 
-    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+    async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, components):
         self.si = si
         self.ollama = ollama
         self.kb = kb
@@ -1222,7 +1222,7 @@ class OmniscientDataAbsorber:
         self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
 
         # Use the consciousness emulator to prioritize actions
-        prioritized_actions = components["consciousness_emulator"].emulate_consciousness(combined_decision)
+        prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
