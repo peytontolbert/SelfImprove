@@ -176,7 +176,7 @@ class SystemNarrative:
     def intermediate_checks(self, thought_processes):
         """Include intermediate checks for the thought processes."""
         # Example logic for intermediate checks
-        checks = [f"Check {i+1}: Validate {thought}" for i, thought in enumerate(thought_processes)]
+        checks = [f"Check {i+1}: Validate {thought}" for i, thought in enumerate(thought_processes.split())]
         return checks
 
     def synthesize_thoughts(self, thought_processes):
