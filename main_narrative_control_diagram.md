@@ -15,27 +15,29 @@ graph TD;
     A -->|Initializes| N[ErrorHandler]
     A -->|Initializes| O[SpreadsheetManager]
     A -->|Initializes| P[SystemNarrative]
-    P -->|Controls| Q[Improvement Process]
-    Q -->|Analyzes| R[System State]
-    Q -->|Generates| S[Improvement Suggestions]
-    Q -->|Validates| T[Improvements]
-    Q -->|Applies| U[Improvements]
-    Q -->|Logs| V[State and Decisions]
-    Q -->|Handles| W[Errors]
-    Q -->|Assesses| X[Alignment Implications]
-    Q -->|Uses| Y[Reinforcement Learning Feedback and Ollama Insights]
-    Q -->|Integrates| Z[Predictive Analysis and Ollama-Driven Strategies]
-    Q -->|Evolves| AA[Long-term Evolution with Ollama Guidance]
-    R -->|Feedback| D
-    S -->|Validation| J
-    T -->|Application| K
-    U -->|Update| C
-    V -->|Log| O
-    W -->|Recovery| N
-    X -->|Consult| B
-    Y -->|Optimize| F
-    Z -->|Enhance| G
-    AA -->|Refine| Q
-    Q -->|Consults| AB[Ollama for Ethical and Alignment Considerations]
-    Q -->|Refines| AC[Feedback Loop Optimization with Ollama]
+    A -->|Initializes| Q[QuantumOptimizer]
+    A -->|Initializes| R[SwarmIntelligence]
+    P -->|Controls| S[Improvement Process]
+    S -->|Analyzes| T[System State]
+    S -->|Generates| U[Improvement Suggestions]
+    S -->|Validates| V[Improvements]
+    S -->|Applies| W[Improvements]
+    S -->|Logs| X[State and Decisions]
+    S -->|Handles| Y[Errors]
+    S -->|Assesses| Z[Alignment Implications]
+    S -->|Uses| AA[Reinforcement Learning Feedback and Ollama Insights]
+    S -->|Integrates| AB[Predictive Analysis and Ollama-Driven Strategies]
+    S -->|Evolves| AC[Long-term Evolution with Ollama Guidance]
+    T -->|Feedback| D
+    U -->|Validation| J
+    V -->|Application| K
+    W -->|Update| C
+    X -->|Log| O
+    Y -->|Recovery| N
+    Z -->|Consult| B
+    AA -->|Optimize| F
+    AB -->|Enhance| G
+    AC -->|Refine| S
+    S -->|Consults| AD[Ollama for Ethical and Alignment Considerations]
+    S -->|Refines| AE[Feedback Loop Optimization with Ollama]
 ```
