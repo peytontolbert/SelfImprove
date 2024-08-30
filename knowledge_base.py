@@ -83,16 +83,22 @@ class KnowledgeBase:
         query = f"UNWIND $nodes AS node MERGE (n:{label} {{name: node.name}}) SET n += node.properties"
         tx.run(query, nodes=[{"name": node["name"], "properties": node["properties"]} for node in nodes])
 
-    def find_shortest_path(self, start_node, end_node, relationship_type):
-        """Find the shortest path between two nodes."""
+    def find_paths_with_constraints(self, start_node, end_node, relationship_type, max_depth=5):
+        """Find paths between two nodes with constraints on relationship type and depth."""
         with self.driver.session() as session:
             result = session.run(
                 "MATCH (start {name: $start_node}), (end {name: $end_node}), "
-                "p = shortestPath((start)-[:$relationship_type*]-(end)) "
+                "p = (start)-[:$relationship_type*..$max_depth]-(end) "
                 "RETURN p",
-                start_node=start_node, end_node=end_node, relationship_type=relationship_type
+                start_node=start_node, end_node=end_node, relationship_type=relationship_type, max_depth=max_depth
             )
             return [record["p"] for record in result]
+
+    def pattern_match_query(self, pattern):
+        """Execute a pattern matching query to find specific structures in the graph."""
+        with self.driver.session() as session:
+            result = session.run(pattern)
+            return [record.data() for record in result]
 
     def add_relationship(self, from_node, to_node, relationship_type, properties=None):
         """Add or update a relationship with properties between nodes."""
@@ -246,41 +252,17 @@ class KnowledgeBase:
         self.logger.info(f"Memory summary: {summary}")
         return summary
 
-    async def get_longterm_memory(self, max_size: int = 1024 * 1024):
-        """Retrieve, refine, and manage long-term memory entries, ensuring size constraints."""
-        entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
-        indexed_entries = self.index_and_categorize_entries(entries)
-        
-        for entry_name in indexed_entries:
-            file_path = os.path.join(self.base_directory, f"{entry_name}.json")
-            with open(file_path, 'r') as file:
-                data = json.load(file)
-            self.longterm_memory[entry_name] = self.refine_memory_entry(data)
-        
-        # Prioritize and manage memory
-        self.prioritize_memory_entries()
-        self.summarize_less_relevant_data()
-
-        # Check the size of the long-term memory
-        memory_size = sum(len(json.dumps(entry)) for entry in self.longterm_memory.values())
-        if memory_size > max_size:
-            self.logger.warning(f"Long-term memory size ({memory_size} bytes) exceeds the maximum allowed size ({max_size} bytes). Summarizing data.")
-            await self.summarize_memory_with_ollama(self.longterm_memory)
-
-        if self.longterm_memory:
-            self.logger.info(f"Retrieved and refined long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
-            # Log metrics for reinforcement learning
-            if "metrics" in self.longterm_memory:
-                self.logger.info(f"Metrics for reinforcement learning: {json.dumps(self.longterm_memory['metrics'], indent=2)}")
-            # Continuously provide necessary context from long-term memory
-            await self.provide_context_from_memory()
-        else:
-            self.logger.warning("No long-term memory entries found.")
-        
-        # Periodically review and update memory
-        await self.periodic_memory_review()
-
-        return self.longterm_memory
+    async def retrieve_and_augment_with_rag(self, query, context=None):
+        """Retrieve relevant information from the graph database and augment it with RAG."""
+        context = context or {}
+        graph_data = self.query_insights(query)
+        augmented_data = await self.ollama.query_ollama(
+            "rag_augmentation",
+            f"Augment the following data with additional insights: {graph_data}",
+            context={"graph_data": graph_data, **context}
+        )
+        self.logger.info(f"RAG augmented data: {augmented_data}")
+        return augmented_data
 
     def index_and_categorize_entries(self, entries):
         """Index and categorize entries for efficient retrieval."""
