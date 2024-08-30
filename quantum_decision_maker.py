@@ -53,7 +53,14 @@ class QuantumDecisionMaker:
         """
         self.logger.info("Building quantum decision tree.")
         # Example logic: Evaluate decisions based on a combination of factors
-        optimal_decision = max(decision_space, key=lambda decision: decision.get("score", 0))
+        try:
+            optimal_decision = max(
+                (decision for decision in decision_space if isinstance(decision, dict)),
+                key=lambda decision: decision.get("score", 0)
+            )
+        except ValueError:
+            self.logger.error("No valid decisions found in decision space.")
+            return {"error": "No valid decisions found"}
         self.logger.info(f"Optimal decision made: {optimal_decision}")
         await self.ollama.log_chain_of_thought("Quantum decision-making process completed.")
         return optimal_decision
