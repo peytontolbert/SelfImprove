@@ -53,7 +53,6 @@ class QuantumOptimizer:
         self.logger.info("Problem space validated successfully.")
         return True
 
-    async def quantum_optimize_logic(self, problem_space):
     async def quantum_optimize_logic(self, problem_space: dict) -> dict:
         # Enhanced logic: Evaluate multiple possibilities using quantum superposition
         self.logger.info("Applying quantum-inspired logic to optimize the problem space.")
