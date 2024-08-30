@@ -1671,39 +1671,37 @@ class OmniscientDataAbsorber:
 
     async def handle_high_urgency_implication(self, category, description):
         self.logger.warning(f"High urgency implication detected in category: {category}. Immediate action required.")
-        # Implement logic to handle high urgency implications
-        # For example, trigger an immediate review or alert the system administrators
+        # Trigger an immediate review and alert system administrators
         context = {
             "system_state": await self.ollama.evaluate_system_state({}),
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"High urgency implication in {category}: {description}", "High urgency handling", context or {})
-        # You might want to add a method to alert administrators or trigger an immediate response
+        await self.log_state(f"High urgency implication in {category}: {description}", "High urgency handling", context)
+        await self.alert_administrators(category, description)
+        await self.trigger_immediate_review(category, description)
 
     async def handle_medium_high_urgency_implication(self, category, description):
         self.logger.info(f"Medium-high urgency implication detected in category: {category}. Prioritize for review.")
-        # Implement logic to handle medium-high urgency implications
-        # For example, add to a priority queue for review
+        # Add to a priority queue for review
         context = {
             "system_state": await self.ollama.evaluate_system_state({}),
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"Medium-high urgency implication in {category}: {description}", "Medium-high urgency handling", context or {})
-        # You might want to add a method to schedule a review or add to a priority task list
+        await self.log_state(f"Medium-high urgency implication in {category}: {description}", "Medium-high urgency handling", context)
+        await self.add_to_priority_queue(category, description)
 
     async def handle_low_medium_urgency_implication(self, category, description):
         self.logger.info(f"Low-medium urgency implication detected in category: {category}. Monitor and review as needed.")
-        # Implement logic to handle low-medium urgency implications
-        # For example, add to a monitoring list
+        # Add to a monitoring list
         context = {
             "system_state": await self.ollama.evaluate_system_state({}),
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state(f"Low-medium urgency implication in {category}: {description}", "Low-medium urgency handling", context or {})
-        # You might want to add a method to add this to a monitoring list or schedule a future review
+        await self.log_state(f"Low-medium urgency implication in {category}: {description}", "Low-medium urgency handling", context)
+        await self.add_to_monitoring_list(category, description)
 
     async def handle_timeout_error(self):
         await self.log_error("Timeout occurred in control_improvement_process")
