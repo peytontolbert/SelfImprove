@@ -117,6 +117,8 @@ class SystemNarrative:
                 async with session.request(method, url, json=data) as response:
                     response_data = await response.json()
                     self.logger.info(f"Network operation successful: {response_data}")
+                    # Ensure proper cleanup and resource management
+                    await session.close()
         except Exception as e:
             self.logger.error(f"Error performing network operation: {str(e)}")
 
@@ -173,7 +175,7 @@ class SystemNarrative:
             "current_tasks": "List of current tasks",
             "performance_metrics": await self.ollama.query_ollama("system_metrics", "Provide an overview of the current system capabilities and performance.")
         })
-        self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
+        self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)} | Timestamp: {time.time()}")
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
         self.spreadsheet_manager.write_data((5, 1), [["State"], [message]])
         await self.log_with_ollama(message, context)
@@ -263,10 +265,16 @@ class SystemNarrative:
 
             if improvement_cycle_count % 5 == 0:
                 self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
+                # Implement self-adaptation based on reflection insights
+                adaptation_strategies = await self.ollama.query_ollama("self_adaptation", "Adapt system strategies based on self-reflection insights.")
+                self.logger.info(f"Self-adaptation strategies: {adaptation_strategies}")
                 self.logger.info(f"Self-reflection insights: {self_reflection}")
                 await self.knowledge_base.add_entry("self_reflection", self_reflection)
 
             resource_optimization = await self.ollama.query_ollama("resource_optimization", "Optimize resource allocation based on current and predicted demands.", context={"system_state": system_state})
+            # Implement dynamic resource allocation adjustments
+            dynamic_allocation = await self.ollama.query_ollama("dynamic_resource_allocation", "Adjust resource allocation dynamically based on real-time analysis.")
+            self.logger.info(f"Dynamic resource allocation: {dynamic_allocation}")
             self.logger.info(f"Resource allocation optimization: {resource_optimization}")
             await self.knowledge_base.add_entry("resource_optimization", resource_optimization)
 
@@ -359,6 +367,9 @@ class SystemNarrative:
 
         # Optimize feedback loop for rapid learning
         feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+        # Integrate machine learning models for adaptive feedback
+        adaptive_feedback = await self.ollama.query_ollama("adaptive_feedback", "Use machine learning to adapt feedback loops based on historical data and current performance.")
+        self.logger.info(f"Adaptive feedback integration: {adaptive_feedback}")
         self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
         await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
 
@@ -520,6 +531,9 @@ class SystemNarrative:
 
     async def process_recovery_suggestion(self, eh, ollama, e):
         recovery_suggestion = await eh.handle_error(ollama, e)
+        # Implement predictive analysis for error recovery
+        predictive_recovery = await ollama.query_ollama("predictive_error_recovery", "Predict potential errors and suggest preemptive recovery strategies.")
+        self.logger.info(f"Predictive recovery strategies: {predictive_recovery}")
         if recovery_suggestion and recovery_suggestion.get('decompose_task', False):
             subtasks = await eh.decompose_task(ollama, recovery_suggestion.get('original_task'))
             await self.log_state("Decomposed task into subtasks", {"subtasks": subtasks})
