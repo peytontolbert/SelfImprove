@@ -433,7 +433,7 @@ class RefinementManager:
         # Define the objective function
         def objective(params):
             # Example: Minimize the negative sum of strategy values
-            return -sum(strategy.values())
+            return -sum(params)
 
         # Define the search space
         search_space = [(0, 1) for _ in strategy]
@@ -442,7 +442,7 @@ class RefinementManager:
         result = gp_minimize(objective, search_space, n_calls=10)
 
         # Update strategy with optimized values
-        optimized_strategy = {k: v + result.x[i] for i, (k, v) in enumerate(strategy.items())}
+        optimized_strategy = {k: result.x[i] for i, k in enumerate(strategy.keys())}
         return optimized_strategy
 
     async def evaluate_refinement(self, refinement):
