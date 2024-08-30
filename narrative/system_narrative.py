@@ -1417,7 +1417,8 @@ class OmniscientDataAbsorber:
             "after": new_metrics
         })
 
-    async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si):
+    async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si, context=None):
+        context = context or {}
         await self.log_state("Performing additional system improvement tasks", "Additional tasks execution", task_queue or {})
         await task_queue.manage_orchestration()
         
