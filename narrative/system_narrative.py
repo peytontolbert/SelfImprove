@@ -941,7 +941,12 @@ class OmniscientDataAbsorber:
             prompt += f" | Context: {context}"
         await self.ollama.query_ollama("logging", prompt, refine=False)
 
-    async def log_recovery(self, recovery_action, success=True):
+    async def log_with_ollama(self, message, context=None):
+        """Log messages with Ollama's assistance."""
+        prompt = f"Log this message: {message}"
+        if context:
+            prompt += f" | Context: {context}"
+        await self.ollama.query_ollama("logging", prompt, refine=False)
         status = "successful" if success else "failed"
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
         await self.log_with_ollama(recovery_action, {"success": success})
