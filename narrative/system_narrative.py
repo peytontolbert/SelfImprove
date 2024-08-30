@@ -14,7 +14,8 @@ from swarm_intelligence import SwarmIntelligence
 from quantum_decision_maker import QuantumDecisionMaker
 
 class SystemNarrative:
-    def __init__(self, ollama_interface: OllamaInterface, knowledge_base: KnowledgeBase, data_absorber: 'OmniscientDataAbsorber'):
+    def __init__(self, ollama_interface: OllamaInterface, knowledge_base: KnowledgeBase, data_absorber: 'OmniscientDataAbsorber', si=None):
+        self.si = si
         self.ollama = ollama_interface
         self.knowledge_base = knowledge_base
         self.data_absorber = data_absorber
@@ -24,7 +25,7 @@ class SystemNarrative:
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
 
-    async def log_state(self, message, context=None, si=None):
+    async def log_state(self, message, context=None):
         if context is None:
             context = {}
         # Extract relevant elements from the context
@@ -910,7 +911,12 @@ class OmniscientDataAbsorber:
         recovery_suggestion = await self.ollama.query_ollama(self.ollama.system_prompt, error_prompt, task="error_recovery", context=context)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
 
-    async def log_error(self, error, context=None):
+    async def log_with_ollama(self, message, context=None):
+        """Log messages with Ollama's assistance."""
+        prompt = f"Log this message: {message}"
+        if context:
+            prompt += f" | Context: {context}"
+        await self.ollama.query_ollama("logging", prompt, refine=False)
         """Log errors with context and recovery strategies."""
         error_context = context or {}
         error_context.update({"error": str(error), "timestamp": time.time()})
