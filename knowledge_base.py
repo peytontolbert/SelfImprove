@@ -62,9 +62,9 @@ class KnowledgeBase:
     @staticmethod
     def _create_initial_nodes(tx):
         # Check if the constraint already exists before creating
-        result = tx.run("CALL db.constraints() YIELD name WHERE name = 'constraint_bcaf404a' RETURN name")
+        result = tx.run("SHOW CONSTRAINTS WHERE entityType = 'NODE' AND labelsOrTypes = ['Node'] AND properties = ['name'] RETURN name")
         if not result.single():
-            tx.run("CREATE CONSTRAINT IF NOT EXISTS FOR (n:Node) REQUIRE n.name IS UNIQUE")
+            tx.run("CREATE CONSTRAINT FOR (n:Node) REQUIRE n.name IS UNIQUE")
 
     def add_nodes_batch(self, label, nodes):
         """Add multiple nodes in a batch to the graph."""
