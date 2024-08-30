@@ -1,4 +1,5 @@
 import unittest
+import asyncio
 from main import SelfImprovingAssistant
 
 class TestSelfImprovingAssistant(unittest.TestCase):
