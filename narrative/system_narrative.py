@@ -31,17 +31,19 @@ class SystemNarrative:
         """Log detailed reasoning before executing a step."""
         if context is None:
             context = {}
-        self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(context, indent=2)}")
-        await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}", context)
+        self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(context, indent=2)} | Timestamp: {time.time()}")
+        await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}", relevant_context)
         if context is None:
             context = {}
-        # Extract relevant elements from the context
+        # Extract and refine relevant elements from the context
         relevant_context = {
             "system_status": context.get("system_status", "Current system status"),
             "recent_changes": context.get("recent_changes", "Recent changes in the system"),
             "longterm_memory": context.get("longterm_memory", {}).get("thoughts", {}),
             "current_tasks": context.get("current_tasks", "List of current tasks"),
-            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {})
+            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {}),
+            "user_feedback": context.get("user_feedback", "No user feedback available"),
+            "environmental_factors": context.get("environmental_factors", "No environmental factors available")
         }
         try:
             self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
