@@ -21,6 +21,7 @@ import asyncio
 import os
 import aiohttp
 import json
+from logging_utils import log_with_ollama
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
 from core.improvement_manager import ImprovementManager

@@ -1,6 +1,7 @@
 import os
 import logging
 import aiohttp
+from logging_utils import log_with_ollama
 from knowledge_base import KnowledgeBase
 from core.ollama_interface import OllamaInterface
 import asyncio
@@ -31,7 +32,7 @@ class SystemNarrative:
         if context is None:
             context = {}
         self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(context, indent=2)}")
-        await self.log_with_ollama(f"Chain of Thought: {thought_process}", context)
+        await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}", context)
         if context is None:
             context = {}
         # Extract relevant elements from the context
@@ -45,7 +46,7 @@ class SystemNarrative:
         try:
             self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
             self.spreadsheet_manager.write_data((5, 1), [["Thought Process"], [thought_process]], sheet_name="SystemData")
-            await self.log_with_ollama(thought_process, relevant_context)
+            await log_with_ollama(self.ollama, thought_process, relevant_context)
             # Generate and log thoughts about the current state
             await self.generate_thoughts(relevant_context)
             # Analyze feedback and suggest improvements
@@ -884,7 +885,7 @@ class OmniscientDataAbsorber:
         try:
             self.logger.info(f"System State: {message} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
             self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
-            await self.log_with_ollama(message, relevant_context)
+            await log_with_ollama(self.ollama, message, relevant_context)
             # Generate and log thoughts about the current state
             await self.generate_thoughts(relevant_context)
             # Analyze feedback and suggest improvements
@@ -900,7 +901,7 @@ class OmniscientDataAbsorber:
             self.logger.info(f"System Decision: {decision} | Detailed Rationale: {rationale}")
         else:
             self.logger.info(f"System Decision: {decision}")
-        await self.log_with_ollama(decision, rationale)
+        await log_with_ollama(self.ollama, decision, rationale)
         # Log decision and rationale in the knowledge base
         await self.knowledge_base.add_entry("system_decision", {"decision": decision, "rationale": rationale, "timestamp": time.time()})
         # Log decision and rationale in the knowledge base
@@ -922,25 +923,18 @@ class OmniscientDataAbsorber:
         error_context = context or {}
         error_context.update({"error": str(error), "timestamp": time.time()})
         self.logger.error(f"System Error: {error} | Context: {json.dumps(error_context, indent=2)} | Potential Recovery: {await self.suggest_recovery_strategy(error)}")
-        await self.log_with_ollama(f"Error: {error}", context)
+        await log_with_ollama(self.ollama, f"Error: {error}", context)
         # Log error to spreadsheet
         self.spreadsheet_manager.write_data((15, 1), [["Error", "Context"], [str(error), json.dumps(context or {})]])
         # Suggest and log recovery strategies
         recovery_strategy = await self.suggest_recovery_strategy(error)
         self.logger.info(f"Recovery Strategy: {recovery_strategy}", extra={"recovery_strategy": recovery_strategy})
-        await self.log_with_ollama(f"Recovery Strategy: {recovery_strategy}", context)
+        await log_with_ollama(self.ollama, f"Recovery Strategy: {recovery_strategy}", context)
         # Feedback loop for error handling
         feedback = await self.ollama.query_ollama("error_feedback", f"Provide feedback on the recovery strategy: {recovery_strategy}. Consider the error context and suggest improvements.", context=context)
         self.logger.info(f"Error handling feedback: {feedback}")
         await self.knowledge_base.add_entry("error_handling_feedback", feedback)
 
-    async def log_with_ollama(self, message, context=None):
-        """Log messages with Ollama's assistance."""
-        prompt = f"Log this message: {message}"
-        if context:
-            prompt += f" | Context: {context}"
-        response = await self.ollama.query_ollama("logging", prompt, refine=False)
-        self.logger.info(f"Logged with Ollama: {response}")
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         self.si = si
