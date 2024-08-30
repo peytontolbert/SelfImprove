@@ -41,7 +41,6 @@ from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 from hyperloop_optimizer import HyperloopOptimizer
 from quantum_optimizer import QuantumOptimizer
-from bayesian_optimizer import BayesianOptimizer
 from quantum_decision_maker import QuantumDecisionMaker
 from attention_mechanism import ConsciousnessEmulator
 from simple_nn import GeneralNN
@@ -277,25 +276,22 @@ class SelfImprovement:
         self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
         improvements.extend(collaborative_insights.get("suggestions", []))
 
-        # Integrate Bayesian optimization for decision refinement
-        bayesian_optimized_decisions = await self.bayesian_optimizer.optimize_decision({
+        quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
             "actions": improvements,
             "system_state": metrics
-        })
-        self.logger.info(f"Bayesian optimized decisions: {bayesian_optimized_decisions}")
+        }, context={"metrics": metrics})
+        self.logger.info(f"Quantum decisions: {quantum_decisions}")
 
-        # Integrate reinforcement learning feedback
+        consciousness_insights = await self.consciousness_emulator.emulate_consciousness(metrics)
+        self.logger.info(f"Consciousness insights: {consciousness_insights}")
+
         rl_feedback = await rl_module.get_feedback(metrics)
         self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
 
-        # Combine quantum decisions with Bayesian and RL feedback
-        combined_decisions = bayesian_optimized_decisions + rl_feedback
-        self.logger.info(f"Combined decisions: {combined_decisions}")
-
-        # Optimize improvements using swarm intelligence
         optimized_improvements = await self.swarm_intelligence.optimize_decision({
-            "actions": combined_decisions,
-            "system_state": metrics
+            "actions": improvements,
+            "system_state": metrics,
+            "feedback": rl_feedback
         })
         self.logger.info(f"Optimized improvements: {optimized_improvements}")
 
@@ -414,10 +410,7 @@ async def initialize_components():
     si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator)
     systemnarrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber, si=si)
     si.system_narrative = systemnarrative
-    # Initialize Bayesian optimizer
-    bayesian_optimizer = BayesianOptimizer()
     components = {
-        "bayesian_optimizer": bayesian_optimizer,
         "consciousness_emulator": consciousness_emulator,
         "ollama": ollama,
         "rl_module": ReinforcementLearningModule(ollama),
