@@ -423,7 +423,7 @@ async def main():
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
     await narrative.log_chain_of_thought("Initializing system components with detailed logging and context management.")
-    await narrative.log_state("System components initialized successfully")
+    await narrative.log_state("System components initialized successfully", thought_process="Initialization complete")
     
     # Initialize prompt manager for versioning and A/B testing
     prompt_manager = PromptManager()
