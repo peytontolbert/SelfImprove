@@ -1126,9 +1126,7 @@ class OmniscientDataAbsorber:
         await self.knowledge_base.add_entry("deep_learning_insights", deep_learning_insights)
 
         # Adaptive learning for strategy adjustment
-        adaptive_learning_strategies = await self.ollama.query_ollama("adaptive_learning", "Implement adaptive learning techniques to adjust strategies based on real-time feedback.", context={"system_state": system_state})
-        self.logger.info(f"Adaptive learning strategies: {adaptive_learning_strategies}")
-        await self.knowledge_base.add_entry("adaptive_learning_strategies", adaptive_learning_strategies)
+        await self.adaptive_learning(system_state)
 
         # Implement collaborative learning strategies
         collaborative_learning = await self.ollama.query_ollama("collaborative_learning", "Leverage insights from multiple AI systems to enhance learning and decision-making processes.", context={"system_state": system_state})
