@@ -13,7 +13,6 @@ from attention_mechanism import AttentionMechanism
 class SystemNarrative:
     def __init__(self, ollama_interface=None, knowledge_base=None):
         self.attention_mechanism = AttentionMechanism()
-    def __init__(self, ollama_interface=None, knowledge_base=None):
         self.request_log = []  # Initialize a log to track requests and expected responses
         self.logger = logging.getLogger("SystemNarrative")
         self.ollama = ollama_interface or OllamaInterface()
