@@ -248,15 +248,15 @@ class KnowledgeBase:
         return memory_str
 
     async def get_longterm_memory(self):
-        """Retrieve long-term memory entries."""
+        """Retrieve and refine long-term memory entries."""
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
         for entry_name in entries:
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
             with open(file_path, 'r') as file:
                 data = json.load(file)
-            self.longterm_memory[entry_name] = data
+            self.longterm_memory[entry_name] = self.refine_memory_entry(data)
         if self.longterm_memory:
-            self.logger.info(f"Retrieved long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
+            self.logger.info(f"Retrieved and refined long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
             # Log metrics for reinforcement learning
             if "metrics" in self.longterm_memory:
                 self.logger.info(f"Metrics for reinforcement learning: {json.dumps(self.longterm_memory['metrics'], indent=2)}")
@@ -265,6 +265,13 @@ class KnowledgeBase:
         else:
             self.logger.warning("No long-term memory entries found.")
         return self.longterm_memory
+
+    def refine_memory_entry(self, data):
+        """Refine a memory entry for better relevance and actionability."""
+        # Example refinement logic
+        refined_data = {k: v for k, v in data.items() if v}
+        self.logger.info(f"Refined memory entry: {refined_data}")
+        return refined_data
 
     async def provide_context_from_memory(self):
         """Provide necessary context from long-term memory for ongoing processes."""

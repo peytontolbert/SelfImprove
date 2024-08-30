@@ -22,11 +22,14 @@ class ConsciousnessEmulator:
         feedback = context.get("feedback", {})
         longterm_memory = context.get("longterm_memory", await self.ollama.get_longterm_memory())
 
+        # Extract and refine context
+        refined_context = self.extract_and_refine_context(context)
+
         # Analyze context for deeper insights
-        self.analyze_context(context)
+        self.analyze_context(refined_context)
 
         # Calculate composite scores for actions
-        self.calculate_composite_scores(actions, system_state, feedback, longterm_memory, context)
+        self.calculate_composite_scores(actions, system_state, feedback, longterm_memory, refined_context)
 
         # Update action scores based on real-time feedback
         self.update_action_scores(actions, feedback)
@@ -47,10 +50,25 @@ class ConsciousnessEmulator:
         self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
         await self.system_narrative.log_chain_of_thought({
             "process": "Consciousness emulation",
-            "context": context,
+            "context": refined_context,
             "prioritized_actions": prioritized_actions
         })
-        return {"enhanced_awareness": context, "prioritized_actions": prioritized_actions}
+        return {"enhanced_awareness": refined_context, "prioritized_actions": prioritized_actions}
+
+    def extract_and_refine_context(self, context):
+        """
+        Extract and refine context for better awareness.
+
+        Parameters:
+        - context: A dictionary containing system metrics, feedback, and other relevant data.
+
+        Returns:
+        - A refined context dictionary.
+        """
+        # Extract key elements and refine them
+        refined_context = {k: v for k, v in context.items() if v}
+        self.logger.info(f"Refined context: {refined_context}")
+        return refined_context
 
     def analyze_context(self, context):
         """
