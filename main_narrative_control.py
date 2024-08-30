@@ -240,7 +240,8 @@ class SelfImprovement:
     - suggest_prompt_refinements: Suggests refinements for system prompts.
     - retry_ollama_call: Retries a function call with Ollama if the result is None.
     """
-    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager):
+    def __init__(self, ollama: OllamaInterface, knowledge_base: KnowledgeBase, improvement_manager: ImprovementManager, consciousness_emulator: ConsciousnessEmulator):
+        self.consciousness_emulator = consciousness_emulator
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
         self.knowledge_base = knowledge_base
@@ -249,7 +250,7 @@ class SelfImprovement:
     async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
         # Use swarm intelligence and consciousness emulation to optimize improvements
-        consciousness_insights = components["consciousness_emulator"].emulate_consciousness(metrics)
+        consciousness_insights = self.consciousness_emulator.emulate_consciousness(metrics)
         self.logger.info(f"Consciousness insights: {consciousness_insights}")
         optimized_improvements = self.swarm_intelligence.optimize_decision({
             "actions": improvements,
@@ -363,7 +364,7 @@ def initialize_components():
     kb = KnowledgeBase(ollama_interface=ollama)
     improvement_manager = ImprovementManager(ollama)
     omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
-    si = SelfImprovement(ollama, kb, improvement_manager)
+    si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator)
     consciousness_emulator = ConsciousnessEmulator(ollama)
     components = {
         "consciousness_emulator": consciousness_emulator,
