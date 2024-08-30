@@ -939,7 +939,8 @@ class OmniscientDataAbsorber:
         prompt = f"Log this message: {message}"
         if context:
             prompt += f" | Context: {context}"
-        await self.ollama.query_ollama("logging", prompt, refine=False)
+        response = await self.ollama.query_ollama("logging", prompt, refine=False)
+        self.logger.info(f"Logged with Ollama: {response}")
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         self.si = si
