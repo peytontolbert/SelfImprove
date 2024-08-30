@@ -33,7 +33,7 @@ class SystemNarrative:
     async def log_chain_of_thought(self, thought_processes):
         """Log and implement the chain of thought for system processes."""
         # Retrieve long-term memory for context
-        longterm_memory = context.get("longterm_memory", await self.knowledge_base.get_longterm_memory())
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
         
         # Example of CoT for a simple math task
         cot_steps_math = [
