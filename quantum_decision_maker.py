@@ -54,15 +54,23 @@ class QuantumDecisionMaker:
         self.logger.info("Building quantum decision tree.")
         # Example logic: Evaluate decisions based on a combination of factors
         try:
-            optimal_decision = max(
-                (decision for decision in decision_space if isinstance(decision, dict)),
-                key=lambda decision: decision.get("score", 0)
-            )
-        except ValueError:
-            self.logger.error("No valid decisions found in decision space.")
-            return {"error": "No valid decisions found"}
+            if not decision_space:
+                self.logger.warning("Decision space is empty. Using default decision.")
+                return {"decision": "default_action", "reason": "No valid decisions found, using default."}
+
+            # Filter out invalid decisions
+            valid_decisions = [decision for decision in decision_space if isinstance(decision, dict) and "score" in decision]
+            if not valid_decisions:
+                self.logger.warning("No valid decisions found. Using fallback decision.")
+                return {"decision": "fallback_action", "reason": "No valid decisions found, using fallback."}
+
+            optimal_decision = max(valid_decisions, key=lambda decision: decision.get("score", 0))
+        except Exception as e:
+            self.logger.error(f"Error during decision-making: {str(e)}")
+            return {"error": "Decision-making error", "details": str(e)}
         self.logger.info(f"Optimal decision made: {optimal_decision}")
-        await self.system_narrative.log_chain_of_thought("Quantum decision-making process completed.")
+        # Log the decision-making process
+        await self.system_narrative.log_chain_of_thought(f"Quantum decision-making process completed with decision: {optimal_decision}")
         return optimal_decision
 
     async def calculate_score(self, action, system_state, feedback, variation) -> int:
