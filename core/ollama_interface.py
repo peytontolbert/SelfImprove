@@ -30,6 +30,7 @@ class OllamaInterface:
         if self.session:
             await self.session.close()
             self.session = None
+            self.logger.info("Client session closed successfully.")
 
     def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""
