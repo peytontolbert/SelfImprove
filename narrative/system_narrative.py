@@ -47,7 +47,8 @@ class SystemNarrative:
     async def log_state(self, message, thought_process="Default thought process", context=None):
         if context is None:
             context = {}
-        # Extract relevant elements from the context
+        # Ensure context is initialized
+        context = context or {}
         relevant_context = {
             "system_status": context.get("system_status", "Current system status"),
             "recent_changes": context.get("recent_changes", "Recent changes in the system"),
@@ -71,6 +72,7 @@ class SystemNarrative:
             except Exception as e:
                 self.logger.error(f"Error during log state operation: {str(e)}")
             self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
+            await log_with_ollama(self.ollama, message, relevant_context)
             await log_with_ollama(self.ollama, message, relevant_context)
             # Generate and log thoughts about the current state
             await self.generate_thoughts(relevant_context)
@@ -1007,7 +1009,7 @@ class OmniscientDataAbsorber:
             self.logger.error(f"Failed to execute system update: {str(e)}")
             self.logger.debug(f"Update error output: {e.stderr}")
 
-    async def log_state(self, message, context=None):
+    async def log_state(self, message, thought_process="Default thought process", context=None):
         if context is None:
             context = {}
         # Extract relevant elements from the context
