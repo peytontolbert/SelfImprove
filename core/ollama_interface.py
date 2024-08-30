@@ -8,6 +8,7 @@ from chat_with_ollama import ChatGPT
 from knowledge_base import KnowledgeBase
 from functools import lru_cache
 import time
+import subprocess
 from tutorial_manager import TutorialManager
 from log_manager import LogManager
 
