@@ -241,7 +241,9 @@ class KnowledgeBase:
     async def get_longterm_memory(self, max_size: int = 1024 * 1024):
         """Retrieve, refine, and manage long-term memory entries, ensuring size constraints."""
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
-        for entry_name in entries:
+        indexed_entries = self.index_and_categorize_entries(entries)
+        
+        for entry_name in indexed_entries:
             file_path = os.path.join(self.base_directory, f"{entry_name}.json")
             with open(file_path, 'r') as file:
                 data = json.load(file)
@@ -271,6 +273,13 @@ class KnowledgeBase:
         await self.periodic_memory_review()
 
         return self.longterm_memory
+
+    def index_and_categorize_entries(self, entries):
+        """Index and categorize entries for efficient retrieval."""
+        # Example logic to index and categorize entries
+        categorized_entries = sorted(entries, key=lambda x: x)  # Sort alphabetically for simplicity
+        self.logger.info(f"Indexed and categorized entries: {categorized_entries}")
+        return categorized_entries
 
     def refine_memory_entry(self, data):
         """Refine a memory entry for better relevance and actionability."""
