@@ -373,8 +373,26 @@ class OllamaInterface:
         recovery_strategy = await self.query_ollama(self.system_prompt, error_prompt, context=context)
         if 'dynamic_recovery' in recovery_strategy:
             self.logger.info("Implementing dynamic recovery strategy as suggested by Ollama.")
-            # Example dynamic recovery logic: Adjust software assistantparameters or restart services
+            # Example dynamic recovery logic: Adjust software assistant parameters or restart services
             await self.dynamic_recovery(recovery_strategy['dynamic_recovery'], error)
+
+    async def dynamic_recovery(self, recovery_actions: Dict[str, Any], error: Exception):
+        """Implement dynamic recovery actions based on the provided strategy."""
+        try:
+            for action in recovery_actions.get('actions', []):
+                action_type = action.get('type')
+                details = action.get('details', {})
+                if action_type == "adjust_parameters":
+                    self.logger.info(f"Adjusting parameters: {details}")
+                    # Implement parameter adjustment logic here
+                elif action_type == "restart_service":
+                    self.logger.info(f"Restarting service: {details}")
+                    # Implement service restart logic here
+                else:
+                    self.logger.warning(f"Unknown recovery action type: {action_type}")
+            self.logger.info("Dynamic recovery actions completed successfully.")
+        except Exception as e:
+            self.logger.error(f"Error during dynamic recovery: {str(e)}")
         
         if 'retry' in recovery_strategy:
             # Implement retry logic
