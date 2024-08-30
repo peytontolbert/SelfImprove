@@ -24,6 +24,7 @@ import os
 import aiohttp
 import json
 import torch
+import tempfile
 import unittest
 import torch.nn as nn
 import torch.optim as optim
@@ -161,9 +162,21 @@ class TestingFramework:
         self.logger = logging.getLogger(__name__)
 
     async def run_tests(self, ollama, test_cases):
-        self.logger.info("Running tests using unittest framework.")
+        self.logger.info("Generating and running AI-generated tests.")
+        
+        # Generate test code using AI
+        context = {"test_cases": test_cases}
+        generated_tests = await ollama.query_ollama("test_generation", f"Generate test code for these cases: {test_cases}", context=context)
+        self.logger.info(f"Generated test code: {generated_tests}")
+        
+        # Save generated test code to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as temp_test_file:
+            temp_test_file.write(generated_tests.encode('utf-8'))
+            temp_test_file_path = temp_test_file.name
+        
+        # Load and run the tests from the temporary file
         loader = unittest.TestLoader()
-        suite = loader.discover(start_dir='tests', pattern='test_*.py')
+        suite = loader.discover(start_dir=os.path.dirname(temp_test_file_path), pattern=os.path.basename(temp_test_file_path))
         
         runner = unittest.TextTestRunner()
         result = runner.run(suite)
@@ -177,6 +190,10 @@ class TestingFramework:
         }
         
         self.logger.info(f"Test results: {test_results}")
+        
+        # Clean up the temporary test file
+        os.remove(temp_test_file_path)
+        
         return test_results
 
     async def generate_tests(self, ollama, code):
