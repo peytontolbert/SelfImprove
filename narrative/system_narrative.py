@@ -853,7 +853,6 @@ class QuantumPredictiveAnalyzer:
     def __init__(self, ollama_interface: OllamaInterface):
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
         self.request_log = []
-        self.request_log = []
         self.logger = logging.getLogger("QuantumPredictiveAnalyzer")
 
     async def perform_quantum_analysis(self, predictive_context):
@@ -933,6 +932,7 @@ class TemporalEngine:
 class OmniscientDataAbsorber:
     def __init__(self, knowledge_base: KnowledgeBase, ollama_interface: OllamaInterface):
         self.knowledge_base = knowledge_base
+        self.request_log = []
         self.logger = logging.getLogger("OmniscientDataAbsorber")
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
 
