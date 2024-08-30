@@ -122,8 +122,8 @@ class OllamaInterface:
             if result is not None:
                 return result
             await asyncio.sleep(delay)
-                self.logger.warning(f"Attempt {attempt + 1} failed, retrying in {delay} seconds...")
-                delay *= 2
+            self.logger.warning(f"Attempt {attempt + 1} failed, retrying in {delay} seconds...")
+            delay *= 2
         self.logger.error("All retry attempts failed. Returning None.")
         return None
 
