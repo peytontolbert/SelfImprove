@@ -1,0 +1,17 @@
+{
+    "title": "Software Development Tasks",
+    "content": [
+        {
+            "difficulty": "Easy",
+            "task": "Create a small codebase for a simple calculator application. Implement basic operations like addition, subtraction, multiplication, and division."
+        },
+        {
+            "difficulty": "Medium",
+            "task": "Generate an example request from a user asking for a new feature in the calculator application, such as adding a history of calculations. Implement this feature."
+        },
+        {
+            "difficulty": "Hard",
+            "task": "Handle a large machine learning codebase. The user requests multiple changes, including optimizing the model's performance, adding new data preprocessing steps, and updating the model's evaluation metrics."
+        }
+    ]
+}
