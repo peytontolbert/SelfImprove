@@ -7,11 +7,25 @@ from qiskit.utils import QuantumInstance
 from qiskit.opflow import Z, I
 from scipy.optimize import minimize, COBYLA
 import ast
-import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
 
 class QuantumMultidimensionalCodingEngine:
+    """
+    A quantum-inspired engine for multidimensional code analysis, refactoring, and synthesis.
+
+    Attributes:
+    - ollama: An instance of OllamaInterface for querying and decision-making.
+    - quantum_instance: A QuantumInstance for executing quantum circuits.
+    - vectorizer: A TfidfVectorizer for converting code to vector representations.
+    - pca: A PCA instance for dimensionality reduction.
+
+    Methods:
+    - multidimensional_code_analysis: Analyzes code snippets using quantum circuits.
+    - quantum_inspired_refactoring: Suggests refactoring based on quantum principles.
+    - quantum_code_synthesis: Synthesizes code from high-level descriptions.
+    """
+
     def __init__(self, ollama):
         self.ollama = ollama
         self.logger = logging.getLogger(__name__)
@@ -20,11 +34,11 @@ class QuantumMultidimensionalCodingEngine:
         self.pca = PCA(n_components=10)
 
     async def multidimensional_code_analysis(self, code_snippet):
+        """Perform multidimensional analysis on a code snippet."""
         code_vector = self.code_to_vector(code_snippet)
         num_qubits = len(code_vector)
 
         feature_map = ZZFeatureMap(feature_dimension=num_qubits, reps=2)
-
         qc = QuantumCircuit(num_qubits)
         qc.append(feature_map, range(num_qubits))
 
@@ -49,6 +63,7 @@ class QuantumMultidimensionalCodingEngine:
         return insights
 
     async def quantum_inspired_refactoring(self, code_snippet):
+        """Suggest refactoring for a code snippet using quantum principles."""
         code_vector = self.code_to_vector(code_snippet)
         num_qubits = len(code_vector)
 
@@ -73,6 +88,7 @@ class QuantumMultidimensionalCodingEngine:
         return refined_suggestions
 
     async def quantum_code_synthesis(self, high_level_description):
+        """Synthesize code from a high-level description using quantum techniques."""
         encoded_description = self.encode_description(high_level_description)
         num_qubits = len(encoded_description)
 
