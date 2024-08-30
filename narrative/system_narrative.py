@@ -121,6 +121,7 @@ class SystemNarrative:
             "Use predictive analytics to optimize resource allocation based on anticipated demands.",
             context={"system_state": system_state}
         )
+        resource_optimization = await self.ollama.query_ollama(
             "advanced_resource_optimization",
             "Implement advanced dynamic resource allocation based on current and predicted demands.",
             context={"system_state": system_state}
