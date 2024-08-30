@@ -639,7 +639,7 @@ class SystemNarrative:
         except Exception as e:
             self.logger.error(f"Error during adaptive learning: {e}")
         self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
-        await self.log_state("Timeout recovery initiated")
+        await self.log_state("Timeout recovery initiated", "Recovery process started")
 
         # 1. Save the current state
         current_state = await self.ollama.evaluate_system_state({})
