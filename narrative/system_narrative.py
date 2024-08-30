@@ -188,7 +188,7 @@ class SystemNarrative:
             "feedback": feedback
         }
         # Use swarm intelligence and quantum decision-making to optimize decision-making
-        combined_decision = self.swarm_intelligence.optimize_decision({
+        combined_decision = await self.swarm_intelligence.optimize_decision({
             "actions": context.get("actions", []),
             "system_state": system_state,
             "feedback": feedback
