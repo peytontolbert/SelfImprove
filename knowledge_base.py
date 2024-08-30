@@ -19,8 +19,8 @@ class KnowledgeBase:
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
         self._initialized = False
-        self.check_connection()
         if not self._initialized:
+            self.check_connection()
             self.initialize_database()
             self._initialized = True
         self.ollama = ollama_interface
