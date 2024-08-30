@@ -271,9 +271,10 @@ class SelfImprovement:
         self.logger.info(f"Quantum decisions: {quantum_decisions}")
         consciousness_insights = self.consciousness_emulator.emulate_consciousness(metrics)
         self.logger.info(f"Consciousness insights: {consciousness_insights}")
-        optimized_improvements = self.swarm_intelligence.optimize_decision({
+        optimized_improvements = await self.swarm_intelligence.optimize_decision({
             "actions": improvements,
-            "system_state": metrics
+            "system_state": metrics,
+            "feedback": rl_feedback
         })
         validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
         # Analyze code for potential performance bottlenecks
@@ -405,7 +406,7 @@ def initialize_components():
         "tutorial_manager": TutorialManager(),
         "meta_learner": MetaLearner(),
         "quantum_optimizer": QuantumOptimizer(ollama),
-        "swarm_intelligence": SwarmIntelligence(ollama)
+        "swarm_intelligence": SwarmIntelligence(ollama),
     }
 
     # Load a tutorial on the first run
