@@ -240,8 +240,11 @@ class DeploymentManager:
         if deployment_decision.get('deploy', False):
             self.logger.info("Code deployed successfully")
             await narrative.log_state("Deployment approved by Ollama", "Deployment approval")
-            # Implement actual deployment logic here
-            # For example: subprocess.run(["./deploy_script.sh"])
+            try:
+                subprocess.run(["./deploy_script.sh"], check=True)
+                self.logger.info("Deployment script executed successfully.")
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Deployment script failed: {e}")
         else:
             await narrative.log_state("Deployment deferred based on Ollama's decision", "Deployment deferral")
             self.logger.info("Deployment deferred based on Ollama's decision")
@@ -250,21 +253,34 @@ class DeploymentManager:
         context = {"version": version}
         rollback_plan = await ollama.query_ollama("deployment", f"Generate a rollback plan for version: {version}", context=context)
         self.logger.info(f"Rollback plan generated: {rollback_plan}")
-        # Implement rollback logic here
-        # For example: subprocess.run(["./rollback_script.sh", version])
+        try:
+            subprocess.run(["./rollback_script.sh", version], check=True)
+            self.logger.info(f"Rollback to version {version} executed successfully.")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Rollback failed: {e}")
 
     async def monitor_deployment(self, ollama):
         context = {"deployment_status": "ongoing"}
         monitoring_result = await ollama.query_ollama("deployment_monitoring", "Monitor the ongoing deployment and report on its status", context=context)
         self.logger.info(f"Deployment monitoring result: {monitoring_result}")
-        return monitoring_result
+        try:
+            # Example: Check deployment status
+            result = subprocess.run(["./check_deployment_status.sh"], capture_output=True, text=True, check=True)
+            self.logger.info(f"Deployment status: {result.stdout}")
+            return result.stdout
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Failed to check deployment status: {e}")
+            return "Deployment status check failed"
 
     async def perform_canary_release(self, ollama, new_version, canary_percentage):
         context = {"new_version": new_version, "canary_percentage": canary_percentage}
         canary_strategy = await ollama.query_ollama("canary_release", f"Implement a canary release strategy for version {new_version} with {canary_percentage}% of traffic", context=context)
         self.logger.info(f"Canary release strategy: {canary_strategy}")
-        # Implement canary release logic here
-        # For example: subprocess.run(["./canary_release.sh", new_version, str(canary_percentage)])
+        try:
+            subprocess.run(["./canary_release.sh", new_version, str(canary_percentage)], check=True)
+            self.logger.info(f"Canary release for version {new_version} with {canary_percentage}% traffic executed successfully.")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Canary release failed: {e}")
 
 class SystemManager:
     """
