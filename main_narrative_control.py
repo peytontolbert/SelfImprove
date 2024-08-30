@@ -375,7 +375,7 @@ class SelfImprovement:
 
     async def suggest_prompt_refinements(self):
         current_prompts = await self.knowledge_base.get_entry("system_prompts")
-        refinements = await self.ollama.query_ollama("prompt_refinement", f"Suggest refinements for these prompts: {current_prompts}")
+        refinements = await self.ollama.query_ollama("adaptive_prompt_refinement", f"Suggest adaptive refinements for these prompts: {current_prompts}")
         if refinements:
             await self.ollama.update_system_prompt(refinements.get("new_system_prompt", "Default system prompt"))
         self.logger.info(f"Prompt refinements suggested: {refinements}")

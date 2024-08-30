@@ -73,7 +73,7 @@ class OllamaInterface:
             essential_context.update({"context_memory": summarized_memory})
         
         if refine and task not in ["logging", "categorization"]:
-            refined_prompt = await self.refine_prompt(prompt, task)
+            refined_prompt = await self.adaptive_refine_prompt(prompt, task, feedback=context.get("feedback"))
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
         
@@ -174,20 +174,11 @@ class OllamaInterface:
         self.logger.error("All retry attempts failed.")
         return None
 
-    async def refine_prompt(self, prompt: str, task: str) -> str:
-        """Refine a given prompt based on the task."""
-        if task == "general":
-            refinement_prompt = (
-                f"Refine the following prompt for assessing alignment implications:\n\n"
-                f"Evaluate the alignment implications of recent modifications to the software assistant. "
-                f"Consider user behavior nuances and organizational objectives. "
-                f"Emphasize how these changes improve complex task management and resource optimization."
-            )
-        else:
-            refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
-        # Include task-specific details in the context
-        context = {"task": task, "prompt_length": len(prompt)}
-        response = await self.query_ollama("prompt_refinement", refinement_prompt, context=context, refine=False)
+    async def adaptive_refine_prompt(self, prompt: str, task: str, feedback: Dict[str, Any] = None) -> str:
+        """Adaptively refine a given prompt based on the task and feedback."""
+        refinement_prompt = f"Refine the following prompt for the task of {task}:\n\n{prompt}"
+        context = {"task": task, "prompt_length": len(prompt), "feedback": feedback or {}}
+        response = await self.query_ollama("adaptive_prompt_refinement", refinement_prompt, context=context, refine=False)
         refined_prompt = response.get("refined_prompt", prompt)
         if isinstance(refined_prompt, str):
             return refined_prompt.strip()
