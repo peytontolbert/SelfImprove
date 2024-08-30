@@ -849,7 +849,7 @@ async def main():
         system_strategies.update(quantum_optimized_solution)
         logger.info(f"System strategies updated with quantum optimized solution: {system_strategies}")
 
-    complex_tasks = ["Optimize system architecture", "Enhance user experience"]
+    complex_tasks = ["Optimize system architecture", "Optimize ai software assistant capabilities"]
     subtasks_results = await asyncio.gather(
         *[ollama.query_ollama("task_decomposition", f"Decompose the task: {task}") for task in complex_tasks]
     )
