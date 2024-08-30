@@ -40,6 +40,7 @@ from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 from quantum_optimizer import QuantumOptimizer
+from quantum_decision_maker import QuantumDecisionMaker
 from attention_mechanism import ConsciousnessEmulator
 logging.basicConfig(
     level=logging.INFO,
@@ -421,6 +422,7 @@ async def main():
     components = initialize_components()
     ollama = components["ollama"]
     rl_module = components["rl_module"]
+    metrics = await si.get_system_metrics()
     rl_feedback = await rl_module.get_feedback(metrics)
     logger.info(f"Reinforcement learning feedback: {rl_feedback}")
     task_queue = components["task_queue"]
