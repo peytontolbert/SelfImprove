@@ -21,7 +21,7 @@ class ConsciousnessEmulator:
         feedback = context.get("feedback", {})
         longterm_memory = context.get("longterm_memory", {})
 
-        # Calculate a composite score for each action based on multiple factors
+        # Calculate a composite score for each action based on multiple factors, including new ones
         for action in actions:
             impact_score = action.get("impact_score", 0)
             urgency = action.get("urgency", 1)
@@ -30,11 +30,14 @@ class ConsciousnessEmulator:
             resource_availability = system_state.get("resources", {}).get(action.get("name"), 1)
             alignment_with_goals = system_state.get("alignment", {}).get(action.get("name"), 1)
             memory_relevance = longterm_memory.get(action.get("name"), {}).get("relevance", 1)
+            historical_trend = context.get("historical_trends", {}).get(action.get("name"), 1)
+            user_preference = context.get("user_preferences", {}).get(action.get("name"), 1)
+            potential_risk = context.get("potential_risks", {}).get(action.get("name"), 1)
 
-            # Composite score calculation
+            # Composite score calculation with additional factors
             composite_score = (
-                (impact_score * urgency * alignment_with_goals * memory_relevance) /
-                (1 + dependencies) * historical_performance * resource_availability
+                (impact_score * urgency * alignment_with_goals * memory_relevance * historical_trend * user_preference) /
+                (1 + dependencies + potential_risk) * historical_performance * resource_availability
             )
             action["composite_score"] = composite_score
 
