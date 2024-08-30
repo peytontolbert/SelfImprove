@@ -37,69 +37,102 @@ class SelfImprovement:
         self.improvement_manager = improvement_manager
 
     async def analyze_performance(self, metrics, rl_module):
-        improvements = await self.improvement_manager.suggest_improvements(metrics)
-        # Train the neural network model with performance data
-        train_loader = self.prepare_data_loader(metrics)
-        criterion = torch.nn.MSELoss()
-        optimizer = torch.optim.Adam(self.nn_model.parameters())
-        self.nn_model.train_model(train_loader, criterion, optimizer, num_epochs=10)
+        """
+        Analyze system performance and suggest improvements.
 
-        # Use the trained model to predict improvements
-        predicted_improvements = self.predict_improvements(metrics)
-        improvements.extend(predicted_improvements)
-        optimized_improvements = self.swarm_intelligence.optimize_decision({
-            "actions": improvements,
-            "system_state": metrics
-        })
-        await self.system_narrative.log_chain_of_thought({
-            "process": "Performance analysis",
-            "metrics": metrics,
-            "improvements": improvements,
-            "optimized_improvements": optimized_improvements
-        })
-        validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
-        # Analyze code for potential performance bottlenecks
-        performance_optimizations = await self.ollama.query_ollama(
-            "performance_optimization",
-            f"Suggest performance optimizations for these metrics: {metrics}",
-            context={"metrics": metrics, "longterm_memory": await self.knowledge_base.get_longterm_memory()}
-        )
-        self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
-        # Integrate real-time feedback loop
-        real_time_feedback = await self.collect_real_time_feedback(metrics)
-        self.logger.info(f"Real-time feedback: {real_time_feedback}")
-        improvements.extend(real_time_feedback)
-        performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
-        
-        # Monitor code health and evolution with feedback loop
-        code_health = await self.ollama.query_ollama("code_health_monitoring", "Monitor the health and evolution of the codebase with feedback loop.", context={"metrics": metrics})
-        self.logger.info(f"Code health monitoring with feedback loop: {code_health}")
+        Parameters:
+        - metrics: A dictionary of system metrics.
+        - rl_module: A reinforcement learning module for feedback.
 
-        # Integrate meta-learning and reinforcement learning for strategy adaptation
-        meta_learning_strategies = await self.meta_learn(metrics)
-        self.logger.info(f"Meta-learning strategies: {meta_learning_strategies}")
-        # Implement predictive analytics for proactive improvements
-        predictive_insights = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to anticipate future challenges and opportunities.", context={"metrics": metrics})
-        self.logger.info(f"Predictive insights: {predictive_insights}")
-        improvements.extend(predictive_insights.get("suggestions", []))
-        
-        # Generate and test hypotheses for self-improvement
-        hypotheses = await self.generate_hypotheses(metrics)
-        tested_hypotheses = await self.test_hypotheses(hypotheses)
-        self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
-        
-        # Use reinforcement learning feedback to adapt improvements
-        rl_feedback = await rl_module.get_feedback(metrics)
-        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-        
-        return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
+        Returns:
+        - A list of validated improvements and suggestions.
+        """
+        try:
+            improvements = await self.improvement_manager.suggest_improvements(metrics)
+            
+            # Train the neural network model with performance data
+            train_loader = self.prepare_data_loader(metrics)
+            criterion = torch.nn.MSELoss()
+            optimizer = torch.optim.Adam(self.nn_model.parameters())
+            self.nn_model.train_model(train_loader, criterion, optimizer, num_epochs=10)
+
+            # Use the trained model to predict improvements
+            predicted_improvements = self.predict_improvements(metrics)
+            improvements.extend(predicted_improvements)
+
+            # Optimize improvements using swarm intelligence
+            optimized_improvements = await self.swarm_intelligence.optimize_decision({
+                "actions": improvements,
+                "system_state": metrics
+            })
+
+            await self.system_narrative.log_chain_of_thought({
+                "process": "Performance analysis",
+                "metrics": metrics,
+                "improvements": improvements,
+                "optimized_improvements": optimized_improvements
+            })
+
+            validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
+
+            # Analyze code for potential performance bottlenecks
+            performance_optimizations = await self.ollama.query_ollama(
+                "performance_optimization",
+                f"Suggest performance optimizations for these metrics: {metrics}",
+                context={"metrics": metrics, "longterm_memory": await self.knowledge_base.get_longterm_memory()}
+            )
+            self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
+
+            # Integrate real-time feedback loop
+            real_time_feedback = await self.collect_real_time_feedback(metrics)
+            self.logger.info(f"Real-time feedback: {real_time_feedback}")
+            improvements.extend(real_time_feedback)
+
+            performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
+
+            # Monitor code health and evolution with feedback loop
+            code_health = await self.ollama.query_ollama("code_health_monitoring", "Monitor the health and evolution of the codebase with feedback loop.", context={"metrics": metrics})
+            self.logger.info(f"Code health monitoring with feedback loop: {code_health}")
+
+            # Integrate meta-learning and reinforcement learning for strategy adaptation
+            meta_learning_strategies = await self.meta_learn(metrics)
+            self.logger.info(f"Meta-learning strategies: {meta_learning_strategies}")
+
+            # Implement predictive analytics for proactive improvements
+            predictive_insights = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to anticipate future challenges and opportunities.", context={"metrics": metrics})
+            self.logger.info(f"Predictive insights: {predictive_insights}")
+            improvements.extend(predictive_insights.get("suggestions", []))
+
+            # Generate and test hypotheses for self-improvement
+            hypotheses = await self.generate_hypotheses(metrics)
+            tested_hypotheses = await self.test_hypotheses(hypotheses)
+            self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
+
+            # Use reinforcement learning feedback to adapt improvements
+            rl_feedback = await rl_module.get_feedback(metrics)
+            self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+
+            return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
+
+        except Exception as e:
+            self.logger.error(f"Error during performance analysis: {e}")
+            return []
 
     def prepare_data_loader(self, metrics):
-        # Prepare data loader for training the neural network
-        # This is a placeholder implementation
-        # Replace with actual data preparation logic
-        data = [(torch.tensor([metric]), torch.tensor([0.0])) for metric in metrics.values()]
-        return torch.utils.data.DataLoader(data, batch_size=2)
+        """
+        Prepare a data loader for training the neural network.
+
+        Parameters:
+        - metrics: A dictionary of system metrics to be used as input features.
+
+        Returns:
+        - A DataLoader object for iterating over the dataset.
+        """
+        # Convert metrics to a list of tuples (input, target)
+        data = [(torch.tensor([value], dtype=torch.float32), torch.tensor([0.0], dtype=torch.float32)) for value in metrics.values()]
+        
+        # Create a DataLoader with a batch size of 4
+        return torch.utils.data.DataLoader(data, batch_size=4, shuffle=True)
 
     def predict_improvements(self, metrics):
         # Use the neural network model to predict improvements
