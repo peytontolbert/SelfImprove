@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"relevance_evaluation\",\n  \"prompt_length\": 427,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994907.3116603\n}\n\nRefine the following prompt for the task of relevance_evaluation:\n\nEvaluate the relevance of this entry: decision_making_improvements with data: {'task': 'decision_making_improvement', 'prompt_length': 49, 'system_definition': \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\", 'context_memory': '{\"timestamp\": 1724994903.2187502}', 'timestamp': 1724994910.890625}",
-  "response": "{ \n    \"task\": \"relevance_evaluation\",\n    \"prompt_length\": 427,\n    \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n    \"context_memory\": \"{}\",\n    \"timestamp\": 1724994907.3116603\n}",
-  "timestamp": 1724994910.4034476
-}

@@ -1,6 +1,0 @@
-{
-  "system_prompt": "goal_setting",
-  "prompt": "Context: {\n  \"task\": null,\n  \"prompt_length\": 52,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994809.797201\n}\n\nWhat are specific short-term objectives that can be achieved in the next [timeframe] to incrementally improve performance, efficiency, or outcomes?",
-  "response": "{\n  \"task\": null,\n  \"prompt_length\": 52,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{\\\"goal_setting\\\": {\\\"next_timeframe\\\": [90, 180], \\\"short_term_objectives\\\": [{\\\"objective\\\": \\\"Improve response accuracy by 15%\\\", \\\"metric\\\": \\\"accuracy\\\", \\\"target_value\\\": 0.85}, {\\\"objective\\\": \\\"Reduce average response time by 25%\\\", \\\"metric\\\": \\\"response_time\\\", \\\"target_value\\\": 2.5}]}\",\n  \"timestamp\": 1724994809.797201\n}",
-  "timestamp": 1724994813.7413125
-}

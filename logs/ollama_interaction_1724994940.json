@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 139,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994937.1858017\n}\n\nRefine the following prompt for the task of general:\n\nAdjust resource allocation dynamically using predictive analytics and real-time data.",
-  "response": "{  \n  \"task\": \"general\",  \n  \"prompt\": \"How can we adjust resource allocation dynamically using predictive analytics and real-time data to optimize system performance and ensure efficient utilization of resources?\",  \n  \"context\": {    \n    \"task\": \"general\",    \n    \"prompt_length\": 139,    \n    \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",    \n    \"context_memory\": \"{}\",    \n    \"timestamp\": 1724994937.1858017  \n  }  \n}",
-  "timestamp": 1724994940.8052921
-}

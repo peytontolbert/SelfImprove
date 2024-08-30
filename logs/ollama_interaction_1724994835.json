@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 101,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994833.2684486\n}\n\nRefine the following prompt for the task of general:\n\nAdjust strategies based on progress evaluation.",
-  "response": "{\"prompt\": \"Provide an overview of methodologies to adjust strategies based on ongoing progress evaluation, considering factors such as project scope, team dynamics, and resource allocation.\"}",
-  "timestamp": 1724994835.777536
-}

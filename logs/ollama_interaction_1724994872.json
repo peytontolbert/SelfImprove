@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 105,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994869.4537756\n}\n\nRefine the following prompt for the task of general:\n\nEvaluate and enhance AI's interaction capabilities.",
-  "response": "{  \n  \"task\": \"general\",\n  \"prompt\": \"What innovative ways can be employed to make AI more interactive, engaging, and effective in its communication with humans?\",\n  \"input_ids\": [12345],\n  \"context_memory\": {\n    \"previous_prompt\": \"Evaluate and enhance AI's interaction capabilities.\",\n    \"response\": null,\n    \"timestamp\": 1724994869.4537756\n  }\n}",
-  "timestamp": 1724994872.7471783
-}

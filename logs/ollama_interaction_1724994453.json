@@ -1,6 +1,0 @@
-{
-  "system_prompt": "system_metrics",
-  "prompt": "Context: {\n  \"task\": null,\n  \"prompt_length\": 71,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994450.3559995\n}\n\nProvide an overview of the current system capabilities and performance.",
-  "response": "{  \n  \"task\": null, \n  \"prompt_length\": 71, \n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\", \n  \"context_memory\": \"{}\", \n  \"timestamp\": 1724994450.3559995\n}",
-  "timestamp": 1724994453.4560785
-}

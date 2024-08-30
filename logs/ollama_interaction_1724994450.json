@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 125,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994446.6708615\n}\n\nRefine the following prompt for the task of general:\n\nProvide an overview of the current system capabilities and performance.",
-  "response": "{\"prompt\": \"Assess the strengths and weaknesses of the current system, including its efficiency, accuracy, and scalability.\", \"context\": \"{\\n  \\\"task\\\": \\\"general\\\",\\n  \\\"prompt_length\\\": 125,\\n  \\\"system_definition\\\": \\\"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\\\",\\n  \\\"context_memory\\\": \\\"{\\\\\\\"input\\\\\\\": \\\\\\\"Provide an overview of the current system capabilities and performance.\\\\\\\"}\\\",\\n  \\\"timestamp\\\": 1724994446.6708615\\n}\"}",
-  "timestamp": 1724994450.3554938
-}

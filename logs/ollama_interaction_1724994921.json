@@ -1,6 +1,0 @@
-{
-  "system_prompt": "Default software assistant prompt",
-  "prompt": "Context: {\n  \"task\": null,\n  \"prompt_length\": 163,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994918.083288\n}\n\nEvaluate the relevance of this entry: quantum_predictive_insights with data: {'error': 'Quantum analysis failed', 'details': \"'str' object has no attribute 'get'\"}",
-  "response": "{  \n  \"task\": null,\n  \"prompt_length\": 163,\n  \"system_definition\": \"The term \\u2018system\\u2019 refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994918.083288\n}\n\n  \n  \n\n\n\n\n\n \n\n \n \n\n\n\n\n\n \n\n\n \n\n\n\n\n\n  \n\n\n\n \n\n \n\n\n\n\n\n\n ",
-  "timestamp": 1724994921.8209453
-}

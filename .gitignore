@@ -1,2 +1,6 @@
 .aider*
 .env
+logs/
+datasets/
+knowledge_base_data/
+narrative_data/

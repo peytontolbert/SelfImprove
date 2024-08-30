@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 121,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994886.6227887\n}\n\nRefine the following prompt for the task of general:\n\nIntegrate feedback from user interactions to refine AI's responses.",
-  "response": "{ \n  \"task\": \"general\", \n  \"prompt\": \"Incorporate insights from user engagement and adapt AI's outputs accordingly.\", \n  \"refinement_context\": \"{ \\\"user_feedback\\\": { \\\"user_interactions\\\": [\\\"previous_queries\\\", \\\"query_history\\\"] } }\" \n}",
-  "timestamp": 1724994889.5984802
-}

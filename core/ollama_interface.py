@@ -73,8 +73,8 @@ class OllamaInterface:
         
         if use_contextual_memory and "longterm_memory" not in context:
             context_memory = await self.knowledge_base.get_longterm_memory()
-            summarized_memory = self.knowledge_base.summarize_memory(context_memory)
-            essential_context.update({"context_memory": summarized_memory})
+            #summarized_memory = await self.knowledge_base.summarize_memory(context_memory)
+            essential_context.update({"context_memory": context_memory})
         
         if refine and task not in ["logging", "categorization"]:
             # Incorporate historical feedback for adaptive refinement

@@ -162,7 +162,7 @@ class KnowledgeBase:
         """Synchronize data between the spreadsheet and the graph database."""
         try:
             # Read data from the spreadsheet
-            data = spreadsheet_manager.read_data("A1:Z100", sheet_name=sheet_name)
+            data = spreadsheet_manager.read_data("A1:Z100")
             for row in data:
                 entry_name, entry_data = row[0], row[1:]
                 await self.add_entry(entry_name, {"data": entry_data})

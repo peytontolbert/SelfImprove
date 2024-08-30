@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"relevance_evaluation\",\n  \"prompt_length\": 230,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994914.0215015\n}\n\nRefine the following prompt for the task of relevance_evaluation:\n\nEvaluate the relevance of this entry: quantum_predictive_insights with data: {'error': 'Quantum analysis failed', 'details': \"'str' object has no attribute 'get'\"}",
-  "response": "{  \"task\": \"relevance_evaluation\",  \"prompt_length\": 230,  \"system_definition\": \"The term ''system'' refers to the project and its capabilities for complex software development assistant tasks.\",  \"context_memory\": \"{}\",  \"timestamp\": 1724994914.0215015,  \"input_text\": \"Evaluate the relevance of this entry: quantum_predictive_insights with data: {\\\\'error\\\\': \\\\u2018Quantum analysis failed\\\\u2019, \\\\u2019details\\\\u2019: \\\\'str\\\\u2019 object has no attribute \\\\u2017get\\\\u2019}\"}",
-  "timestamp": 1724994918.0827806
-}

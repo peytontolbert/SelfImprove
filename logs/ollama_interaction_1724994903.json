@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 103,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994900.6584108\n}\n\nRefine the following prompt for the task of general:\n\nTrack and improve AI's decision-making processes.",
-  "response": "{\"prompt\": \"Analyze the current limitations and biases in AI decision-making systems, propose strategies to mitigate them, and discuss the importance of transparency and accountability in ensuring fair outcomes.\"}",
-  "timestamp": 1724994903.2182398
-}

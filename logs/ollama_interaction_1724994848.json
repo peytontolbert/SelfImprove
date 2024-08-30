@@ -1,6 +1,0 @@
-{
-  "system_prompt": "adaptive_prompt_refinement",
-  "prompt": "Context: {\n  \"task\": \"general\",\n  \"prompt_length\": 105,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{}\",\n  \"timestamp\": 1724994845.0836565\n}\n\nRefine the following prompt for the task of general:\n\nIntegrate feedback loops for continuous refinement.",
-  "response": "{\n  \"task\": \"general\",\n  \"prompt_length\": 105,\n  \"system_definition\": \"The term 'system' refers to the project and its capabilities for complex software development assistant tasks.\",\n  \"context_memory\": \"{\\\"timestamp\\\": 1724994845.0836565, \\\"input_history\\\": [\\\"Integrate feedback loops for continuous refinement.\\\"]}\",\n  \"timestamp\": 1724994846.085356\n}",
-  "timestamp": 1724994848.3953974
-}
