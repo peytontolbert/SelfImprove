@@ -231,6 +231,8 @@ class KnowledgeBase:
         """Retrieve long-term memory data."""
         # Placeholder implementation
         return self.longterm_memory
+
+    async def integrate_cross_disciplinary_knowledge(self, disciplines: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate knowledge across multiple disciplines."""
         prompt = f"Integrate knowledge from these disciplines: {disciplines} with the following data: {json.dumps(knowledge)}"
         context = {"disciplines": disciplines, "knowledge": knowledge}
