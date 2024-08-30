@@ -34,8 +34,40 @@ class SystemNarrative:
         """Log and enhance the chain of thought for system processes."""
         # Enhance the chain of thought by synthesizing multiple thoughts
         enhanced_thought = self.synthesize_thoughts(thought_processes)
+        
+        # Add explicit step-by-step guidance
+        steps = self.break_down_thoughts(thought_processes)
+        self.logger.info(f"Step-by-step guidance: {steps}")
+        
+        # Provide contextual information
+        context_info = self.provide_context(thought_processes)
+        self.logger.info(f"Contextual Information: {context_info}")
+        
+        # Include intermediate checks
+        checks = self.intermediate_checks(thought_processes)
+        self.logger.info(f"Intermediate Checks: {checks}")
+        
+        # Log the enhanced chain of thought
         self.logger.info(f"Enhanced Chain of Thought: {enhanced_thought}")
         await log_with_ollama(self.ollama, f"Enhanced Chain of Thought: {enhanced_thought}")
+        
+    def break_down_thoughts(self, thought_processes):
+        """Break down thoughts into explicit steps."""
+        # Example logic to break down thoughts
+        steps = [f"Step {i+1}: {thought}" for i, thought in enumerate(thought_processes)]
+        return steps
+
+    def provide_context(self, thought_processes):
+        """Provide contextual information for the thought processes."""
+        # Example logic to provide context
+        context_info = "Relevant context for the thought processes."
+        return context_info
+
+    def intermediate_checks(self, thought_processes):
+        """Include intermediate checks for the thought processes."""
+        # Example logic for intermediate checks
+        checks = [f"Check {i+1}: Validate {thought}" for i, thought in enumerate(thought_processes)]
+        return checks
 
     def synthesize_thoughts(self, thought_processes):
         """Synthesize multiple thoughts into a stronger, cohesive thought."""
