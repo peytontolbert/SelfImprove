@@ -1,4 +1,5 @@
 import logging
+import subprocess
 from typing import List, Dict, Any
 from file_system import FileSystem
 class ImprovementManager:
