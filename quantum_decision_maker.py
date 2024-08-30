@@ -41,6 +41,7 @@ class QuantumDecisionMaker:
         Returns:
         - A list of possible outcomes with their scores.
         """
+        self.logger.debug(f"Starting evaluation of possibilities for action: {action}")
         try:
             # Prepare input data for the model
             input_data = torch.tensor([system_state.get('metric', 0), feedback.get('metric', 0)], dtype=torch.float32)
@@ -55,7 +56,7 @@ class QuantumDecisionMaker:
             self.logger.info(f"Evaluated possibilities for action '{action}': {possible_outcomes}")
             return possible_outcomes
         except Exception as e:
-            self.logger.error(f"Error evaluating possibilities for action '{action}': {e}")
+            self.logger.error(f"Error evaluating possibilities for action '{action}': {e}", exc_info=True)
             return []
         finally:
             # Log the feedback loop completion
@@ -67,26 +68,17 @@ class QuantumDecisionMaker:
 
         Parameters:
         - decision_space: A dictionary containing possible decisions and their contexts.
+        - context: Additional context for decision-making.
 
         Returns:
         - The optimal decision based on quantum evaluation.
         """
         self.logger.info("Building quantum decision tree.")
-        # Integrate long-term memory insights
-        longterm_memory = await self.kb.get_longterm_memory()
-        context = context or {}
-        context.update({"longterm_memory": longterm_memory})
-
-        # Filter out invalid decisions
-        valid_decisions = [decision for decision in decision_space if isinstance(decision, dict) and "score" in decision]
-        if not valid_decisions:
-            self.logger.warning("No valid decisions found. Using fallback decision.")
-            return {"decision": "fallback_action", "reason": "No valid decisions found, using fallback."}
-        evolved_decisions = self.evolve_decision_strategies(valid_decisions, context)
         try:
-            if not decision_space:
-                self.logger.warning("Decision space is empty. Using default decision.")
-                return {"decision": "default_action", "reason": "No valid decisions found, using default."}
+            # Integrate long-term memory insights
+            longterm_memory = await self.kb.get_longterm_memory()
+            context = context or {}
+            context.update({"longterm_memory": longterm_memory})
 
             # Filter out invalid decisions
             valid_decisions = [decision for decision in decision_space if isinstance(decision, dict) and "score" in decision]
@@ -94,10 +86,12 @@ class QuantumDecisionMaker:
                 self.logger.warning("No valid decisions found. Using fallback decision.")
                 return {"decision": "fallback_action", "reason": "No valid decisions found, using fallback."}
 
+            evolved_decisions = self.evolve_decision_strategies(valid_decisions, context)
             optimal_decision = max(evolved_decisions, key=lambda decision: decision.get("score", 0))
         except Exception as e:
-            self.logger.error(f"Error during decision-making: {str(e)}")
+            self.logger.error(f"Error during decision-making: {str(e)}", exc_info=True)
             return {"error": "Decision-making error", "details": str(e)}
+        
         self.logger.info(f"Optimal decision made: {optimal_decision}")
         # Log the decision-making process
         await self.system_narrative.log_chain_of_thought(f"Quantum decision-making process completed with decision: {optimal_decision}")
