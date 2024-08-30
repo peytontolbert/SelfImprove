@@ -55,7 +55,7 @@ class TaskQueue:
             task["refinement"] = refinement.get("refinement", "No refinement available")
             logger.info(f"Task refinement for {task['name']}: {task['refinement']}")
 
-    async def adaptive_task_learning(self):
+    async def adaptive_task_learning(self, project_requirements):
         """Implement adaptive learning to adjust task strategies."""
         for task in self.tasks:
             learning = await self.ollama.query_ollama("adaptive_task_learning", f"Adapt task strategy for: {task['name']}", context={"task": task})
