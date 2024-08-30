@@ -263,7 +263,14 @@ class SelfImprovement:
 
     async def analyze_performance(self, metrics, rl_module):
         improvements = await self.improvement_manager.suggest_improvements(metrics)
-        # Use swarm intelligence, consciousness emulation, and quantum decision-making to optimize improvements
+        # Use swarm intelligence, consciousness emulation, quantum decision-making, and collaborative learning to optimize improvements
+        collaborative_insights = await self.ollama.query_ollama(
+            "collaborative_learning",
+            "Integrate collaborative learning insights to optimize improvements.",
+            context={"metrics": metrics}
+        )
+        self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
+        improvements.extend(collaborative_insights.get("suggestions", []))
         quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
             "actions": improvements,
             "system_state": metrics
@@ -411,11 +418,6 @@ def initialize_components():
         "meta_learner": MetaLearner(ollama, kb),
         "quantum_optimizer": QuantumOptimizer(ollama),
         "swarm_intelligence": SwarmIntelligence(ollama),
-        "predictive_analytics_engine": PredictiveAnalyticsEngine(ollama, kb),
-        "ethical_decision_making_module": EthicalDecisionMakingModule(ollama),
-        "resource_management_optimizer": ResourceManagementOptimizer(ollama),
-        "feedback_loop_enhancer": FeedbackLoopEnhancer(ollama),
-        "collaborative_learning_integrator": CollaborativeLearningIntegrator(ollama, kb),
     }
 
     # Load a tutorial on the first run
