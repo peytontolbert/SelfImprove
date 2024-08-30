@@ -22,7 +22,12 @@ class SpreadsheetManager:
 
     def write_data(self, start_cell: Tuple[int, int], data: List[List[Optional[str]]], sheet_name: Optional[str] = None) -> None:
         try:
-            sheet = self.workbook[sheet_name] if sheet_name else self.workbook.active
+            if sheet_name:
+                if sheet_name not in self.workbook.sheetnames:
+                    self.workbook.create_sheet(title=sheet_name)
+                sheet = self.workbook[sheet_name]
+            else:
+                sheet = self.workbook.active
             for i, row in enumerate(data):
                 for j, value in enumerate(row):
                     sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
