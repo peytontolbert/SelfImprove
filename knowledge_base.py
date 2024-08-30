@@ -32,6 +32,7 @@ class KnowledgeBase:
             self.base_directory = "knowledge_base_data"
             if not os.path.exists(self.base_directory):
                 os.makedirs(self.base_directory)
+            self.memory_limit = 100  # Set a default memory limit
             self.initialized = True
 
     def initialize_database(self):

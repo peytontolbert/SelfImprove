@@ -172,7 +172,12 @@ class SystemNarrative:
         except Exception as e:
             self.logger.error(f"Error during log state operation: {str(e)}", exc_info=True)
             await self.suggest_recovery_strategy(e)
-        """Log detailed reasoning before executing a step."""
+    async def suggest_recovery_strategy(self, error):
+        """Suggest a recovery strategy for a given error."""
+        error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
+        context = {"error": str(error)}
+        recovery_suggestion = await self.ollama.query_ollama(self.ollama.system_prompt, error_prompt, task="error_recovery", context=context)
+        return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
         if context is None:
             context = {}
         # Extract and refine relevant elements from the context
