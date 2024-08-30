@@ -738,9 +738,9 @@ def load_configuration():
 if __name__ == "__main__":
     asyncio.run(main())
     def scale_up(self, component_name):
-        self.logger.info(f"Scaling up resources for {component_name}")
-        # Implement logic to increase resources, e.g., add more instances
+        self.logger.info(f"Increasing resource allocation for {component_name}")
+        # Implement logic to adjust resource allocation, e.g., increase CPU or memory limits
 
     def scale_down(self, component_name):
-        self.logger.info(f"Scaling down resources for {component_name}")
-        # Implement logic to decrease resources, e.g., remove instances
+        self.logger.info(f"Decreasing resource allocation for {component_name}")
+        # Implement logic to adjust resource allocation, e.g., decrease CPU or memory limits
