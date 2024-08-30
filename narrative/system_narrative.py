@@ -540,7 +540,7 @@ class SystemNarrative:
 
 class QuantumPredictiveAnalyzer:
     def __init__(self):
-        self.quantum_decision_maker = QuantumDecisionMaker()
+        self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
         self.logger = logging.getLogger("QuantumPredictiveAnalyzer")
 
     async def perform_quantum_analysis(self, predictive_context):
