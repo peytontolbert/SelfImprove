@@ -1,5 +1,6 @@
 import logging
 from typing import List, Dict, Any, Optional
+from spreadsheet_manager import SpreadsheetManager
 import os
 import json
 import asyncio
