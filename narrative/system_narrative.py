@@ -8,7 +8,11 @@ import subprocess
 import json
 from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
+from attention_mechanism import AttentionMechanism
+
 class SystemNarrative:
+    def __init__(self, ollama_interface=None, knowledge_base=None):
+        self.attention_mechanism = AttentionMechanism()
     def __init__(self, ollama_interface=None, knowledge_base=None):
         self.request_log = []  # Initialize a log to track requests and expected responses
         self.logger = logging.getLogger("SystemNarrative")
@@ -241,6 +245,10 @@ class SystemNarrative:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        # Use the attention mechanism to prioritize actions
+        context = {"actions": [{"name": "optimize_performance", "impact_score": 8}, {"name": "enhance_security", "impact_score": 5}]}
+        prioritized_actions = self.attention_mechanism.prioritize_actions(context)
+        self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         await self.self_optimization(ollama, kb)
         system_state = {}
         improvement_cycle_count = 0
