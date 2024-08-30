@@ -1,6 +1,7 @@
 import logging
 import subprocess
 from core.ollama_interface import OllamaInterface
+from quantum_decision_maker import QuantumDecisionMaker
 from meta_learner import MetaLearner
 from quantum_optimizer import QuantumOptimizer
 from knowledge_base import KnowledgeBase
