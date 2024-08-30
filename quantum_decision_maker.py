@@ -55,6 +55,7 @@ class QuantumDecisionMaker:
         # Example logic: Evaluate decisions based on a combination of factors
         optimal_decision = max(decision_space, key=lambda decision: decision.get("score", 0))
         self.logger.info(f"Optimal decision made: {optimal_decision}")
+        await self.ollama.log_chain_of_thought("Quantum decision-making process completed.")
         return optimal_decision
 
     async def calculate_score(self, action, system_state, feedback, variation) -> int:
