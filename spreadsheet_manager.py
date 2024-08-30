@@ -33,8 +33,9 @@ class SpreadsheetManager:
                 for j, value in enumerate(row):
                     sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
             self.workbook.save(self.file_path)
+            logging.info(f"Data written successfully to {start_cell} in sheet '{sheet_name or self.workbook.active.title}'.")
         except Exception as e:
-            logging.error(f"Error writing data to {start_cell}: {e}")
+            logging.error(f"Error writing data to {start_cell} in sheet '{sheet_name or self.workbook.active.title}': {e}")
 
     def add_sheet(self, sheet_name: str) -> None:
         try:
