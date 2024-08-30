@@ -1,4 +1,3 @@
-```mermaid
 graph TD;
     A[Main Function] -->|Initializes| B[OllamaInterface]
     A -->|Initializes| C[KnowledgeBase]
@@ -6,40 +5,41 @@ graph TD;
     A -->|Initializes| E[TaskQueue]
     A -->|Initializes| F[VersionControlSystem]
     A -->|Initializes| G[CodeAnalysis]
-    A -->|Initializes| H[TestingFramework]
+    A -->|Initializes| H[TestingFramework] 
     A -->|Initializes| I[DeploymentManager]
     A -->|Initializes| J[ImprovementManager]
     A -->|Initializes| K[SelfImprovement]
     A -->|Initializes| L[FileSystem]
     A -->|Initializes| M[PromptManager]
     A -->|Initializes| N[ErrorHandler]
-    A -->|Initializes| O[SpreadsheetManager]
-    A -->|Initializes| P[SystemNarrative]
-    A -->|Initializes| Q[QuantumOptimizer]
-    A -->|Initializes| R[SwarmIntelligence]
-    P -->|Controls| S[Improvement Process]
-    S -->|Analyzes| T[System State]
-    S -->|Generates| U[Improvement Suggestions]
-    S -->|Validates| V[Improvements]
-    S -->|Applies| W[Improvements]
-    S -->|Logs| X[State and Decisions]
-    S -->|Handles| Y[Errors]
-    S -->|Assesses| Z[Alignment Implications]
-    S -->|Uses| AA[Reinforcement Learning Feedback and Ollama Insights]
-    S -->|Integrates| AB[Predictive Analysis and Ollama-Driven Strategies]
-    S -->|Evolves| AC[Long-term Evolution with Ollama Guidance]
-    T -->|Feedback| D
-    U -->|Validation| J
-    V -->|Application| K
-    W -->|Update| C
-    X -->|Log| O
-    Y -->|Recovery| N
-    Z -->|Consult| B
-    AA -->|Optimize| F
-    AB -->|Enhance| G
-    AC -->|Refine| S
-    S -->|Consults| AD[Ollama for Ethical and Alignment Considerations]
-    S -->|Refines| AE[Feedback Loop Optimization with Ollama]
-    S -->|Incorporates| AF[Quantum Decision Making and Consciousness Emulation]
-    S -->|Adapts| AG[Adaptive Learning and Strategy Adjustment]
-```
+    A -->|Initializes| O[SystemNarrative]
+    A -->|Initializes| P[QuantumOptimizer] 
+    A -->|Initializes| Q[SwarmIntelligence]
+
+    O -->|Controls| R[Improvement Process]
+    R -->|Analyzes| S[System State]
+    R -->|Generates| T[Improvement Suggestions]
+    R -->|Validates| U[Improvements]
+    R -->|Applies| V[Improvements] 
+    R -->|Logs| W[State and Decisions]
+    R -->|Handles| X[Errors]
+    R -->|Assesses| Y[Alignment Implications]
+    R -->|Uses| Z[Reinforcement Learning Feedback and Ollama Insights]
+    R -->|Integrates| AA[Predictive Analysis and Ollama-Driven Strategies] 
+    R -->|Evolves| AB[Long-term Evolution with Ollama Guidance]
+
+    S -->|Feedback| D
+    T -->|Validation| J
+    U -->|Application| K
+    V -->|Update| C
+    W -->|Log| N
+    X -->|Recovery| M
+    Y -->|Consult| B
+    Z -->|Optimize| F
+    AA -->|Enhance| G
+    AB -->|Refine| R
+
+    R -->|Consults| AC[Ollama for Ethical and Alignment Considerations]
+    R -->|Refines| AD[Feedback Loop Optimization with Ollama]
+    R -->|Incorporates| AE[Quantum Decision Making and Consciousness Emulation]
+    R -->|Adapts| AF[Adaptive Learning and Strategy Adjustment]
