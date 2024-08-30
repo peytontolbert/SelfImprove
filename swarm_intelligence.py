@@ -1,9 +1,11 @@
 import logging
 from typing import Dict, Any
+from quantum_decision_maker import QuantumDecisionMaker
 
 class SwarmIntelligence:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        self.quantum_decision_maker = QuantumDecisionMaker()
 
     def quantum_decision_making(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -41,9 +43,9 @@ class SwarmIntelligence:
         Returns:
         - A dictionary with optimized decisions and actions.
         """
-        # Combine swarm intelligence and quantum decision-making
+        # Combine swarm intelligence and quantum-inspired decision-making
         swarm_optimized = self.analyze_swarm_behavior(context.get("actions", []), context.get("system_state", {}), context.get("feedback", {}))
-        quantum_optimized = self.quantum_decision_making(context)
+        quantum_optimized = self.quantum_decision_maker.quantum_decision_tree(context)
 
         # Merge results from both approaches
         combined_optimized_actions = {**swarm_optimized, **quantum_optimized}
