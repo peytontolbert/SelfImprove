@@ -47,11 +47,11 @@ class OllamaInterface:
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
         if self.first_run:
             tutorial = self.tutorial_manager.load_tutorial("getting_started")
+            context = {}
             if tutorial:
                 self.logger.info(f"Loaded tutorial: {tutorial}")
                 context.update({"tutorial": tutorial})
             self.first_run = False
-            context = {}
         # Clarify the meaning of "system" in the context
         context.update({"system_definition": "The term 'software assistant' refers to the project and its capabilities for complex software development assistant tasks."})
         
