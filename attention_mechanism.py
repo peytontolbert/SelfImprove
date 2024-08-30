@@ -15,9 +15,24 @@ class AttentionMechanism:
         Returns:
         - A dictionary with prioritized actions and their respective scores.
         """
-        # Example logic for prioritization
+        # Enhanced logic for prioritization
         actions = context.get("actions", [])
-        prioritized_actions = sorted(actions, key=lambda x: x.get("impact_score", 0), reverse=True)
-        
-        self.logger.info(f"Prioritized actions: {prioritized_actions}")
+        system_state = context.get("system_state", {})
+        feedback = context.get("feedback", {})
+
+        # Calculate a composite score for each action based on multiple factors
+        for action in actions:
+            impact_score = action.get("impact_score", 0)
+            urgency = action.get("urgency", 1)  # Default urgency is 1
+            dependencies = action.get("dependencies", 0)  # Default dependencies is 0
+            historical_performance = feedback.get(action.get("name"), {}).get("historical_performance", 1)
+
+            # Composite score calculation
+            composite_score = (impact_score * urgency) / (1 + dependencies) * historical_performance
+            action["composite_score"] = composite_score
+
+        # Sort actions by composite score
+        prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
+
+        self.logger.info(f"Prioritized actions with composite scores: {prioritized_actions}")
         return {"prioritized_actions": prioritized_actions}
