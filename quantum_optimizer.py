@@ -1,16 +1,25 @@
 import logging
 
+from core.ollama_interface import OllamaInterface
+
 class QuantumOptimizer:
-    def __init__(self):
+    def __init__(self, ollama_interface: OllamaInterface):
+        self.ollama = ollama_interface
         self.logger = logging.getLogger(__name__)
 
     async def quantum_optimize(self, ollama, problem_space):
         try:
-            if not self.validate_problem_space(problem_space):
+            # Validate and refine the problem space using Ollama
+            refined_problem_space = await self.ollama.query_ollama(
+                "problem_space_refinement",
+                "Refine the problem space for quantum optimization.",
+                context={"problem_space": problem_space}
+            )
+            if not self.validate_problem_space(refined_problem_space):
                 raise ValueError("Invalid problem space provided for quantum optimization.")
 
             self.logger.info("Starting quantum optimization process.")
-            quantum_solution = await self.quantum_optimize_logic(problem_space)
+            quantum_solution = await self.quantum_optimize_logic(refined_problem_space)
             self.logger.info("Quantum optimization process completed.")
 
             self.analyze_results(quantum_solution)
@@ -39,6 +48,7 @@ class QuantumOptimizer:
     async def quantum_optimize_logic(self, problem_space):
         """Apply quantum-inspired logic to optimize the problem space."""
         # Example logic: Evaluate multiple possibilities using quantum superposition
+        self.logger.info("Applying quantum-inspired logic to optimize the problem space.")
         variables = problem_space.get("variables", [])
         constraints = problem_space.get("constraints", [])
         
