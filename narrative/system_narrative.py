@@ -22,6 +22,7 @@ class SystemNarrative:
         self.ollama = ollama_interface
         self.knowledge_base = knowledge_base
         self.data_absorber = data_absorber
+        self.kb = knowledge_base
         self.logger = logging.getLogger("SystemNarrative")
         self.spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
         self.consciousness_emulator = ConsciousnessEmulator(ollama_interface)
