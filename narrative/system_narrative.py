@@ -247,7 +247,16 @@ class SystemNarrative:
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         # Use the attention mechanism to prioritize actions based on system state and feedback
-        system_state = await self.ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+        # Enhance system_state with additional metrics and context
+        performance_metrics = await si.get_system_metrics()
+        recent_changes = await self.knowledge_base.get_entry("recent_changes")
+        feedback_data = await self.knowledge_base.get_entry("user_feedback")
+
+        system_state = await self.ollama.evaluate_system_state({
+            "metrics": performance_metrics,
+            "recent_changes": recent_changes,
+            "feedback": feedback_data
+        })
 
         # Evaluate and enhance AI's interaction capabilities
         interaction_capabilities = await self.ollama.query_ollama("interaction_capability_evaluation", "Evaluate and enhance AI's interaction capabilities.", context={"system_state": system_state})
