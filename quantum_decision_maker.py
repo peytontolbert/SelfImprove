@@ -117,6 +117,3 @@ class QuantumDecisionMaker:
         mutated_decision = decision.copy()
         mutated_decision["score"] += random.uniform(-1, 1)  # Random mutation
         return mutated_decision
-        for variation in range(5):
-            score = await self.calculate_score(action, system_state, feedback, variation)
-            possible_outcomes.append({"action": action, "score": score + predicted_score})
