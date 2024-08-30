@@ -433,22 +433,22 @@ async def main():
     narrative = components["narrative"]
     data_absorber = components["omniscient_data_absorber"]
     consciousness_emulator = components["consciousness_emulator"]
-    
+
     await system_initialization(system_manager, ollama, narrative)
-    
+
     async def main_loop():
         while True:
             try:
                 await data_absorber.absorb_knowledge()
                 context = await consciousness_emulator.emulate_consciousness(await ollama.evaluate_system_state({}))
                 context.update(await consciousness_emulator.emulate_consciousness(context))
-                
+
                 await process_tasks(components, context)
                 await manage_prompts(components, context)
                 await analyze_and_improve_system(components, context)
                 await optimize_system(components, context)
                 await handle_complex_tasks(components, context)
-                
+
                 await narrative.log_chain_of_thought("Completed main loop iteration")
                 await asyncio.sleep(60)  # Adjust the sleep time as needed
             except Exception as e:
