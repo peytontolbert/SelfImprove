@@ -19,10 +19,9 @@ Functions:
 import logging
 import asyncio
 from core.ollama_interface import OllamaInterface
-from core.improvement_manager import ImprovementManager
 from core.task_manager import TaskQueue
 from prompts.management.prompt_manager import PromptManager
-from utils.error_handler import ErrorHandler
+from error_handler import ErrorHandler
 from file_system import FileSystem
 from knowledge_base import KnowledgeBase
 import time
@@ -72,7 +71,8 @@ class CodeAnalysis:
     - analyze_code: Analyzes the given code and returns improvement suggestions.
     """
     async def analyze_code(self, ollama, code):
-        context = {"code": code}
+        # Add code length to context for better analysis
+        context = {"code": code, "code_length": len(code)}
         analysis = await ollama.query_ollama("code_analysis", f"Analyze this code and suggest improvements: {code}", context=context)
         return analysis
 
@@ -229,7 +229,9 @@ class SelfImprovement:
             try:
                 system_state = await self.ollama.evaluate_system_state({"metrics": await self.get_system_metrics()})
                 improvements = await self.analyze_performance(system_state)
+                # Validate and apply improvements if any
                 if improvements:
+                    await self.log_state("Validating improvements")
                     results = await self.apply_improvements(improvements)
                     await self.learn_from_experience({"improvements": improvements, "results": results})
             except Exception as e:
@@ -296,7 +298,8 @@ class SelfImprovement:
                     for code_improvement in code_analysis['improvements']:
                         await si.apply_code_change(code_improvement)
 
-                test_results = await tf.run_tests(ollama, "current_test_suite")
+                # Run tests and handle failures
+                test_results = await si.retry_ollama_call(tf.run_tests, ollama, "current_test_suite")
                 if test_results.get('failed_tests'):
                     for failed_test in test_results['failed_tests']:
                         fix = await self.retry_ollama_call(ollama.query_ollama, "test_fixing", f"Fix this failed test: {failed_test}")
