@@ -919,6 +919,13 @@ class OmniscientDataAbsorber:
         self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
         await self.log_with_ollama(message, context)
 
+    async def log_state(self, message, context=None):
+        """Log the current state of the system with a message and optional context."""
+        if context is None:
+            context = {}
+        self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
+        await self.log_with_ollama(message, context)
+
     async def log_recovery(self, recovery_action, success=True):
         status = "successful" if success else "failed"
         self.logger.info(f"Recovery Action: {recovery_action} | Status: {status}")
