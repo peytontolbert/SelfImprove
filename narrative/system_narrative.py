@@ -556,12 +556,13 @@ class QuantumPredictiveAnalyzer:
         try:
             self.logger.info("Starting quantum predictive analysis.")
             decision_space = self.prepare_decision_space(predictive_context)
+            self.logger.debug(f"Prepared decision space: {decision_space}")
             optimal_decision = self.quantum_decision_maker.quantum_decision_tree(decision_space)
             self.logger.info(f"Quantum predictive analysis completed with decision: {optimal_decision}")
             return optimal_decision
         except Exception as e:
-            self.logger.error(f"Error in quantum predictive analysis: {e}")
-            return {"error": "Quantum analysis failed"}
+            self.logger.error(f"Error in quantum predictive analysis: {e}", exc_info=True)
+            return {"error": "Quantum analysis failed", "details": str(e)}
 
     def prepare_decision_space(self, predictive_context):
         """
@@ -573,12 +574,15 @@ class QuantumPredictiveAnalyzer:
         Returns:
         - A decision space enriched with quantum possibilities.
         """
-        # Example logic to prepare decision space
+        # Enhanced logic to prepare decision space
         decision_space = {
             "scenarios": predictive_context.get("scenarios", []),
             "historical_data": predictive_context.get("historical_data", {}),
-            "current_state": predictive_context.get("current_state", {})
+            "current_state": predictive_context.get("current_state", {}),
+            "external_factors": predictive_context.get("external_factors", {}),
+            "risk_assessment": predictive_context.get("risk_assessment", {})
         }
+        self.logger.debug(f"Decision space prepared with additional context: {decision_space}")
         return decision_space
 
 class TemporalEngine:
