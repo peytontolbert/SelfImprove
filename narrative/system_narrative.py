@@ -30,7 +30,7 @@ class SystemNarrative:
         self.request_log = []
         self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
 
-    async def collect_user_feedback(self):
+    async def collect_user_feedback(self, thought_processes):
         """Collect real-time user feedback and log it for analysis."""
         try:
             # Simulate collecting feedback from users
