@@ -17,14 +17,37 @@ class ConsciousnessEmulator:
         Returns:
         - A dictionary with enhanced awareness and prioritized actions.
         """
-        # Simulate a higher level of awareness by integrating more contextual data
         actions = context.get("actions", [])
         system_state = context.get("system_state", {})
         feedback = context.get("feedback", {})
         longterm_memory = context.get("longterm_memory", {})
 
-        # Calculate a composite score for each action based on multiple factors, including new ones
-        # Use reinforcement learning to adapt and optimize the codebase
+        # Calculate composite scores for actions
+        self.calculate_composite_scores(actions, system_state, feedback, longterm_memory, context)
+
+        # Update action scores based on real-time feedback
+        self.update_action_scores(actions, feedback)
+
+        # Sort actions by composite score
+        prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
+
+        self.logger.info(f"Consciousness-emulated prioritized actions: {prioritized_actions}")
+        # Use Ollama to refine consciousness emulation
+        refinement_suggestions = self.ollama.query_ollama("consciousness_refinement", "Refine consciousness emulation based on current context.")
+        self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
+        return {"enhanced_awareness": context, "prioritized_actions": prioritized_actions}
+
+    def calculate_composite_scores(self, actions, system_state, feedback, longterm_memory, context):
+        """
+        Calculate a composite score for each action based on multiple factors.
+
+        Parameters:
+        - actions: List of actions to evaluate.
+        - system_state: Current state of the system.
+        - feedback: Feedback data to consider.
+        - longterm_memory: Long-term memory data.
+        - context: Additional contextual data.
+        """
         for action in actions:
             impact_score = action.get("impact_score", 0)
             urgency = action.get("urgency", 1)
@@ -43,18 +66,6 @@ class ConsciousnessEmulator:
                 (1 + dependencies + potential_risk) * historical_performance * resource_availability
             )
             action["composite_score"] = composite_score
-
-        # Update action scores based on real-time feedback
-        self.update_action_scores(actions, feedback)
-
-        # Sort actions by composite score
-        prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
-
-        self.logger.info(f"Consciousness-emulated prioritized actions: {prioritized_actions}")
-        # Use Ollama to refine consciousness emulation
-        refinement_suggestions = self.ollama.query_ollama("consciousness_refinement", "Refine consciousness emulation based on current context.")
-        self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
-        return {"enhanced_awareness": context, "prioritized_actions": prioritized_actions}
 
     def update_action_scores(self, actions, feedback):
         """
