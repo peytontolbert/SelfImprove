@@ -332,7 +332,7 @@ class SystemNarrative:
         self.logger.info(f"Refined visualization with long-term evolution insights: {refined_visualization}")
 
         # Use the enhanced attention mechanism to prioritize actions
-        prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)
+        prioritized_actions = self.consciousness_emulator.emulate_consciousness(optimized_decisions)
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
