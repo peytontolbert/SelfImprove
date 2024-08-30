@@ -20,7 +20,7 @@ class ConsciousnessEmulator:
         actions = context.get("actions", [])
         system_state = context.get("system_state", {})
         feedback = context.get("feedback", {})
-        longterm_memory = context.get("longterm_memory", {})
+        longterm_memory = context.get("longterm_memory", await self.ollama.get_longterm_memory())
 
         # Analyze context for deeper insights
         self.analyze_context(context)
