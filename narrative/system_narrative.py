@@ -250,6 +250,13 @@ class SystemNarrative:
         if isinstance(quantum_insights, dict):
             self.logger.info(f"Quantum predictive insights: {quantum_insights}")
             await self.knowledge_base.add_entry("quantum_predictive_insights", quantum_insights)
+            
+            # Log quantum insights for further analysis
+            await self.ollama.query_ollama(
+                "quantum_insight_logging",
+                "Log quantum insights for further analysis and decision-making enhancement.",
+                context={"quantum_insights": quantum_insights}
+            )
         else:
             self.logger.error("Quantum predictive insights is not a dictionary.")
 

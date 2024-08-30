@@ -27,6 +27,13 @@ class QuantumOptimizer:
             # Apply quantum-inspired optimization logic with predictive insights
             quantum_solution = await self.quantum_optimize_logic(refined_problem_space, predictive_context)
             self.logger.info("Quantum optimization process completed with predictive insights.")
+            
+            # Log the decision-making process
+            await self.ollama.query_ollama(
+                "quantum_decision_logging",
+                "Log the quantum decision-making process for transparency.",
+                context={"refined_problem_space": refined_problem_space, "quantum_solution": quantum_solution}
+            )
             await self.system_narrative.log_chain_of_thought({
                 "process": "Quantum optimization",
                 "context": refined_problem_space,
