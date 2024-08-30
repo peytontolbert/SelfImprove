@@ -130,7 +130,7 @@ class OllamaInterface:
             return {"error": "Unexpected response type", "response": str(result)}
 
     def log_interaction(self, system_prompt, prompt, response):
-        """Log the interaction with Ollama."""
+        """Log the interaction with Ollama and save to dataset."""
         log_data = {
             "system_prompt": system_prompt,
             "prompt": prompt,
@@ -139,6 +139,13 @@ class OllamaInterface:
         }
         log_name = f"ollama_interaction_{int(time.time())}"
         self.log_manager.save_log(log_name, log_data)
+
+        # Append interaction to dataset file
+        dataset_file = os.path.join("datasets", "ollama_interactions.jsonl")
+        os.makedirs(os.path.dirname(dataset_file), exist_ok=True)
+        with open(dataset_file, 'a') as file:
+            json.dump(log_data, file)
+            file.write('\n')
     def log_interaction(self, system_prompt, prompt, response):
         """Log the interaction with Ollama."""
         log_data = {
