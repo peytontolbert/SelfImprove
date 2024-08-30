@@ -67,5 +67,15 @@ class ConsciousnessEmulator:
         for action in actions:
             action_name = action.get("name", "")
             real_time_feedback = feedback.get(action_name, {}).get("real_time_score", 0)
-            action["composite_score"] += real_time_feedback
+            historical_trend = feedback.get(action_name, {}).get("historical_trend", 1)
+            user_feedback = feedback.get(action_name, {}).get("user_feedback", 1)
+            predictive_score = feedback.get(action_name, {}).get("predictive_score", 1)
+
+            # Update composite score with additional factors
+            action["composite_score"] += (
+                real_time_feedback +
+                historical_trend * 0.5 +  # Weight historical trends
+                user_feedback * 0.3 +     # Weight user feedback
+                predictive_score * 0.2    # Weight predictive insights
+            )
             self.logger.debug(f"Updated composite score for action '{action_name}': {action['composite_score']}")
