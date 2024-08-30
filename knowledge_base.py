@@ -244,17 +244,16 @@ class KnowledgeBase:
 
     async def get_longterm_memory(self):
         """Retrieve long-term memory entries."""
-        if not self.longterm_memory:
-            entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
-            for entry_name in entries:
-                file_path = os.path.join(self.base_directory, f"{entry_name}.json")
-                with open(file_path, 'r') as file:
-                    data = json.load(file)
-                self.longterm_memory[entry_name] = data
-            if self.longterm_memory:
-                self.logger.info(f"Retrieved long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
-            else:
-                self.logger.warning("No long-term memory entries found.")
+        entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
+        for entry_name in entries:
+            file_path = os.path.join(self.base_directory, f"{entry_name}.json")
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            self.longterm_memory[entry_name] = data
+        if self.longterm_memory:
+            self.logger.info(f"Retrieved long-term memory: {json.dumps(self.longterm_memory, indent=2)}")
+        else:
+            self.logger.warning("No long-term memory entries found.")
         return self.longterm_memory
 
     async def save_longterm_memory(self, longterm_memory):
