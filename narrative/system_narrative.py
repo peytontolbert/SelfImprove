@@ -166,9 +166,7 @@ class SystemNarrative:
         await self.knowledge_base.add_entry("deep_learning_insights", deep_learning_insights)
 
         # Adaptive learning for strategy adjustment
-        adaptive_learning_strategies = await self.ollama.query_ollama("adaptive_learning", "Implement adaptive learning techniques to adjust strategies based on real-time feedback.", context={"system_state": system_state})
-        self.logger.info(f"Adaptive learning strategies: {adaptive_learning_strategies}")
-        await self.knowledge_base.add_entry("adaptive_learning_strategies", adaptive_learning_strategies)
+        await self.adaptive_learning(system_state)
 
         # Implement collaborative learning strategies
         collaborative_learning = await self.ollama.query_ollama("collaborative_learning", "Leverage insights from multiple AI systems to enhance learning and decision-making processes.", context={"system_state": system_state})
@@ -565,7 +563,21 @@ class SystemNarrative:
             return
 
 
-    async def handle_timeout(self):
+    async def adaptive_learning(self, system_state):
+        """Implement adaptive learning techniques to adjust strategies based on real-time feedback."""
+        try:
+            self.logger.info("Starting adaptive learning process.")
+            feedback = await self.ollama.query_ollama("real_time_feedback", "Gather real-time feedback for adaptive learning.", context={"system_state": system_state})
+            self.logger.info(f"Real-time feedback: {feedback}")
+
+            # Adjust strategies based on feedback
+            strategy_adjustments = await self.ollama.query_ollama("strategy_adjustment", "Adjust strategies based on real-time feedback.", context={"feedback": feedback})
+            self.logger.info(f"Strategy adjustments: {strategy_adjustments}")
+
+            # Log the adjustments
+            await self.knowledge_base.add_entry("strategy_adjustments", strategy_adjustments)
+        except Exception as e:
+            self.logger.error(f"Error during adaptive learning: {e}")
         self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
         await self.log_state("Timeout recovery initiated")
 
