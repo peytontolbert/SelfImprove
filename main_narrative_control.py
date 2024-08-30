@@ -24,7 +24,6 @@ import json
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from simple_nn import SimpleNN
 from logging_utils import log_with_ollama
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule
@@ -41,7 +40,6 @@ from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 from quantum_optimizer import QuantumOptimizer
-from version_control_system import VersionControlSystem  # Assuming this is the correct import path
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -50,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 
+class VersionControlSystem:
     """
     - ReinforcementLearningModule: Manages reinforcement learning tasks and feedback.
     Handles version control operations such as committing changes and assessing codebase readiness.
@@ -445,27 +444,7 @@ async def main():
     longterm_memory = await kb.get_longterm_memory()
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
     await kb.save_longterm_memory(longterm_memory)
-    # Retrieve or define metrics before using them
-    metrics = await si.get_system_metrics()
-    input_size = len(metrics)
-    hidden_size = 10
-    output_size = 1
-    model = SimpleNN(input_size, hidden_size, output_size)
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-    # Convert metrics to tensor
-    metrics_tensor = torch.tensor(list(metrics.values()), dtype=torch.float32)
-
-    # Forward pass
-    outputs = model(metrics_tensor)
-    loss = criterion(outputs, torch.tensor([1.0]))  # Dummy target for illustration
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-    logger.info(f"Deep learning model output: {outputs.item()}")
-    await narrative.log_chain_of_thought("Analyzing system performance to suggest improvements using deep learning.")
+    await narrative.log_chain_of_thought("Analyzing system performance to suggest improvements.")
     improvements = await si.analyze_performance({"metric": "value", "longterm_memory": longterm_memory}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
