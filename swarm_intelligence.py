@@ -3,9 +3,9 @@ from typing import Dict, Any
 from quantum_decision_maker import QuantumDecisionMaker
 
 class SwarmIntelligence:
-    def __init__(self):
+    def __init__(self, ollama):
         self.logger = logging.getLogger(__name__)
-        self.quantum_decision_maker = QuantumDecisionMaker()
+        self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama)
 
     def quantum_decision_making(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
