@@ -42,6 +42,7 @@ class OllamaInterface:
                 self.logger.error(f"Error closing client session: {e}")
             finally:
                 self.session = None
+                self.logger.info("Client session set to None.")
 
     def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""
@@ -74,7 +75,7 @@ class OllamaInterface:
         
         if refine and task not in ["logging", "categorization"]:
             # Incorporate historical feedback for adaptive refinement
-            historical_feedback = await self.knowledge_base.get_entry("historical_feedback")
+            historical_feedback = await self.knowledge_base.get_entry("historical_feedback") or {}
             refined_prompt = await self.adaptive_refine_prompt(prompt, task, feedback={**context.get("feedback", {}), **historical_feedback})
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
