@@ -502,7 +502,12 @@ async def system_initialization(system_manager, ollama, narrative):
     config = load_configuration()
     config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
     logger.info(f"Configuration updates suggested by Ollama: {config_updates}")
-    await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
+    
+    # Apply configuration updates dynamically
+    for key, value in config_updates.items():
+        config[key] = value
+        logger.info(f"Updated config {key} to {value}")
+    
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
     
@@ -584,14 +589,25 @@ async def analyze_and_improve_system(components, context):
     performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}", context=context)
     logger.info(f"Performance optimizations: {performance_optimizations}")
     
-    for improvement in refined_improvements:
-        result = await si.apply_improvements([improvement])
-        await narrative.log_chain_of_thought(f"Applied improvement: {improvement}, Result: {result}")
+    try:
+        tasks = [
+            si.apply_improvements([improvement]) for improvement in refined_improvements
+        ]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        # Automatically deploy improvements if successful
-        if result.get("success", False):
-            await components["dm"].deploy_code(ollama, narrative)
-            await narrative.log_chain_of_thought(f"Deployed improvement: {improvement}")
+        for improvement, result in zip(refined_improvements, results):
+            if isinstance(result, Exception):
+                logger.error(f"Error applying improvement {improvement}: {result}")
+                continue
+            
+            await narrative.log_chain_of_thought(f"Applied improvement: {improvement}, Result: {result}")
+            
+            # Automatically deploy improvements if successful
+            if result.get("success", False):
+                await components["dm"].deploy_code(ollama, narrative)
+                await narrative.log_chain_of_thought(f"Deployed improvement: {improvement}")
+    except Exception as e:
+        logger.error(f"Error during improvement application: {e}")
 
 async def optimize_system(components, context):
     ollama = components["ollama"]
