@@ -13,9 +13,12 @@ class SpreadsheetManager:
             self.workbook.save(file_path)
             logging.info(f"Created a new workbook due to: {e}")
 
-    def read_data(self, cell_range: str) -> List[List[Optional[str]]]:
+    def read_data(self, cell_range: str, sheet_name: Optional[str] = None) -> List[List[Optional[str]]]:
         try:
-            sheet = self.workbook.active
+            if sheet_name:
+                sheet = self.workbook[sheet_name]
+            else:
+                sheet = self.workbook.active
             return [[cell.value for cell in row] for row in sheet[cell_range]]
         except Exception as e:
             logging.error(f"Error reading data from {cell_range}: {e}")
