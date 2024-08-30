@@ -3,7 +3,46 @@ from core.ollama_interface import OllamaInterface
 
 logger = logging.getLogger(__name__)
 
+from datetime import datetime
+from typing import List, Dict, Any
+
 class TaskQueue:
+    def __init__(self):
+        self.tasks: List[Dict[str, Any]] = []
+
+    def add_task(self, name: str, priority: int = 1, deadline: datetime = None, status: str = "Pending"):
+        """Add a new task to the queue."""
+        task = {
+            "name": name,
+            "priority": priority,
+            "deadline": deadline,
+            "status": status
+        }
+        self.tasks.append(task)
+        self.tasks.sort(key=lambda x: (x['priority'], x['deadline'] or datetime.max))
+        print(f"Task added: {task}")
+
+    def update_task_status(self, name: str, status: str):
+        """Update the status of a task."""
+        for task in self.tasks:
+            if task['name'] == name:
+                task['status'] = status
+                print(f"Task status updated: {task}")
+                break
+
+    def get_pending_tasks(self):
+        """Get all pending tasks."""
+        return [task for task in self.tasks if task['status'] == "Pending"]
+
+    def get_overdue_tasks(self):
+        """Get all overdue tasks."""
+        now = datetime.now()
+        return [task for task in self.tasks if task['deadline'] and task['deadline'] < now and task['status'] == "Pending"]
+
+    def display_tasks(self):
+        """Display all tasks."""
+        for task in self.tasks:
+            print(f"Task: {task['name']}, Priority: {task['priority']}, Deadline: {task['deadline']}, Status: {task['status']}")
     def __init__(self, ollama: OllamaInterface):
         self.tasks = []
         self.ollama = ollama
