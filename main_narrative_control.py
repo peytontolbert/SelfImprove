@@ -24,6 +24,7 @@ import os
 import aiohttp
 import json
 import torch
+import unittest
 import torch.nn as nn
 import torch.optim as optim
 from logging_utils import log_with_ollama
@@ -160,8 +161,21 @@ class TestingFramework:
         self.logger = logging.getLogger(__name__)
 
     async def run_tests(self, ollama, test_cases):
-        context = {"test_cases": test_cases}
-        test_results = await ollama.query_ollama("testing", f"Run and analyze these test cases: {test_cases}", context=context)
+        self.logger.info("Running tests using unittest framework.")
+        loader = unittest.TestLoader()
+        suite = loader.discover(start_dir='tests', pattern='test_*.py')
+        
+        runner = unittest.TextTestRunner()
+        result = runner.run(suite)
+        
+        test_results = {
+            "total": result.testsRun,
+            "failures": len(result.failures),
+            "errors": len(result.errors),
+            "skipped": len(result.skipped),
+            "successful": result.wasSuccessful()
+        }
+        
         self.logger.info(f"Test results: {test_results}")
         return test_results
 
