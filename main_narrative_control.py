@@ -22,8 +22,8 @@ import os
 import aiohttp
 import json
 import torch
-import torch.nn as nn
 import torch.optim as optim
+from simple_nn import SimpleNN
 from logging_utils import log_with_ollama
 from core.ollama_interface import OllamaInterface
 from reinforcement_learning_module import ReinforcementLearningModule

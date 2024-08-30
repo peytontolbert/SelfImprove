@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, Any, List
-from main_narrative_control import SimpleNN
+from simple_nn import SimpleNN
 import torch
 from core.ollama_interface import OllamaInterface
 
