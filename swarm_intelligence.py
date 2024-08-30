@@ -7,7 +7,7 @@ class SwarmIntelligence:
         self.logger = logging.getLogger(__name__)
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama)
 
-    def quantum_decision_making(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def quantum_decision_making(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Apply quantum-inspired decision-making to enhance swarm intelligence.
 
