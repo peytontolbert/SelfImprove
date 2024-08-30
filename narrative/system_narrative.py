@@ -24,7 +24,7 @@ class SystemNarrative:
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
 
-    async def log_state(self, message, context=None):
+    async def log_state(self, message, context=None, si=None):
         if context is None:
             context = {}
         # Extract relevant elements from the context
@@ -49,7 +49,7 @@ class SystemNarrative:
             self.logger.error(f"Error during log state operation: {str(e)}")
         # Initialize system_state and other required variables
         improvement_cycle_count = 0
-        performance_metrics = await si.get_system_metrics()
+        performance_metrics = await self.si.get_system_metrics()
         recent_changes = await self.knowledge_base.get_entry("recent_changes")
         feedback_data = await self.knowledge_base.get_entry("user_feedback")
         system_state = await self.ollama.evaluate_system_state({
@@ -135,7 +135,7 @@ class SystemNarrative:
 
         # Implement adaptive goal setting based on real-time performance metrics
         current_goals = await self.knowledge_base.get_entry("current_goals")
-        performance_metrics = await si.get_system_metrics()
+        performance_metrics = await self.si.get_system_metrics()
         adaptive_goal_adjustments = await self.ollama.query_ollama(
             "adaptive_goal_setting",
             f"Continuously adjust goals based on real-time performance metrics and environmental changes: {performance_metrics}",
@@ -164,7 +164,7 @@ class SystemNarrative:
             self.logger.info(f"Self-reflection insights: {self_reflection}")
             self.logger.info(f"Self-adaptation strategies: {adaptation_strategies}")
             await self.knowledge_base.add_entry("self_reflection", self_reflection)
-        system_state = await self.ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+        system_state = await self.ollama.evaluate_system_state({"metrics": await self.si.get_system_metrics()})
         feedback = await self.ollama.query_ollama("feedback_analysis", "Analyze feedback for the current system state.", context={"system_state": system_state})
         context = {
             "actions": [{"name": "optimize_performance", "impact_score": 8}, {"name": "enhance_security", "impact_score": 5}],
@@ -184,19 +184,19 @@ class SystemNarrative:
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
-        await self.self_optimization(ollama, kb)
+        await self.self_optimization(self.ollama, self.kb)
         system_state = {}
         improvement_cycle_count = 0
         while True:
             improvement_cycle_count += 1
             try:
-                await asyncio.wait_for(self.improvement_cycle(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count), timeout=300)
+                await asyncio.wait_for(self.improvement_cycle(self.ollama, self.si, self.kb, self.task_queue, self.vcs, self.ca, self.tf, self.dm, self.fs, self.pm, self.eh, improvement_cycle_count), timeout=300)
             except asyncio.TimeoutError:
                 await self.handle_timeout_error()
             except Exception as e:
-                await self.handle_general_error(e, eh, ollama)
+                await self.handle_general_error(e, self.eh, self.ollama)
 
-            await self.dynamic_goal_setting(ollama, system_state)
+            await self.dynamic_goal_setting(self.ollama, system_state)
 
             future_challenges = await self.ollama.query_ollama("future_challenges", "Predict future challenges and suggest preparation strategies.", context={"system_state": system_state})
             self.logger.info(f"Future challenges and strategies: {future_challenges}")
@@ -940,6 +940,17 @@ class OmniscientDataAbsorber:
         await self.log_with_ollama(recovery_action, {"success": success})
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
+        self.si = si
+        self.ollama = ollama
+        self.kb = kb
+        self.task_queue = task_queue
+        self.vcs = vcs
+        self.ca = ca
+        self.tf = tf
+        self.dm = dm
+        self.fs = fs
+        self.pm = pm
+        self.eh = eh
         # Initialize system_state and other required variables
         improvement_cycle_count = 0
         performance_metrics = await si.get_system_metrics()
