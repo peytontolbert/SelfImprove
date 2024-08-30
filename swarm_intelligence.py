@@ -45,7 +45,9 @@ class SwarmIntelligence:
         """
         # Combine swarm intelligence and quantum-inspired decision-making
         swarm_optimized = self.analyze_swarm_behavior(context.get("actions", []), context.get("system_state", {}), context.get("feedback", {}))
+        # Use quantum decision-making to enhance swarm intelligence
         quantum_optimized = self.quantum_decision_maker.quantum_decision_tree(context)
+        self.logger.info(f"Quantum decision-making applied: {quantum_optimized}")
 
         # Merge results from both approaches
         combined_optimized_actions = {**swarm_optimized, **quantum_optimized}
