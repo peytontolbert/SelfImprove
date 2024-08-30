@@ -17,6 +17,7 @@ class KnowledgeBase:
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
+        self.check_connection()
         self.initialize_database()
         self.ollama = ollama_interface
         self.longterm_memory = {}
@@ -24,7 +25,15 @@ class KnowledgeBase:
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
 
-    def initialize_database(self):
+    def check_connection(self):
+        """Check if the connection to the Neo4j database can be established."""
+        try:
+            with self.driver.session() as session:
+                session.run("RETURN 1")
+            self.logger.info("Successfully connected to the Neo4j database.")
+        except Exception as e:
+            self.logger.error(f"Failed to connect to the Neo4j database: {str(e)}")
+            raise ConnectionError("Could not connect to the Neo4j database. Please ensure it is running and accessible.")
         """Initialize the database with necessary nodes and relationships."""
         try:
             with self.driver.session() as session:
