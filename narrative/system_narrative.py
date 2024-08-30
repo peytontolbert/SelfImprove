@@ -11,6 +11,7 @@ from reinforcement_learning_module import ReinforcementLearningModule
 from spreadsheet_manager import SpreadsheetManager
 from attention_mechanism import AttentionMechanism
 from swarm_intelligence import SwarmIntelligence
+from quantum_decision_maker import QuantumDecisionMaker
 
 class TemporalEngine:
     def __init__(self):
@@ -46,6 +47,7 @@ class OmniscientDataAbsorber:
     def __init__(self, knowledge_base: KnowledgeBase):
         self.knowledge_base = knowledge_base
         self.logger = logging.getLogger("OmniscientDataAbsorber")
+        self.quantum_decision_maker = QuantumDecisionMaker()
 
     async def absorb_knowledge(self):
         """Absorb knowledge from various sources with prioritization."""
@@ -65,7 +67,36 @@ class OmniscientDataAbsorber:
         except Exception as e:
             self.logger.error(f"Error absorbing knowledge: {e}")
 
-    async def disseminate_knowledge(self):
+    async def make_complex_decision(self, decision_space):
+        """Use quantum-inspired decision making for complex problems."""
+        self.logger.info("Initiating complex decision-making process")
+
+        # Prepare the decision space with relevant data
+        enhanced_decision_space = await self.enrich_decision_space(decision_space)
+
+        # Use the quantum-inspired decision tree
+        optimal_decision = await self.quantum_decision_maker.quantum_decision_tree(enhanced_decision_space)
+
+        self.logger.info(f"Complex decision made: {optimal_decision}")
+
+        # Log the decision and its rationale
+        await self.log_decision(optimal_decision, "Made using quantum-inspired decision tree")
+
+        return optimal_decision
+
+    async def enrich_decision_space(self, decision_space):
+        """Enrich the decision space with additional context and data."""
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
+        current_state = await self.ollama.evaluate_system_state({})
+
+        enhanced_space = {
+            **decision_space,
+            "longterm_memory": longterm_memory,
+            "current_state": current_state,
+            "historical_decisions": await self.knowledge_base.get_entry("historical_decisions")
+        }
+
+        return enhanced_space
         """Disseminate absorbed knowledge for decision-making."""
         try:
             entries = await self.knowledge_base.list_entries()
