@@ -82,8 +82,15 @@ class SelfImprovement:
         predictive_insights = await self.ollama.query_ollama("predictive_analytics", "Use predictive analytics to anticipate future challenges and opportunities.", context={"metrics": metrics})
         self.logger.info(f"Predictive insights: {predictive_insights}")
         improvements.extend(predictive_insights.get("suggestions", []))
+        
+        # Generate and test hypotheses for self-improvement
+        hypotheses = await self.generate_hypotheses(metrics)
         tested_hypotheses = await self.test_hypotheses(hypotheses)
         self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
+        
+        # Use reinforcement learning feedback to adapt improvements
+        rl_feedback = await rl_module.get_feedback(metrics)
+        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
         
         return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
 
@@ -199,12 +206,3 @@ class SelfImprovement:
         """Collect real-time feedback from user interactions."""
         feedback = await self.ollama.query_ollama("real_time_feedback", "Collect real-time feedback based on current metrics.", context={"metrics": metrics})
         return feedback.get("feedback", [])
-        for attempt in range(max_retries):
-            result = await func(*args, **kwargs)
-            if result is not None:
-                return result
-            self.logger.warning(f"Attempt {attempt + 1} failed, retrying...")
-        self.logger.error("All attempts failed, returning None")
-        self.logger.error("All attempts failed, returning None")
-        await self.narrative.log_error("All attempts failed", {"function": func.__name__, "args": args, "kwargs": kwargs})
-        return None
