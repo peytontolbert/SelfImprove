@@ -26,7 +26,12 @@ class SystemNarrative:
         self.swarm_intelligence = SwarmIntelligence(ollama_interface)
         self.request_log = []
 
-    async def log_state(self, message, context=None):
+    async def log_chain_of_thought(self, thought_process, context=None):
+        """Log detailed reasoning before executing a step."""
+        if context is None:
+            context = {}
+        self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(context, indent=2)}")
+        await self.log_with_ollama(f"Chain of Thought: {thought_process}", context)
         if context is None:
             context = {}
         # Extract relevant elements from the context

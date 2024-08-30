@@ -416,6 +416,7 @@ async def main():
     await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
     logging.getLogger().setLevel(config.get("log_level", logging.INFO))
     logger.info("System components initialized with detailed logging and context management")
+    await narrative.log_chain_of_thought("Initializing system components with detailed logging and context management.")
     await narrative.log_state("System components initialized successfully")
     
     # Initialize prompt manager for versioning and A/B testing
@@ -435,6 +436,7 @@ async def main():
     longterm_memory = await kb.get_longterm_memory()
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
     await kb.save_longterm_memory(longterm_memory)
+    await narrative.log_chain_of_thought("Analyzing system performance to suggest improvements.")
     improvements = await si.analyze_performance({"metric": "value", "longterm_memory": longterm_memory}, rl_module)
     spreadsheet_manager.write_data((11, 1), [["Improvement", "Outcome"]] + [[imp, "Pending"] for imp in improvements])
     logger.info("Logged improvements to spreadsheet")
@@ -449,6 +451,7 @@ async def main():
     logger.info(f"Knowledge base refinement: {knowledge_refinement}")
 
     # Ollama-centric performance optimization
+    await narrative.log_chain_of_thought("Identifying and optimizing performance bottlenecks.")
     performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}")
     logger.info(f"Performance optimizations: {performance_optimizations}")
 
@@ -461,6 +464,7 @@ async def main():
 
     # Quantum optimization for complex problem spaces
     problem_space = {"variables": ["x", "y"], "constraints": ["x + y <= 10"]}
+    await narrative.log_chain_of_thought("Applying quantum optimization to complex problem spaces.")
     optimized_solution = await quantum_optimizer.quantum_optimize(ollama, problem_space)
     logger.info(f"Quantum optimized solution: {optimized_solution}")
     complex_tasks = ["Optimize system architecture", "Enhance user experience"]
@@ -470,6 +474,7 @@ async def main():
     for task, subtasks in zip(complex_tasks, subtasks_results):
         logger.info(f"Decomposed subtasks for {task}: {subtasks}")
     # Enhanced error recovery
+    await narrative.log_chain_of_thought("Suggesting adaptive recovery strategies for recent errors.")
     error_recovery_strategies = await ollama.query_ollama("adaptive_error_recovery", "Suggest adaptive recovery strategies for recent errors.")
     logger.info(f"Adaptive error recovery strategies: {error_recovery_strategies}")
     # Scalability and resource optimization
