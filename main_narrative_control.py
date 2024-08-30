@@ -287,11 +287,21 @@ class SystemManager:
 
     def restart_component(self, component_name):
         self.logger.info(f"Restarting component: {component_name}")
-        # Placeholder for component restart logic
+        # Implement component restart logic using subprocess
+        try:
+            subprocess.run(["systemctl", "restart", component_name], check=True)
+            self.logger.info(f"Component {component_name} restarted successfully.")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Failed to restart component {component_name}: {e}")
 
     def update_component(self, component_name):
         self.logger.info(f"Updating component: {component_name}")
-        # Placeholder for component update logic
+        # Implement component update logic using subprocess
+        try:
+            subprocess.run(["apt-get", "update", component_name], check=True)
+            self.logger.info(f"Component {component_name} updated successfully.")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Failed to update component {component_name}: {e}")
 
     async def monitor_performance(self):
         self.logger.info("Monitoring system performance in real-time.")

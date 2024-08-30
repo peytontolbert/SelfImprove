@@ -20,8 +20,11 @@ class QuantumDecisionMaker:
         Returns:
         - A calculated score as a float.
         """
-        # Example logic for score calculation
-        base_score = system_state.get('metric', 0) + feedback.get('metric', 0)
+        # Calculate score using a weighted sum of system state and feedback metrics
+        weight_system_state = 0.6
+        weight_feedback = 0.4
+        base_score = (weight_system_state * system_state.get('metric', 0) +
+                      weight_feedback * feedback.get('metric', 0))
         score = base_score * (1 + variation * 0.1)
         return score
     def __init__(self, ollama_interface: OllamaInterface):
