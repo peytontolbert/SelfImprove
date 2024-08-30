@@ -275,16 +275,16 @@ class SystemNarrative:
         context.update({"longterm_memory": longterm_memory})
         self.logger.info(f"Updated context with long-term memory: {json.dumps(longterm_memory, indent=2)}")
 
-        # Enhanced feedback loops for continuous refinement
+        # Advanced feedback loops with machine learning models
         feedback_sources = ["user_feedback", "system_performance", "external_data"]
         feedback_data = {source: await self.knowledge_base.get_entry(source) for source in feedback_sources}
-        feedback_loops = await self.ollama.query_ollama(
-            "enhanced_feedback_loops",
-            "Integrate enhanced feedback loops using diverse data sources for continuous refinement.",
+        ml_model = await self.ollama.query_ollama(
+            "ml_feedback_model",
+            "Integrate machine learning models to dynamically adjust feedback loops based on historical data and real-time performance.",
             context={"system_state": system_state, "feedback_data": feedback_data}
         )
-        self.logger.info(f"Enhanced feedback loops integration: {feedback_loops}")
-        await self.knowledge_base.add_entry("enhanced_feedback_loops", feedback_loops)
+        self.logger.info(f"Machine learning feedback model integration: {ml_model}")
+        await self.knowledge_base.add_entry("ml_feedback_model", ml_model)
 
         system_state = await self.ollama.evaluate_system_state({
             "metrics": performance_metrics,
@@ -1314,17 +1314,17 @@ class OmniscientDataAbsorber:
         self.logger.info(f"Decision-making improvements: {decision_making_improvements}")
         await self.knowledge_base.add_entry("decision_making_improvements", decision_making_improvements)
 
-        # Advanced Predictive Analytics for Future Challenges
+        # Advanced Predictive Analytics with sophisticated models
         historical_data = await self.knowledge_base.get_entry("historical_metrics")
         predictive_context = {**system_state, "historical_data": historical_data}
-        predictive_models = ["time_series_forecasting", "anomaly_detection", "trend_analysis"]
+        sophisticated_models = ["deep_learning_forecasting", "complex_anomaly_detection", "advanced_trend_analysis"]
         predictive_insights = await self.ollama.query_ollama(
-            "advanced_predictive_analytics",
-            "Utilize advanced predictive models to anticipate future challenges and opportunities.",
-            context={"predictive_context": predictive_context, "models": predictive_models}
+            "sophisticated_predictive_analytics",
+            "Use sophisticated predictive models to anticipate future challenges and opportunities.",
+            context={"predictive_context": predictive_context, "models": sophisticated_models}
         )
-        self.logger.info(f"Advanced predictive insights: {predictive_insights}")
-        await self.knowledge_base.add_entry("advanced_predictive_insights", predictive_insights)
+        self.logger.info(f"Sophisticated predictive insights: {predictive_insights}")
+        await self.knowledge_base.add_entry("sophisticated_predictive_insights", predictive_insights)
 
         # Advanced Resource Optimization
         resource_optimization = await self.ollama.query_ollama(
