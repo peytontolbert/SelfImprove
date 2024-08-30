@@ -19,7 +19,7 @@ class OllamaInterface:
         self.tutorial_manager = TutorialManager()
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
-        self.system_prompt = "Default system prompt"
+        self.system_prompt = "Default software assistant prompt"
         self.prompt_cache = {}
         self.prompt_templates = {}
         self.conversation_contexts = {}
@@ -34,6 +34,8 @@ class OllamaInterface:
             await self.session.close()
             self.session = None
             self.logger.info("Client session closed successfully.")
+        else:
+            self.logger.warning("Attempted to close a non-existent session.")
 
     def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""
@@ -51,7 +53,7 @@ class OllamaInterface:
             self.first_run = False
             context = {}
         # Clarify the meaning of "system" in the context
-        context.update({"system_definition": "The term 'system' refers to the project and its capabilities for complex software development assistant tasks."})
+        context.update({"system_definition": "The term 'software assistant' refers to the project and its capabilities for complex software development assistant tasks."})
         
         if use_contextual_memory:
             if "longterm_memory" not in context:

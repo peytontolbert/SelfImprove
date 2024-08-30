@@ -205,7 +205,7 @@ class SystemNarrative:
             self.logger.info(f"Adaptive learning data: {learning_data}")
             await self.knowledge_base.add_entry("adaptive_learning", learning_data)
             # Track the evolution of system capabilities
-            self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
+            await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
             # Track the evolution of system capabilities
             await self.knowledge_base.add_capability("adaptive_learning", {"details": learning_data, "timestamp": time.time()})
 
