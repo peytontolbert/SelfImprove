@@ -482,6 +482,7 @@ async def main():
     performance_optimizations = await ollama.query_ollama("performance_optimization", f"Identify and optimize performance bottlenecks: {metrics}")
     logger.info(f"Performance optimizations: {performance_optimizations}")
 
+    system_state = await components["ollama"].evaluate_system_state({})
     # Enhance continuous improvement framework
     logger.info("Enhancing continuous improvement framework with robust feedback integration.")
     feedback_optimization = await ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"system_state": system_state})
