@@ -1,5 +1,7 @@
 import logging
 from typing import Dict, Any, List
+from main_narrative_control import SimpleNN
+import torch
 from core.ollama_interface import OllamaInterface
 
 class QuantumDecisionMaker:
@@ -7,7 +9,12 @@ class QuantumDecisionMaker:
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama_interface
 
-    async def evaluate_possibilities(self, action, system_state, feedback) -> List[Dict[str, Any]]:
+    def __init__(self, ollama_interface: OllamaInterface):
+        self.logger = logging.getLogger(__name__)
+        self.ollama = ollama_interface
+        # Initialize the deep learning model
+        self.model = SimpleNN(input_size=10, hidden_size=5, output_size=1)  # Adjust sizes as needed
+        self.model.eval()  # Set the model to evaluation mode
         """
         Evaluate multiple possibilities for a given action using quantum-inspired logic.
 
@@ -20,8 +27,14 @@ class QuantumDecisionMaker:
         - A list of possible outcomes with their scores.
         """
         try:
+            # Prepare input data for the model
+            input_data = torch.tensor([system_state.get('metric', 0), feedback.get('metric', 0)], dtype=torch.float32)
+            with torch.no_grad():
+                # Use the model to predict a score
+                predicted_score = self.model(input_data).item()
+
             possible_outcomes = [
-                {"action": action, "score": await self.calculate_score(action, system_state, feedback, variation)}
+                {"action": action, "score": await self.calculate_score(action, system_state, feedback, variation) + predicted_score}
                 for variation in range(5)
             ]
             self.logger.info(f"Evaluated possibilities for action '{action}': {possible_outcomes}")
