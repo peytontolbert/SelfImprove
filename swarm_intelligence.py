@@ -22,7 +22,7 @@ class SwarmIntelligence:
         feedback = context.get("feedback", {})
 
         try:
-            quantum_optimized_actions = self.analyze_quantum_behavior(actions, system_state, feedback)
+            quantum_optimized_actions = await self.analyze_quantum_behavior(actions, system_state, feedback)
             self.logger.info(f"Quantum-optimized actions: {quantum_optimized_actions}")
             return {"quantum_optimized_actions": quantum_optimized_actions}
         except Exception as e:

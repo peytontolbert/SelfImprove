@@ -203,6 +203,27 @@ class SystemNarrative:
         self.logger.info(f"Prioritized actions for improvement: {prioritized_actions}")
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
+
+    async def execute_actions(self, actions):
+        """Execute a list of actions derived from thoughts and improvements."""
+        try:
+            for action in actions:
+                action_type = action.get("type")
+                details = action.get("details", {})
+                if action_type == "file_operation":
+                    await self.handle_file_operation(details)
+                elif action_type == "system_update":
+                    await self.handle_system_update(details)
+                elif action_type == "network_operation":
+                    await self.handle_network_operation(details)
+                elif action_type == "database_update":
+                    await self.handle_database_update(details)
+                else:
+                    self.logger.error(f"Unknown action type: {action_type}. Please check the action details.")
+            # Log the execution of actions
+            self.logger.info(f"Executed actions: {actions}")
+        except Exception as e:
+            self.logger.error(f"Error executing actions: {e}")
         await self.self_optimization(self.ollama, self.kb)
         system_state = {}
         improvement_cycle_count = 0
