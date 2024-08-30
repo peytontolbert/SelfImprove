@@ -1272,14 +1272,14 @@ class OmniscientDataAbsorber:
         await self.knowledge_base.add_entry("goal_adjustments", goal_adjustments)
 
     async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
-        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
+        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", context)
         # Log the start of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the start of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         
         # System state analysis
-        await self.log_state("Analyzing current system state")
+        await self.log_state("Analyzing current system state", context)
         system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
 
@@ -1289,7 +1289,7 @@ class OmniscientDataAbsorber:
         self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
 
         # Generate and apply improvements in parallel
-        await self.log_state("Generating improvement suggestions")
+        await self.log_state("Generating improvement suggestions", context)
         # Retrieve insights from the knowledge base for generating improvements
         insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
         self.logger.info(f"Retrieved insights for improvement: {insights}")
@@ -1363,7 +1363,7 @@ class OmniscientDataAbsorber:
         if improvement_cycle_count % 10 == 0:  # Every 10 cycles
             longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
             self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
-        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
+        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}", context)
         # Log the completion of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the completion of an improvement cycle in the knowledge base
@@ -1486,21 +1486,21 @@ class OmniscientDataAbsorber:
         self.logger.warning(f"High urgency implication detected in category: {category}. Immediate action required.")
         # Implement logic to handle high urgency implications
         # For example, trigger an immediate review or alert the system administrators
-        await self.log_state(f"High urgency implication in {category}: {description}")
+        await self.log_state(f"High urgency implication in {category}: {description}", context)
         # You might want to add a method to alert administrators or trigger an immediate response
 
     async def handle_medium_high_urgency_implication(self, category, description):
         self.logger.info(f"Medium-high urgency implication detected in category: {category}. Prioritize for review.")
         # Implement logic to handle medium-high urgency implications
         # For example, add to a priority queue for review
-        await self.log_state(f"Medium-high urgency implication in {category}: {description}")
+        await self.log_state(f"Medium-high urgency implication in {category}: {description}", context)
         # You might want to add a method to schedule a review or add to a priority task list
 
     async def handle_low_medium_urgency_implication(self, category, description):
         self.logger.info(f"Low-medium urgency implication detected in category: {category}. Monitor and review as needed.")
         # Implement logic to handle low-medium urgency implications
         # For example, add to a monitoring list
-        await self.log_state(f"Low-medium urgency implication in {category}: {description}")
+        await self.log_state(f"Low-medium urgency implication in {category}: {description}", context)
         # You might want to add a method to add this to a monitoring list or schedule a future review
 
     async def handle_timeout_error(self):
@@ -1550,7 +1550,7 @@ class OmniscientDataAbsorber:
 
     async def handle_timeout(self):
         self.logger.warning("Timeout occurred in the improvement cycle. Initiating recovery process.")
-        await self.log_state("Timeout recovery initiated")
+        await self.log_state("Timeout recovery initiated", context)
 
         # 1. Save the current state
         current_state = await self.ollama.evaluate_system_state({})
@@ -1589,7 +1589,7 @@ class OmniscientDataAbsorber:
         # Implement timeout adjustment logic here
         # For example: self.timeout_duration = new_timeout
 
-        await self.log_state("Timeout recovery completed")
+        await self.log_state("Timeout recovery completed", context)
         # Example usage of TemporalEngine
         objectives = ["Optimize performance", "Enhance user experience"]
         await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})
