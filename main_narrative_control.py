@@ -343,18 +343,20 @@ class SelfImprovement:
     async def meta_learn(self, performance_data):
         meta_learner = MetaLearner()
         optimized_strategies = await meta_learner.optimize_learning_strategies(self.ollama, performance_data)
-        await self.apply_learning_strategies(optimized_strategies)
-        try:
-            logger.info(f"Applying system update: {system_update}")
-            # Execute the update command or script
-            result = subprocess.run(system_update, shell=True, check=True, capture_output=True, text=True)
-            logger.info(f"System update executed successfully: {system_update}")
-            logger.debug(f"Update output: {result.stdout}")
-            return {"status": "success", "message": "System update applied successfully"}
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Failed to apply system update: {str(e)}")
-            logger.debug(f"Update error output: {e.stderr}")
-            return {"status": "failure", "message": f"System update failed: {str(e)}"}
+        for strategy in optimized_strategies:
+            if 'system_update' in strategy:
+                system_update = strategy['system_update']
+                try:
+                    self.logger.info(f"Applying system update: {system_update}")
+                    # Execute the update command or script
+                    result = subprocess.run(system_update, shell=True, check=True, capture_output=True, text=True)
+                    self.logger.info(f"System update executed successfully: {system_update}")
+                    self.logger.debug(f"Update output: {result.stdout}")
+                    return {"status": "success", "message": "System update applied successfully"}
+                except subprocess.CalledProcessError as e:
+                    self.logger.error(f"Failed to apply system update: {str(e)}")
+                    self.logger.debug(f"Update error output: {e.stderr}")
+                    return {"status": "failure", "message": f"System update failed: {str(e)}"}
 
     async def apply_quantum_optimization(self, problem_space):
         quantum_optimizer = QuantumOptimizer()
