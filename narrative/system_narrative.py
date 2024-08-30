@@ -654,19 +654,33 @@ class OmniscientDataAbsorber:
     async def absorb_knowledge(self):
         """Absorb knowledge from various sources with prioritization."""
         try:
-            # Prioritize files based on recent changes
-            files = sorted(os.listdir("knowledge_base_data"), key=lambda x: os.path.getmtime(os.path.join("knowledge_base_data", x)), reverse=True)
+            files = self.get_prioritized_files()
             for file in files:
-                with open(os.path.join("knowledge_base_data", file), 'r') as f:
-                    data = f.read()
-                    # Evaluate relevance before adding
-                    relevance = await self.knowledge_base.evaluate_relevance(file, {"content": data})
-                    if relevance.get('is_relevant', False):
-                        await self.knowledge_base.add_entry(file, {"content": data})
+                data = self.read_file(file)
+                if await self.is_relevant(file, data):
+                    await self.save_knowledge(file, data)
             self.logger.info("Knowledge absorbed from prioritized files.")
             await self.disseminate_knowledge()
         except Exception as e:
             self.logger.error(f"Error absorbing knowledge: {e}")
+
+    def get_prioritized_files(self):
+        """Get files sorted by modification time."""
+        return sorted(os.listdir("knowledge_base_data"), key=lambda x: os.path.getmtime(os.path.join("knowledge_base_data", x)), reverse=True)
+
+    def read_file(self, file):
+        """Read the content of a file."""
+        with open(os.path.join("knowledge_base_data", file), 'r') as f:
+            return f.read()
+
+    async def is_relevant(self, file, data):
+        """Check if the file content is relevant."""
+        relevance = await self.knowledge_base.evaluate_relevance(file, {"content": data})
+        return relevance.get('is_relevant', False)
+
+    async def save_knowledge(self, file, data):
+        """Save the knowledge to the knowledge base."""
+        await self.knowledge_base.add_entry(file, {"content": data})
 
     async def disseminate_knowledge(self):
         """Disseminate absorbed knowledge for decision-making."""
