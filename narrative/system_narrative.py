@@ -16,7 +16,7 @@ class TemporalEngine:
         self.logger = logging.getLogger("TemporalEngine")
 
     async def temporal_recursion(self, objective, context, depth=0, max_depth=5):
-        """Recursively process an objective over time."""
+        """Recursively process an objective over time with dynamic adjustments."""
         if depth >= max_depth:
             self.logger.warning(f"Max recursion depth reached for objective: {objective}")
             return
@@ -28,6 +28,8 @@ class TemporalEngine:
         # Adjust based on feedback
         if feedback.get("adjustment_needed"):
             self.logger.info(f"Adjusting objective: {objective} based on feedback")
+            # Dynamically adjust max_depth based on feedback
+            max_depth = min(max_depth + 1, 10) if feedback.get("increase_depth") else max_depth
         await self.temporal_recursion(objective, context, depth + 1, max_depth)
 
     async def temporal_loop(self, objectives, context, iterations=3):
@@ -45,15 +47,18 @@ class OmniscientDataAbsorber:
         self.logger = logging.getLogger("OmniscientDataAbsorber")
 
     async def absorb_knowledge(self):
-        """Absorb knowledge from various sources."""
+        """Absorb knowledge from various sources with prioritization."""
         try:
-            # Example: Absorb knowledge from files
-            files = os.listdir("knowledge_base_data")
+            # Prioritize files based on recent changes
+            files = sorted(os.listdir("knowledge_base_data"), key=lambda x: os.path.getmtime(os.path.join("knowledge_base_data", x)), reverse=True)
             for file in files:
                 with open(os.path.join("knowledge_base_data", file), 'r') as f:
                     data = f.read()
-                    await self.knowledge_base.add_entry(file, {"content": data})
-            self.logger.info("Knowledge absorbed from files.")
+                    # Evaluate relevance before adding
+                    relevance = await self.knowledge_base.evaluate_relevance(file, {"content": data})
+                    if relevance.get('is_relevant', False):
+                        await self.knowledge_base.add_entry(file, {"content": data})
+            self.logger.info("Knowledge absorbed from prioritized files.")
             await self.omniscient_data_absorber.absorb_knowledge()
             await self.omniscient_data_absorber.disseminate_knowledge()
         except Exception as e:
