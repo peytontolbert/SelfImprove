@@ -7,7 +7,7 @@ class ConsciousnessEmulator:
         self.ollama = ollama
         self.logger = logging.getLogger(__name__)
 
-    def emulate_consciousness(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def emulate_consciousness(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Simulate a consciousness-like awareness to enhance decision-making and self-improvement.
 
