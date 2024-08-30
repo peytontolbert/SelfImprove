@@ -60,22 +60,25 @@ class OllamaInterface:
                 context.update({"tutorial": tutorial})
             self.first_run = False
         # Clarify the meaning of "system" in the context
-        context.update({"system_definition": "The term 'system' refers to the project and its capabilities for complex software development assistant tasks."})
+        # Simplify context to include only essential elements
+        essential_context = {
+            "task": context.get("task"),
+            "prompt_length": len(prompt),
+            "system_definition": "The term 'system' refers to the project and its capabilities for complex software development assistant tasks."
+        }
         
-        if use_contextual_memory:
-            if "longterm_memory" not in context:
-                context_memory = await self.knowledge_base.get_longterm_memory()
-                # Summarize context memory to fit within context limits
-                summarized_memory = self.knowledge_base.summarize_memory(context_memory)
-                context.update({"context_memory": summarized_memory})
+        if use_contextual_memory and "longterm_memory" not in context:
+            context_memory = await self.knowledge_base.get_longterm_memory()
+            summarized_memory = self.knowledge_base.summarize_memory(context_memory)
+            essential_context.update({"context_memory": summarized_memory})
+        
         if refine and task not in ["logging", "categorization"]:
             refined_prompt = await self.refine_prompt(prompt, task)
             if refined_prompt and isinstance(refined_prompt, str):
                 prompt = refined_prompt.strip()
-        if not context:
-            self.logger.warning("No specific context provided. Using default context.")
-        context.update({"timestamp": time.time()})
-        context_str = json.dumps(context, indent=2)
+        
+        essential_context.update({"timestamp": time.time()})
+        context_str = json.dumps(essential_context, indent=2)
         prompt = f"Context: {context_str}\n\n{prompt}"
         self.logger.info(f"Querying Ollama with prompt: {prompt}")
 
