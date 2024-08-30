@@ -43,6 +43,8 @@ class OllamaInterface:
             finally:
                 self.session = None
                 self.logger.info("Client session set to None.")
+        else:
+            self.logger.warning("Attempted to close a non-existent session.")
 
     def simplify_context_memory(self, context_memory, max_depth=3, current_depth=0):
         """Simplify the context memory structure to avoid excessive nesting."""

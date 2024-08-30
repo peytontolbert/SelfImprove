@@ -136,7 +136,7 @@ class SystemNarrative:
         feedback = await self.ollama.query_ollama("feedback_analysis", "Refine thoughts based on feedback.", context={"thoughts": thought_processes})
         refined_thoughts = [f"Refined {thought}" for thought in feedback.get("refined_thoughts", thought_processes)]
         # Log feedback-driven refinement process
-        await self.ollama.log_chain_of_thought("Feedback-driven refinement process completed.")
+        self.logger.info("Feedback-driven refinement process completed.")
         return refined_thoughts
 
     async def predictive_thought_modeling(self, thought_processes):
