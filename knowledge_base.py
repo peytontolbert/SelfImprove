@@ -18,6 +18,7 @@ class KnowledgeBase:
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
+        self._initialized = False
         self.check_connection()
         if not self._initialized:
             self.initialize_database()
