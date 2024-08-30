@@ -83,6 +83,7 @@ class QuantumOptimizer:
         
         self.logger.info(f"Quantum optimization logic applied: {optimal_solution}")
         return {"optimal_solution": optimal_solution}
+    def analyze_results(self, quantum_solution):
         """Analyze the optimization results."""
         if quantum_solution:
             self.logger.info(f"Optimization results: {quantum_solution}")
