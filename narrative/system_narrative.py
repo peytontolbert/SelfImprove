@@ -1079,8 +1079,17 @@ class OmniscientDataAbsorber:
         await self.knowledge_base.save_longterm_memory(longterm_memory)
         with open('narrative_data/longterm.json', 'w') as f:
             json.dump(longterm_memory, f, indent=2)
+        # Read existing thoughts
+        existing_thoughts = self.spreadsheet_manager.read_data("A1:A10", sheet_name="NarrativeData")
+        self.logger.info(f"Existing thoughts: {existing_thoughts}")
+
         # Log thoughts to spreadsheet
         self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
+
+        # Write additional insights
+        additional_insights = [["Insight 1", "Detail 1"], ["Insight 2", "Detail 2"]]
+        self.spreadsheet_manager.write_data((2, 1), additional_insights, sheet_name="NarrativeData")
+        self.logger.info("Additional insights written to spreadsheet")
         with open('narrative_data/narrative_data.json', 'w') as f:
             json.dump({"thoughts": thoughts}, f, indent=2)
         return thoughts

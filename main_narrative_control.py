@@ -490,6 +490,13 @@ async def main():
     tasks_data = spreadsheet_manager.read_data("A1:B10")
     logger.info(f"Existing tasks and statuses: {json.dumps(tasks_data, indent=2)}")
 
+    # Process tasks data
+    processed_tasks = [{"task": task[0], "status": "Processed"} for task in tasks_data if task]
+
+    # Write processed tasks back to the spreadsheet
+    spreadsheet_manager.write_data((1, 3), [["Task", "Status"]] + [[task["task"], task["status"]] for task in processed_tasks])
+    logger.info("Processed tasks written to spreadsheet")
+
     # Manage prompt versions and A/B testing
     prompt_versions = prompt_manager.get_next_version("system_prompts")
     logger.info(f"Current prompt version: {prompt_versions}")
