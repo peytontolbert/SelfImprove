@@ -15,6 +15,7 @@ class OllamaInterface:
         self.session = None
         self.knowledge_base = knowledge_base or KnowledgeBase(ollama_interface=self)
         self.first_run = True
+        self.tutorial_manager = TutorialManager()
         self.conversation_history = []
         self.logger = logging.getLogger(__name__)
         self.system_prompt = "Default system prompt"
@@ -42,7 +43,7 @@ class OllamaInterface:
         return context_memory
     async def query_ollama(self, system_prompt: str, prompt: str, task: str = "general", context: Dict[str, Any] = None, refine: bool = True, use_contextual_memory: bool = True) -> Dict[str, Any]:
         if self.first_run:
-            tutorial = self.knowledge_base.load_tutorial("getting_started")
+            tutorial = self.tutorial_manager.load_tutorial("getting_started")
             if tutorial:
                 self.logger.info(f"Loaded tutorial: {tutorial}")
                 context.update({"tutorial": tutorial})

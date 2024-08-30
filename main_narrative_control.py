@@ -348,6 +348,17 @@ def initialize_components():
     pm = PromptManager()
     eh = ErrorHandler()
     tutorial_manager = TutorialManager()
+    # Load a tutorial on the first run
+    if ollama.first_run:
+        tutorial = tutorial_manager.load_tutorial("getting_started")
+        if tutorial:
+            logger.info(f"Loaded tutorial: {tutorial}")
+            # Use the tutorial content as needed
+    # Example of saving a new tutorial
+    new_tutorial_content = {"title": "Advanced Features", "content": "Learn about advanced features..."}
+    tutorial_manager.save_tutorial("advanced_features", new_tutorial_content)
+    logger.info("New tutorial saved: Advanced Features")
+
     return ollama, rl_module, task_queue, vcs, ca, tf, dm, kb, narrative, si, fs, pm, eh, tutorial_manager
 
 async def main():
