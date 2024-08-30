@@ -364,8 +364,8 @@ def initialize_components():
     kb = KnowledgeBase(ollama_interface=ollama)
     improvement_manager = ImprovementManager(ollama)
     omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
-    si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator)
     consciousness_emulator = ConsciousnessEmulator(ollama)
+    si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator)
     components = {
         "consciousness_emulator": consciousness_emulator,
         "ollama": ollama,
