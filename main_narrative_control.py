@@ -710,9 +710,15 @@ async def main():
     # Initialize and use components
     rl_module = components["rl_module"]
     si = components["si"]
+    consciousness_emulator = components["consciousness_emulator"]
     metrics = await si.get_system_metrics()
     rl_feedback = await rl_module.get_feedback(metrics)
     logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+
+    # Use ConsciousnessEmulator to prioritize actions
+    context = {"metrics": metrics, "rl_feedback": rl_feedback}
+    prioritized_actions = await consciousness_emulator.emulate_consciousness(context)
+    logger.info(f"Prioritized actions from ConsciousnessEmulator: {prioritized_actions}")
 
     task_queue = components["task_queue"]
     vcs = components["vcs"]
@@ -738,6 +744,13 @@ async def main():
     # Integrate system narrative deeply into the main loop
     await narrative.log_chain_of_thought("Starting main narrative control process.")
     await narrative.control_improvement_process(ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, components)
+
+    # Log the impact of ConsciousnessEmulator
+    await narrative.log_chain_of_thought({
+        "process": "Consciousness Emulation",
+        "description": "Utilizing ConsciousnessEmulator to enhance decision-making and prioritize actions.",
+        "prioritized_actions": prioritized_actions
+    })
 
     # Example: Train the model (assuming train_loader is defined)
     # nn_model.train_model(train_loader, criterion=nn.MSELoss(), optimizer=optim.Adam(nn_model.parameters()), num_epochs=10)
