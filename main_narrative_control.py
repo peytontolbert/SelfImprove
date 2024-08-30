@@ -35,13 +35,15 @@ from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
-logger = setup_logging()
+def setup_logging():
     """Set up logging with a detailed format."""
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
     return logging.getLogger(__name__)
+
+logger = setup_logging()
 
 class QuantumOptimizer:
     def __init__(self):
