@@ -1418,7 +1418,7 @@ class OmniscientDataAbsorber:
         })
 
     async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si):
-        await self.log_state("Performing additional system improvement tasks", "Additional tasks execution", context or {})
+        await self.log_state("Performing additional system improvement tasks", "Additional tasks execution", task_queue or {})
         await task_queue.manage_orchestration()
         
         # Analyze code and suggest improvements
@@ -1437,12 +1437,12 @@ class OmniscientDataAbsorber:
         # Deploy code if approved
         deployment_decision = await si.retry_ollama_call(dm.deploy_code, ollama)
         if deployment_decision and deployment_decision.get('deploy', False):
-            await self.log_state("Deployment approved by Ollama", "Deployment decision", context or {})
+            await self.log_state("Deployment approved by Ollama", "Deployment decision", deployment_decision or {})
         else:
-            await self.log_state("Deployment deferred based on Ollama's decision", "Deployment decision", context or {})
+            await self.log_state("Deployment deferred based on Ollama's decision", "Deployment decision", deployment_decision or {})
 
         # Perform version control operations
-        await self.log_state("Performing version control operations", "Version control execution", context or {})
+        await self.log_state("Performing version control operations", "Version control execution", vcs or {})
         changes = "Recent system changes"
         await vcs.commit_changes(ollama, changes)
 
