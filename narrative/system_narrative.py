@@ -30,10 +30,19 @@ class SystemNarrative:
         self.request_log = []
         self.code_visualizer = DimensionalCodeVisualizer(ollama_interface)
 
-    async def log_chain_of_thought(self, thought_process):
-        """Log the chain of thought for system processes."""
-        self.logger.info(f"Chain of Thought: {thought_process}")
-        await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}")
+    async def log_chain_of_thought(self, thought_processes):
+        """Log and enhance the chain of thought for system processes."""
+        # Enhance the chain of thought by synthesizing multiple thoughts
+        enhanced_thought = self.synthesize_thoughts(thought_processes)
+        self.logger.info(f"Enhanced Chain of Thought: {enhanced_thought}")
+        await log_with_ollama(self.ollama, f"Enhanced Chain of Thought: {enhanced_thought}")
+
+    def synthesize_thoughts(self, thought_processes):
+        """Synthesize multiple thoughts into a stronger, cohesive thought."""
+        # Example logic to combine thoughts
+        combined_thought = " ".join(thought_processes)
+        # Further enhancement logic can be added here
+        return combined_thought
 
     async def log_state(self, message, thought_process, context=None):
         if context is None:
