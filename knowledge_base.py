@@ -289,7 +289,6 @@ class KnowledgeBase:
     async def summarize_memory(self, memory):
         """Summarize memory entries."""
         self.logger.info(f"Summarizing memory: {memory}")
-        # Ensure the coroutine is awaited
         # Ensure memory is serializable before passing to json.dumps
         try:
             memory_data = json.dumps(memory)
@@ -297,7 +296,13 @@ class KnowledgeBase:
             self.logger.error(f"Error serializing memory data: {e}")
             return "Error: Memory data is not serializable"
 
-        summary = await self.ollama.query_ollama("memory_summarization", f"Summarize the following memory data: {memory_data}")
+        # Avoid recursive call to query_ollama that leads back to summarize_memory
+        if "summary" in memory:
+            self.logger.info("Memory already summarized.")
+            return memory["summary"]
+
+        summary_response = await self.ollama.query_ollama("memory_summarization", f"Summarize the following memory data: {memory_data}")
+        summary = summary_response.get("summary", "No summary available")
         self.logger.info(f"Memory summary: {summary}")
         return summary
 
