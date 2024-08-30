@@ -448,11 +448,8 @@ async def main():
         try:
             while True:
                 try:
-                    await data_absorber.absorb_knowledge()
-                    initial_context = await ollama.evaluate_system_state({})
-                    consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
-                    context = consciousness_result["enhanced_awareness"]
-                    context.update(consciousness_result)
+                    await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
+                    context = await gather_context(ollama, consciousness_emulator)
 
                     await process_tasks(components, context)
                     await manage_prompts(components, context)
@@ -463,11 +460,24 @@ async def main():
                     await narrative.log_chain_of_thought("Completed main loop iteration")
                     await asyncio.sleep(60)  # Adjust the sleep time as needed
                 except Exception as e:
-                    logger.error(f"Error in main loop: {str(e)}")
+                    logger.exception("An error occurred in the main loop", exc_info=e)
                     await error_handling_and_recovery(components, e)
         finally:
             if not session.closed:
                 await session.close()
+
+async def perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator):
+    await data_absorber.absorb_knowledge()
+    initial_context = await ollama.evaluate_system_state({})
+    consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
+    return consciousness_result
+
+async def gather_context(ollama, consciousness_emulator):
+    initial_context = await ollama.evaluate_system_state({})
+    consciousness_result = await consciousness_emulator.emulate_consciousness(initial_context)
+    context = consciousness_result["enhanced_awareness"]
+    context.update(consciousness_result)
+    return context
 
 async def system_initialization(system_manager, ollama, narrative):
     system_manager.log_system_state()
