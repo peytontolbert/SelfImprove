@@ -4,11 +4,12 @@ import random
 from simple_nn import GeneralNN
 import torch
 from core.ollama_interface import OllamaInterface
-
+from knowledge_base import KnowledgeBase
 class QuantumDecisionMaker:
     def __init__(self, ollama_interface: OllamaInterface):
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama_interface
+        self.kb = KnowledgeBase()
 
     async def evaluate_possibilities(self, action, system_state, feedback) -> List[Dict[str, Any]]:
         """
@@ -54,7 +55,7 @@ class QuantumDecisionMaker:
         """
         self.logger.info("Building quantum decision tree.")
         # Integrate long-term memory insights
-        longterm_memory = await self.ollama.get_longterm_memory()
+        longterm_memory = await self.kb.get_longterm_memory()
         context = context or {}
         context.update({"longterm_memory": longterm_memory})
 
