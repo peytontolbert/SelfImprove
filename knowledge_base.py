@@ -227,7 +227,10 @@ class KnowledgeBase:
         self.logger.info(f"Relevance evaluation for {entry_name}: {relevance_decision}")
         return relevance_decision
 
-    async def integrate_cross_disciplinary_knowledge(self, disciplines: List[str], knowledge: Dict[str, Any]) -> Dict[str, Any]:
+    async def get_longterm_memory(self) -> Dict[str, Any]:
+        """Retrieve long-term memory data."""
+        # Placeholder implementation
+        return self.longterm_memory
         """Integrate knowledge across multiple disciplines."""
         prompt = f"Integrate knowledge from these disciplines: {disciplines} with the following data: {json.dumps(knowledge)}"
         context = {"disciplines": disciplines, "knowledge": knowledge}
