@@ -139,7 +139,7 @@ class KnowledgeBase:
             self.logger.info("Synchronized data between spreadsheet and graph database.")
         except Exception as e:
             self.logger.error(f"Error synchronizing data: {e}")
-        if context:
+        if 'context' in locals():
             data.update({"context": context})
 
         # Evaluate the relevance of the data
@@ -157,12 +157,12 @@ class KnowledgeBase:
         if decision.get('add_entry', False):
             properties = {
                 "data": data,
-                "metadata": metadata or {},
-                "narrative_context": narrative_context or {},
+                "metadata": {},
+                "narrative_context": {},
                 "timestamp": time.time()
             }
             self.add_node(entry_name, properties)
-            self.logger.info(f"Entry added: {entry_name} with metadata: {metadata} and narrative context: {narrative_context}")
+            self.logger.info(f"Entry added: {entry_name} with metadata and narrative context")
             # Log the addition of new capabilities for future analysis
             await self.log_capability_evolution(entry_name, properties)
             return True

@@ -1,4 +1,5 @@
 import openpyxl
+import logging
 from openpyxl.utils.exceptions import InvalidFileException
 from typing import List, Tuple, Optional
 
