@@ -178,17 +178,13 @@ class SystemNarrative:
         context = {"error": str(error)}
         recovery_suggestion = await self.ollama.query_ollama(self.ollama.system_prompt, error_prompt, task="error_recovery", context=context)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
-        if context is None:
-            context = {}
-        # Extract and refine relevant elements from the context
+        context = context or {}
         relevant_context = {
             "system_status": context.get("system_status", "Current system status"),
             "recent_changes": context.get("recent_changes", "Recent changes in the system"),
             "longterm_memory": context.get("longterm_memory", {}).get("thoughts", {}),
             "current_tasks": context.get("current_tasks", "List of current tasks"),
-            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {}),
-            "user_feedback": context.get("user_feedback", "No user feedback available"),
-            "environmental_factors": context.get("environmental_factors", "No environmental factors available")
+            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {})
         }
         self.logger.info(f"Chain of Thought: {thought_process} | Context: {json.dumps(context, indent=2)} | Timestamp: {time.time()}")
         await log_with_ollama(self.ollama, f"Chain of Thought: {thought_process}", relevant_context)
