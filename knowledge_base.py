@@ -18,43 +18,23 @@ class KnowledgeBase:
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
-        self._initialized = False
-        if not self._initialized:
-            self.check_connection()
-            self.initialize_database()
-            self._initialized = True
+        self.initialize_database()
         self.ollama = ollama_interface
-        self.longterm_memory = {}  # Initialize with a fixed size limit
-        self.memory_limit = 100  # Example limit for the number of entries
+        self.longterm_memory = {}
         self.base_directory = "knowledge_base_data"
         if not os.path.exists(self.base_directory):
             os.makedirs(self.base_directory)
 
-    def check_connection(self):
-        """Check if the connection to the Neo4j database can be established."""
-        try:
-            with self.driver.session() as session:
-                session.run("RETURN 1")
-            self.logger.info("Successfully connected to the Neo4j database.")
-        except Exception as e:
-            self.logger.error(f"Failed to connect to the Neo4j database: {str(e)}")
-            raise ConnectionError("Could not connect to the Neo4j database. Please ensure it is running and accessible.")
-        """Initialize the database with necessary nodes and relationships."""
-        self.logger.info("Starting database initialization.")
-        
     def initialize_database(self):
         """Initialize the database with necessary nodes and relationships."""
-        self.logger.info("Starting database initialization.")
         try:
             with self.driver.session() as session:
                 session.write_transaction(self._create_initial_nodes)
             self.logger.info("Database initialized successfully.")
-            self.logger.info("Initial nodes and constraints created.")
         except Exception as e:
             self.logger.error(f"Failed to initialize database: {str(e)}")
             self.logger.info("Attempting to create a new database.")
             self.create_database()
-            self.logger.info("New database creation attempted.")
 
     def create_database(self):
         """Create a new database if it doesn't exist."""
@@ -64,11 +44,8 @@ class KnowledgeBase:
 
     @staticmethod
     def _create_initial_nodes(tx):
-        # Check if the constraint already exists before creating
-        result = tx.run("SHOW CONSTRAINTS")
-        constraints = [record["name"] for record in result if "Node" in record["labelsOrTypes"] and "name" in record["properties"]]
-        if "constraint_bcaf404a" not in constraints:
-            tx.run("CREATE CONSTRAINT FOR (n:Node) REQUIRE n.name IS UNIQUE")
+        # Create initial nodes or constraints if needed
+        tx.run("CREATE CONSTRAINT IF NOT EXISTS FOR (n:Node) REQUIRE n.name IS UNIQUE")
 
     def add_nodes_batch(self, label, nodes):
         """Add multiple nodes in a batch to the graph."""
