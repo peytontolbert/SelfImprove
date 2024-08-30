@@ -379,7 +379,7 @@ def initialize_components():
         "eh": ErrorHandler(),
         "tutorial_manager": TutorialManager(),
         "meta_learner": MetaLearner(),
-        "quantum_optimizer": QuantumOptimizer(),
+        "quantum_optimizer": QuantumOptimizer(ollama),
         "swarm_intelligence": SwarmIntelligence(ollama)
     }
 
