@@ -473,13 +473,15 @@ class RefinementManager:
     - knowledge_base: Instance of KnowledgeBase for storing and retrieving knowledge.
     - improvement_manager: Instance of ImprovementManager for managing improvements.
     - consciousness_emulator: Instance of ConsciousnessEmulator for enhancing decision-making.
+    - refinement_manager: Instance of RefinementManager for refining strategies.
 
     Methods:
     - analyze_performance: Analyzes system performance and suggests improvements.
     - validate_improvements: Validates suggested improvements.
     - apply_improvements: Applies validated improvements.
     - apply_code_change: Applies a code change.
-    - apply_system_update: Applies a system update.
+    - meta_learn: Applies meta-learning strategies.
+    - apply_quantum_optimization: Applies quantum optimization to problem spaces.
     - learn_from_experience: Learns from past experiences to improve future performance.
     - get_system_metrics: Retrieves current system metrics.
     - suggest_prompt_refinements: Suggests refinements for system prompts.
@@ -492,31 +494,27 @@ class RefinementManager:
         self.ollama = ollama
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
+        self.refinement_manager = RefinementManager(ollama, knowledge_base)
+        self.swarm_intelligence = SwarmIntelligence(ollama)
 
-    async def analyze_performance(self, metrics, rl_module, refinement_manager):
+    async def analyze_performance(self, metrics, rl_module):
         self.logger.info(f"Starting performance analysis with metrics: {metrics}")
         improvements = await self.improvement_manager.suggest_improvements(metrics)
-        self.logger.info(f"Suggested improvements: {improvements}")
-
+        
         collaborative_insights = await self.ollama.query_ollama(
             "collaborative_learning",
             "Integrate collaborative learning insights to optimize improvements.",
-            context={"metrics": metrics}
+            context={"metrics": metrics, "improvements": improvements}
         )
-        self.logger.info(f"Collaborative learning insights: {collaborative_insights}")
         improvements.extend(collaborative_insights.get("suggestions", []))
 
-        # Combine quantum decisions and reinforcement learning feedback
         quantum_decisions = await self.quantum_decision_maker.quantum_decision_tree({
             "actions": improvements,
             "system_state": metrics
-        }, context={"metrics": metrics})
-        self.logger.info(f"Quantum decisions: {quantum_decisions}")
+        })
 
         rl_feedback = await rl_module.get_feedback(metrics)
-        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
 
-        # Integrate both strategies to influence actions
         combined_insights = {
             "actions": improvements + quantum_decisions.get("suggestions", []),
             "system_state": metrics,
@@ -524,36 +522,23 @@ class RefinementManager:
         }
 
         optimized_improvements = await self.swarm_intelligence.optimize_decision(combined_insights)
-        self.logger.info(f"Optimized improvements with combined insights: {optimized_improvements}")
+        validated_improvements = await self.validate_improvements(optimized_improvements)
 
-        validated_improvements = await self.improvement_manager.validate_improvements(optimized_improvements)
-        self.logger.info(f"Validated improvements: {validated_improvements}")
-
-        performance_optimizations = await self.ollama.query_ollama("performance_optimization", f"Suggest performance optimizations for these metrics: {metrics}", context={"metrics": metrics})
-        self.logger.info(f"Performance optimization suggestions: {performance_optimizations}")
-
-        performance_optimization_suggestions = performance_optimizations.get("suggestions", [])
+        performance_optimizations = await self.ollama.query_ollama(
+            "performance_optimization",
+            f"Suggest performance optimizations for these metrics: {metrics}",
+            context={"metrics": metrics, "validated_improvements": validated_improvements}
+        )
 
         hypotheses = await self.generate_hypotheses(metrics)
-        self.logger.info(f"Generated hypotheses: {hypotheses}")
-
         tested_hypotheses = await self.test_hypotheses(hypotheses)
-        self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
 
-        final_results = validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
-        self.logger.info(f"Final performance analysis results: {final_results}")
+        final_results = validated_improvements + performance_optimizations.get("suggestions", []) + rl_feedback + tested_hypotheses
 
-        # Initialize strategies
-        strategies = []
-        
-        # Use the RefinementManager to refine strategies
-        refined_strategies = await refinement_manager.refine_strategy(improvements, rl_feedback, metrics)
-        self.logger.info(f"Refined strategies: {refined_strategies}")
+        refined_strategies = await self.refinement_manager.refine_strategy(improvements, rl_feedback, metrics)
+        evaluation_results = await self.refinement_manager.evaluate_refinements(refined_strategies)
 
-        # Evaluate the effectiveness of the refinements
-        evaluation_results = await refinement_manager.evaluate_refinements(refined_strategies)
-        self.logger.info(f"Evaluation results of refinements: {evaluation_results}")
-
+        self.logger.info(f"Final performance analysis results: {final_results + evaluation_results + refined_strategies}")
         return final_results + evaluation_results + refined_strategies
 
     async def generate_hypotheses(self, metrics):
