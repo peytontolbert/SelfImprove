@@ -2,7 +2,7 @@ import logging
 import subprocess
 from core.ollama_interface import OllamaInterface
 from meta_learner import MetaLearner
-from main_narrative_control import QuantumOptimizer
+from quantum_optimizer import QuantumOptimizer
 from knowledge_base import KnowledgeBase
 from core.improvement_manager import ImprovementManager
 

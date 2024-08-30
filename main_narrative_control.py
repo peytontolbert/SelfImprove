@@ -36,6 +36,7 @@ from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
 from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
+from quantum_optimizer import QuantumOptimizer
 def setup_logging():
     """Set up logging with a detailed format."""
     logging.basicConfig(
