@@ -18,8 +18,6 @@ class DimensionalCodeVisualizer:
         self.logger.info("Visualizing code structure.")
         # Enhanced visualization logic
         visualization = self.create_visualization(codebase)
-        self.logger.info(f"Visualization result: {visualization}")
-        return visualization
 
     def create_visualization(self, codebase):
         """
