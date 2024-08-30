@@ -163,16 +163,6 @@ class OllamaInterface:
         with open(dataset_file, 'a') as file:
             json.dump(log_data, file)
             file.write('\n')
-    def log_interaction(self, system_prompt, prompt, response):
-        """Log the interaction with Ollama."""
-        log_data = {
-            "system_prompt": system_prompt,
-            "prompt": prompt,
-            "response": response,
-            "timestamp": time.time()
-        }
-        log_name = f"ollama_interaction_{int(time.time())}"
-        self.log_manager.save_log(log_name, log_data)
 
     async def retry_with_backoff(self, func: Callable[[], Coroutine], retries: int = 3, delay: int = 1) -> Any:
         """Retry a coroutine with exponential backoff."""
