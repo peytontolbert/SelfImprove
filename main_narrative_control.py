@@ -41,6 +41,7 @@ from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
 from hyperloop_optimizer import HyperloopOptimizer
 from quantum_optimizer import QuantumOptimizer
+from bayesian_optimizer import BayesianOptimizer
 from quantum_decision_maker import QuantumDecisionMaker
 from attention_mechanism import ConsciousnessEmulator
 from simple_nn import GeneralNN
