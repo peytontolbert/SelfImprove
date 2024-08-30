@@ -587,6 +587,11 @@ async def analyze_and_improve_system(components, context):
     for improvement in refined_improvements:
         result = await si.apply_improvements([improvement])
         await narrative.log_chain_of_thought(f"Applied improvement: {improvement}, Result: {result}")
+        
+        # Automatically deploy improvements if successful
+        if result.get("success", False):
+            await components["dm"].deploy_code(ollama, narrative)
+            await narrative.log_chain_of_thought(f"Deployed improvement: {improvement}")
 
 async def optimize_system(components, context):
     ollama = components["ollama"]
