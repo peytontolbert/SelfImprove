@@ -53,7 +53,7 @@ class SwarmIntelligence:
         self.logger.info(f"Quantum-optimized actions: {quantum_optimized_actions}")
         return quantum_optimized_actions
 
-    def optimize_decision(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def optimize_decision(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
         Use swarm intelligence and quantum decision-making to optimize decisions.
 
