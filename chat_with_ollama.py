@@ -105,7 +105,7 @@ class ChatGPT:
     async def chat_with_ollama(self, system_prompt: str, prompt: str, retries: int=5, delay: int=5):
         url = "http://localhost:11434/api/generate"
         payload = {
-            "model": "llama3.1",
+            "model": "hermes3",
             "prompt": f"{system_prompt}\n{prompt}",
             "format": "json",
             "stream": False,
