@@ -542,13 +542,6 @@ class QuantumPredictiveAnalyzer:
     def __init__(self, ollama_interface: OllamaInterface):
         self.quantum_decision_maker = QuantumDecisionMaker(ollama_interface=ollama_interface)
 
-    async def log_state(self, message, context=None):
-        """Log the current state of the system with a message and optional context."""
-        if context is None:
-            context = {}
-        self.logger.info(f"System State: {message} | Context: {json.dumps(context, indent=2)}")
-        await self.log_with_ollama(message, context)
-        self.logger = logging.getLogger("QuantumPredictiveAnalyzer")
 
     async def perform_quantum_analysis(self, predictive_context):
         """
