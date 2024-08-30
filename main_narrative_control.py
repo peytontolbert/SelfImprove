@@ -512,6 +512,7 @@ async def main():
     await ollama.update_system_prompt(new_system_prompt.get("new_system_prompt", "Default system prompt"))
     logger.info(f"Updated system prompt: {new_system_prompt}")
     longterm_memory = await kb.get_longterm_memory()
+    summarized_memory = await kb.summarize_memory(longterm_memory)
     logger.info(f"Retrieved long-term memory: {json.dumps(longterm_memory, indent=2)}")
     await kb.save_longterm_memory(longterm_memory)
     await narrative.log_chain_of_thought("Analyzing system performance to suggest improvements.")
