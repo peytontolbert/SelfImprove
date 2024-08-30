@@ -594,6 +594,44 @@ class SystemNarrative:
             "after": new_metrics
         })
 
+    async def generate_detailed_thoughts(self, context=None):
+        """Generate detailed thoughts or insights about the current state and tasks."""
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
+        prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
+        if context:
+            prompt += f" | Context: {context}"
+        if longterm_memory:
+            prompt += f" | Long-term Memory: {longterm_memory}"
+        context = context or {}
+        context.update({
+            "longterm_memory": longterm_memory,
+            "current_tasks": "List of current tasks",
+            "system_status": "Current system status"
+        })
+        self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+        await self.knowledge_base.log_interaction("SystemNarrative", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+        self.track_request("thought_generation", prompt, "thoughts")
+        ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
+        thoughts = ollama_response.get('thoughts', 'No thoughts generated')
+        self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
+        await self.knowledge_base.save_longterm_memory(longterm_memory)
+        with open('narrative_data/longterm.json', 'w') as f:
+            json.dump(longterm_memory, f, indent=2)
+        # Read existing thoughts
+        existing_thoughts = self.spreadsheet_manager.read_data("A1:A10", sheet_name="NarrativeData")
+        self.logger.info(f"Existing thoughts: {existing_thoughts}")
+
+        # Log thoughts to spreadsheet
+        self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
+
+        # Write additional insights
+        additional_insights = [["Insight 1", "Detail 1"], ["Insight 2", "Detail 2"]]
+        self.spreadsheet_manager.write_data((2, 1), additional_insights, sheet_name="NarrativeData")
+        self.logger.info("Additional insights written to spreadsheet")
+        with open('narrative_data/narrative_data.json', 'w') as f:
+            json.dump({"thoughts": thoughts}, f, indent=2)
+        return thoughts
+
     async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si, context=None):
         context = context or {}
         await self.log_state("Performing additional system improvement tasks", "Additional tasks execution")
