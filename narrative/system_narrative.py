@@ -911,17 +911,12 @@ class OmniscientDataAbsorber:
         recovery_suggestion = await self.ollama.query_ollama(self.ollama.system_prompt, error_prompt, task="error_recovery", context=context)
         return recovery_suggestion.get("recovery_strategy", "No recovery strategy suggested.")
 
-    async def log_with_ollama(self, message, context=None):
-        """Log messages with Ollama's assistance."""
-        prompt = f"Log this message: {message}"
-        if context:
-            prompt += f" | Context: {context}"
-        await self.ollama.query_ollama("logging", prompt, refine=False)
+    async def log_error(self, error, context=None):
         """Log errors with context and recovery strategies."""
         error_context = context or {}
         error_context.update({"error": str(error), "timestamp": time.time()})
         self.logger.error(f"System Error: {error} | Context: {json.dumps(error_context, indent=2)} | Potential Recovery: {await self.suggest_recovery_strategy(error)}")
-        await self.log_with_ollama(error, context)
+        await self.log_with_ollama(f"Error: {error}", context)
         # Log error to spreadsheet
         self.spreadsheet_manager.write_data((15, 1), [["Error", "Context"], [str(error), json.dumps(context or {})]])
         # Suggest and log recovery strategies
