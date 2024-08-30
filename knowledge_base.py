@@ -124,7 +124,21 @@ class KnowledgeBase:
             "RETURN c.name AS current, r, next.name AS next"
         )
         return self.query_insights(query)
-    async def add_entry(self, entry_name, data, metadata=None, narrative_context=None, context=None):
+    async def sync_with_spreadsheet(self, spreadsheet_manager, sheet_name="KnowledgeBase"):
+        """Synchronize data between the spreadsheet and the graph database."""
+        try:
+            # Read data from the spreadsheet
+            data = spreadsheet_manager.read_data("A1:Z100", sheet_name=sheet_name)
+            for row in data:
+                entry_name, entry_data = row[0], row[1:]
+                await self.add_entry(entry_name, {"data": entry_data})
+
+            # Write data from the graph database to the spreadsheet
+            entries = await self.list_entries()
+            spreadsheet_manager.write_data((1, 1), [["Entry Name", "Data"]] + [[entry, json.dumps(self.longterm_memory.get(entry, {}))] for entry in entries], sheet_name=sheet_name)
+            self.logger.info("Synchronized data between spreadsheet and graph database.")
+        except Exception as e:
+            self.logger.error(f"Error synchronizing data: {e}")
         if context:
             data.update({"context": context})
 

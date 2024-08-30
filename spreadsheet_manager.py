@@ -10,14 +10,14 @@ class SpreadsheetManager:
         except (FileNotFoundError, InvalidFileException) as e:
             self.workbook = openpyxl.Workbook()
             self.workbook.save(file_path)
-            print(f"Created a new workbook due to: {e}")
+            logging.info(f"Created a new workbook due to: {e}")
 
     def read_data(self, cell_range: str) -> List[List[Optional[str]]]:
         try:
             sheet = self.workbook.active
             return [[cell.value for cell in row] for row in sheet[cell_range]]
         except Exception as e:
-            print(f"Error reading data from {cell_range}: {e}")
+            logging.error(f"Error reading data from {cell_range}: {e}")
             return []
 
     def write_data(self, start_cell: Tuple[int, int], data: List[List[Optional[str]]], sheet_name: Optional[str] = None) -> None:
@@ -33,7 +33,7 @@ class SpreadsheetManager:
                     sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
             self.workbook.save(self.file_path)
         except Exception as e:
-            print(f"Error writing data to {start_cell}: {e}")
+            logging.error(f"Error writing data to {start_cell}: {e}")
 
     def add_sheet(self, sheet_name: str) -> None:
         try:
