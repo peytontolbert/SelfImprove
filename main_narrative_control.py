@@ -466,7 +466,9 @@ async def main():
         await optimize_system(components, context)
         await handle_complex_tasks(components, context)
 
-        await narrative.log_chain_of_thought("Completed main loop iteration")
+        # Log detailed insights and context at the end of the main loop iteration
+        context_insights = await narrative.generate_detailed_thoughts(context)
+        await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
         await asyncio.sleep(60)  # Adjust the sleep time as needed
 
 async def perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator):
