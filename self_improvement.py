@@ -4,7 +4,9 @@ import torch
 from core.ollama_interface import OllamaInterface
 from quantum_decision_maker import QuantumDecisionMaker
 from meta_learner import MetaLearner
+from narrative.system_narrative import SystemNarrative
 from simple_nn import GeneralNN
+from swarm_intelligence import SwarmIntelligence
 from quantum_optimizer import QuantumOptimizer
 from knowledge_base import KnowledgeBase
 from core.improvement_manager import ImprovementManager
@@ -33,6 +35,8 @@ class SelfImprovement:
         self.nn_model = GeneralNN(layer_sizes=[10, 20, 10], activation_fn=torch.nn.ReLU)
         self.logger = logging.getLogger(__name__)
         self.ollama = ollama
+        self.system_narrative: SystemNarrative
+        self.swarm_intelligence = SwarmIntelligence()
         self.knowledge_base = knowledge_base
         self.improvement_manager = improvement_manager
 
@@ -50,6 +54,10 @@ class SelfImprovement:
         try:
             improvements = await self.improvement_manager.suggest_improvements(metrics)
             
+            # Use reinforcement learning feedback to adapt improvements
+            rl_feedback = await rl_module.get_feedback(metrics)
+            self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+
             # Train the neural network model with performance data
             train_loader = self.prepare_data_loader(metrics)
             criterion = torch.nn.MSELoss()
@@ -63,7 +71,8 @@ class SelfImprovement:
             # Optimize improvements using swarm intelligence
             optimized_improvements = await self.swarm_intelligence.optimize_decision({
                 "actions": improvements,
-                "system_state": metrics
+                "system_state": metrics,
+                "feedback": rl_feedback
             })
 
             await self.system_narrative.log_chain_of_thought({
@@ -108,9 +117,6 @@ class SelfImprovement:
             tested_hypotheses = await self.test_hypotheses(hypotheses)
             self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
 
-            # Use reinforcement learning feedback to adapt improvements
-            rl_feedback = await rl_module.get_feedback(metrics)
-            self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
 
             return validated_improvements + performance_optimization_suggestions + rl_feedback + tested_hypotheses
 
