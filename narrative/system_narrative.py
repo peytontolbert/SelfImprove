@@ -328,14 +328,14 @@ class SystemNarrative:
         await self.knowledge_base.add_entry("goal_adjustments", goal_adjustments)
 
     async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
-        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}")
+        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", "Improvement cycle initiation")
         # Log the start of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the start of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         
         # System state analysis
-        await self.log_state("Analyzing current system state")
+        await self.log_state("Analyzing current system state", "System state analysis")
         system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
         self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
 
@@ -345,7 +345,7 @@ class SystemNarrative:
         self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
 
         # Generate and apply improvements in parallel
-        await self.log_state("Generating improvement suggestions")
+        await self.log_state("Generating improvement suggestions", "Improvement suggestion generation")
         # Retrieve insights from the knowledge base for generating improvements
         insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
         self.logger.info(f"Retrieved insights for improvement: {insights}")
@@ -423,7 +423,7 @@ class SystemNarrative:
         if improvement_cycle_count % 10 == 0:  # Every 10 cycles
             longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
             self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
-        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}")
+        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}", "Improvement cycle completion")
         # Log the completion of an improvement cycle in the knowledge base
         await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
         # Log the completion of an improvement cycle in the knowledge base
@@ -475,7 +475,7 @@ class SystemNarrative:
         })
 
     async def perform_additional_tasks(self, task_queue, ca, tf, dm, vcs, ollama, si):
-        await self.log_state("Performing additional system improvement tasks")
+        await self.log_state("Performing additional system improvement tasks", "Additional tasks execution")
         await task_queue.manage_orchestration()
         
         # Analyze code and suggest improvements
@@ -504,12 +504,12 @@ class SystemNarrative:
         await vcs.commit_changes(ollama, changes)
 
     async def manage_prompts_and_errors(self, pm, eh, ollama):
-        await self.log_state("Managing prompts")
+        await self.log_state("Managing prompts", "Prompt management")
         new_prompts = await pm.generate_new_prompts(ollama)
         for prompt_name, prompt_content in new_prompts.items():
             pm.save_prompt(prompt_name, prompt_content)
 
-        await self.log_state("Checking for system errors")
+        await self.log_state("Checking for system errors", "System error checking")
         system_errors = await eh.check_for_errors(ollama)
         if system_errors:
             for error in system_errors:
@@ -553,21 +553,21 @@ class SystemNarrative:
         self.logger.warning(f"High urgency implication detected in category: {category}. Immediate action required.")
         # Implement logic to handle high urgency implications
         # For example, trigger an immediate review or alert the system administrators
-        await self.log_state(f"High urgency implication in {category}: {description}")
+        await self.log_state(f"High urgency implication in {category}: {description}", "High urgency implication handling")
         # You might want to add a method to alert administrators or trigger an immediate response
 
     async def handle_medium_high_urgency_implication(self, category, description):
         self.logger.info(f"Medium-high urgency implication detected in category: {category}. Prioritize for review.")
         # Implement logic to handle medium-high urgency implications
         # For example, add to a priority queue for review
-        await self.log_state(f"Medium-high urgency implication in {category}: {description}")
+        await self.log_state(f"Medium-high urgency implication in {category}: {description}", "Medium-high urgency implication handling")
         # You might want to add a method to schedule a review or add to a priority task list
 
     async def handle_low_medium_urgency_implication(self, category, description):
         self.logger.info(f"Low-medium urgency implication detected in category: {category}. Monitor and review as needed.")
         # Implement logic to handle low-medium urgency implications
         # For example, add to a monitoring list
-        await self.log_state(f"Low-medium urgency implication in {category}: {description}")
+        await self.log_state(f"Low-medium urgency implication in {category}: {description}", "Low-medium urgency implication handling")
         # You might want to add a method to add this to a monitoring list or schedule a future review
 
     async def handle_timeout_error(self):
@@ -606,7 +606,7 @@ class SystemNarrative:
         context = {"system_state": "current_system_state_placeholder"}
         reset_command = await ollama.query_ollama("system_control", "Check if a reset is needed", context=context)
         if reset_command.get('reset', False):
-            await self.log_state("Resetting system state as per command")
+            await self.log_state("Resetting system state as per command", "System reset execution")
             try:
                 subprocess.run(["./reset.sh"], check=True)
                 self.logger.info("System reset executed successfully.")
@@ -678,7 +678,7 @@ class SystemNarrative:
         # Implement timeout adjustment logic here
         # For example: self.timeout_duration = new_timeout
 
-        await self.log_state("Timeout recovery completed")
+        await self.log_state("Timeout recovery completed", "Recovery process completed")
         # Example usage of TemporalEngine
         objectives = ["Optimize performance", "Enhance user experience"]
         await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})

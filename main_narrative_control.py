@@ -192,11 +192,11 @@ class DeploymentManager:
         deployment_decision = await ollama.query_ollama("deployment", "Should we deploy the current code?", context=context)
         if deployment_decision.get('deploy', False):
             self.logger.info("Code deployed successfully")
-            await narrative.log_state("Deployment approved by Ollama")
+            await narrative.log_state("Deployment approved by Ollama", "Deployment approval")
             # Implement actual deployment logic here
             # For example: subprocess.run(["./deploy_script.sh"])
         else:
-            await narrative.log_state("Deployment deferred based on Ollama's decision")
+            await narrative.log_state("Deployment deferred based on Ollama's decision", "Deployment deferral")
             self.logger.info("Deployment deferred based on Ollama's decision")
 
     async def rollback(self, ollama, version):
