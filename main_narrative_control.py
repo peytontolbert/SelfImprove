@@ -447,14 +447,19 @@ async def main():
         session = aiohttp.ClientSession()
         try:
             while True:
-                try:
-                    await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
-                except Exception as e:
-                    logger.exception("An error occurred in the main loop", exc_info=e)
-                    await error_handling_and_recovery(components, e)
+                await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
+        except Exception as e:
+            await handle_main_loop_error(e, components)
         finally:
-            if not session.closed:
-                await session.close()
+            await close_session(session)
+
+    async def handle_main_loop_error(e, components):
+        logger.exception("An error occurred in the main loop", exc_info=e)
+        await error_handling_and_recovery(components, e)
+
+    async def close_session(session):
+        if not session.closed:
+            await session.close()
 
     async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
         await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)

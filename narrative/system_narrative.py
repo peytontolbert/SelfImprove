@@ -1205,14 +1205,13 @@ class OmniscientDataAbsorber:
             self.logger.info(f"System State: {message} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
             self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
             await log_with_ollama(self.ollama, message, relevant_context)
-            # Generate and log thoughts about the current state
             await self.generate_thoughts(relevant_context)
-            # Analyze feedback and suggest improvements
             self.track_request("feedback_analysis", f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", "feedback")
             feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
             self.logger.info(f"Feedback analysis: {feedback}")
         except Exception as e:
-            self.logger.error(f"Error during log state operation: {str(e)}")
+            self.logger.error(f"Error during log state operation: {str(e)}", exc_info=True)
+            await self.suggest_recovery_strategy(e)
 
     async def log_decision(self, decision, rationale=None):
         """Log decisions with detailed rationale."""
