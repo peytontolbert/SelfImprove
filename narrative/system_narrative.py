@@ -1578,7 +1578,7 @@ class OmniscientDataAbsorber:
             "recent_changes": await self.knowledge_base.get_entry("recent_changes"),
             "feedback": await self.knowledge_base.get_entry("user_feedback")
         }
-        await self.log_state("Timeout recovery initiated", context)
+        await self.log_state("Timeout recovery initiated", "Recovery process started", context)
 
         # 1. Save the current state
         current_state = await self.ollama.evaluate_system_state({})
@@ -1618,7 +1618,7 @@ class OmniscientDataAbsorber:
         # For example: self.timeout_duration = new_timeout
 
         context = context if 'context' in locals() else {}
-        await self.log_state("Timeout recovery completed", context)
+        await self.log_state("Timeout recovery completed", "Recovery process finished", context)
         # Example usage of TemporalEngine
         objectives = ["Optimize performance", "Enhance user experience"]
         await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})
