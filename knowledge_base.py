@@ -19,6 +19,7 @@ class KnowledgeBase:
         logging.basicConfig(level=logging.INFO)
         self.check_connection()
         self.initialize_database()
+        self.initialize_database()
         self.ollama = ollama_interface
         self.longterm_memory = {}
         self.base_directory = "knowledge_base_data"
@@ -34,6 +35,20 @@ class KnowledgeBase:
         except Exception as e:
             self.logger.error(f"Failed to connect to the Neo4j database: {str(e)}")
             raise ConnectionError("Could not connect to the Neo4j database. Please ensure it is running and accessible.")
+        """Initialize the database with necessary nodes and relationships."""
+        self.logger.info("Starting database initialization.")
+        try:
+            with self.driver.session() as session:
+                session.write_transaction(self._create_initial_nodes)
+            self.logger.info("Database initialized successfully.")
+            self.logger.info("Initial nodes and constraints created.")
+        except Exception as e:
+            self.logger.error(f"Failed to initialize database: {str(e)}")
+            self.logger.info("Attempting to create a new database.")
+            self.create_database()
+            self.logger.info("New database creation attempted.")
+
+    def initialize_database(self):
         """Initialize the database with necessary nodes and relationships."""
         self.logger.info("Starting database initialization.")
         try:
