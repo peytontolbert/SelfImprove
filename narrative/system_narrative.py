@@ -32,11 +32,14 @@ class SystemNarrative:
 
     async def log_chain_of_thought(self, thought_processes):
         """Log and enhance the chain of thought for system processes."""
+        # Retrieve long-term memory for context
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
+        
         # Enhance the chain of thought by synthesizing multiple thoughts
         enhanced_thought_response = await self.ollama.query_ollama(
             "thought_synthesis",
             "Synthesize multiple thoughts into a cohesive thought.",
-            context={"thoughts": thought_processes}
+            context={"thoughts": thought_processes, "longterm_memory": longterm_memory}
         )
         enhanced_thought = enhanced_thought_response.get("synthesized_thought", self.synthesize_thoughts(thought_processes))
         
