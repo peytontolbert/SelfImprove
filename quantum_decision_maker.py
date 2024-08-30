@@ -1,5 +1,6 @@
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
+import random
 from simple_nn import GeneralNN
 import torch
 from core.ollama_interface import OllamaInterface
@@ -41,7 +42,7 @@ class QuantumDecisionMaker:
             # Log the feedback loop completion
             self.logger.info("Feedback loop for evaluating possibilities completed.")
 
-    async def quantum_decision_tree(self, decision_space: Dict[str, Any]) -> Dict[str, Any]:
+    async def quantum_decision_tree(self, decision_space: Dict[str, Any], context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Use a quantum-inspired decision tree to make complex decisions.
 
@@ -52,7 +53,13 @@ class QuantumDecisionMaker:
         - The optimal decision based on quantum evaluation.
         """
         self.logger.info("Building quantum decision tree.")
-        # Example logic: Evaluate decisions based on a combination of factors
+        # Integrate long-term memory insights
+        longterm_memory = await self.ollama.get_longterm_memory()
+        context = context or {}
+        context.update({"longterm_memory": longterm_memory})
+
+        # Use evolutionary algorithms to evolve decision strategies
+        evolved_decisions = self.evolve_decision_strategies(valid_decisions, context)
         try:
             if not decision_space:
                 self.logger.warning("Decision space is empty. Using default decision.")
@@ -64,7 +71,7 @@ class QuantumDecisionMaker:
                 self.logger.warning("No valid decisions found. Using fallback decision.")
                 return {"decision": "fallback_action", "reason": "No valid decisions found, using fallback."}
 
-            optimal_decision = max(valid_decisions, key=lambda decision: decision.get("score", 0))
+            optimal_decision = max(evolved_decisions, key=lambda decision: decision.get("score", 0))
         except Exception as e:
             self.logger.error(f"Error during decision-making: {str(e)}")
             return {"error": "Decision-making error", "details": str(e)}
@@ -73,7 +80,39 @@ class QuantumDecisionMaker:
         await self.system_narrative.log_chain_of_thought(f"Quantum decision-making process completed with decision: {optimal_decision}")
         return optimal_decision
 
-    async def calculate_score(self, action, system_state, feedback, variation) -> int:
+    def evolve_decision_strategies(self, decisions: List[Dict[str, Any]], context: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Evolve decision strategies using evolutionary algorithms.
+
+        Parameters:
+        - decisions: List of decisions to evolve.
+        - context: Contextual information to guide evolution.
+
+        Returns:
+        - A list of evolved decisions.
+        """
+        # Example evolutionary algorithm logic
+        for _ in range(10):  # Number of generations
+            # Select top decisions based on score
+            top_decisions = sorted(decisions, key=lambda d: d.get("score", 0), reverse=True)[:5]
+            # Mutate and crossover to create new decisions
+            new_decisions = [self.mutate_decision(d) for d in top_decisions]
+            decisions.extend(new_decisions)
+        return decisions
+
+    def mutate_decision(self, decision: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Mutate a decision to create a new variant.
+
+        Parameters:
+        - decision: The decision to mutate.
+
+        Returns:
+        - A new mutated decision.
+        """
+        mutated_decision = decision.copy()
+        mutated_decision["score"] += random.uniform(-1, 1)  # Random mutation
+        return mutated_decision
         """
         Calculate a score for a given action variation.
 
