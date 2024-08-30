@@ -664,6 +664,7 @@ class {component_name}:
         thoughts = ollama_response.get('thoughts', 'No thoughts generated')
         self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
         await self.knowledge_base.save_longterm_memory(longterm_memory)
+        os.makedirs('narrative_data', exist_ok=True)
         with open('narrative_data/longterm.json', 'w') as f:
             json.dump(longterm_memory, f, indent=2)
         # Read existing thoughts
