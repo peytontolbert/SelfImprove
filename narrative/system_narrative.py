@@ -247,6 +247,7 @@ class SystemNarrative:
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
         # Initialize system_state and other required variables
+        improvement_cycle_count = 0
         performance_metrics = await si.get_system_metrics()
         recent_changes = await self.knowledge_base.get_entry("recent_changes")
         feedback_data = await self.knowledge_base.get_entry("user_feedback")
