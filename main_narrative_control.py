@@ -480,11 +480,11 @@ class RefinementManager:
         self.logger.info(f"Final performance analysis results: {final_results}")
 
         # Use the RefinementManager to refine strategies
-        refined_strategies = await refinement_manager.refine_strategy(improvements, rl_feedback, metrics)
+        refined_strategies = await refinement_manager.refine_strategy(improvements, rl_feedback, metrics, strategies)
         self.logger.info(f"Refined strategies: {refined_strategies}")
 
         # Evaluate the effectiveness of the refinements
-        evaluation_results = await refinement_manager.evaluate_refinements(refined_strategies)
+        evaluation_results = await refinement_manager.evaluate_refinements(refined_strategies, strategies)
         self.logger.info(f"Evaluation results of refinements: {evaluation_results}")
 
         return final_results + evaluation_results
