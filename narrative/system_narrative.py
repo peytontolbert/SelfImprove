@@ -384,9 +384,14 @@ class SystemNarrative:
         })
         self.logger.info(f"Combined swarm and quantum decision: {combined_decision}")
 
-        # Visualize the code structure with enhanced details
+        # Visualize the code structure with enhanced details and long-term evolution insights
         code_visualization = self.code_visualizer.visualize_code_structure(system_state.get("codebase", {}))
         self.logger.info(f"Enhanced code visualization: {code_visualization}")
+        
+        # Integrate long-term evolution insights into visualization
+        evolution_insights = await self.knowledge_base.get_entry("longterm_evolution_suggestions")
+        refined_visualization = self.code_visualizer.refine_visualization_with_evolution(code_visualization, evolution_insights)
+        self.logger.info(f"Refined visualization with long-term evolution insights: {refined_visualization}")
 
         # Use the enhanced attention mechanism to prioritize actions
         prioritized_actions = self.consciousness_emulator.emulate_consciousness(combined_decision)

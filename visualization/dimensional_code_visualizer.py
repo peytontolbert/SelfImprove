@@ -29,26 +29,26 @@ class DimensionalCodeVisualizer:
         self.logger.info(f"Visualization improvement suggestions: {improvement_suggestions}")
         return visualization
 
-    def create_visualization(self, codebase):
+    def refine_visualization_with_evolution(self, visualization, evolution_insights):
         """
-        Create a detailed visualization of the codebase, including dependencies and interactions.
+        Refine the visualization with insights from long-term evolution.
 
         Parameters:
-        - codebase: The codebase to visualize.
+        - visualization: The current visualization of the code structure.
+        - evolution_insights: Insights from long-term evolution to enhance the visualization.
 
         Returns:
-        - A detailed visualization of the code structure.
+        - A refined visualization incorporating long-term evolution insights.
         """
-        component_count = len(codebase)
-        dependencies = self.analyze_dependencies(codebase)
-        interactions = self.analyze_interactions(codebase)
+        self.logger.info("Refining visualization with long-term evolution insights.")
+        if not evolution_insights:
+            self.logger.warning("No evolution insights available. Returning original visualization.")
+            return visualization
 
-        visualization_details = (
-            f"Visualizing {component_count} components with {len(dependencies)} dependencies "
-            f"and {len(interactions)} interactions."
-        )
-        self.logger.info(f"Visualization result: {visualization_details}")
-        return visualization_details
+        # Example logic to refine visualization
+        refined_visualization = visualization + f" | Evolution Insights: {evolution_insights}"
+        self.logger.info(f"Refined visualization: {refined_visualization}")
+        return refined_visualization
 
     def analyze_dependencies(self, codebase):
         """
