@@ -52,7 +52,7 @@ class SystemNarrative:
         self.logger.info(f"Chain of Thought Steps for Factual Question: {cot_steps_factual}")
 
         # Log the CoT steps
-        for step in cot_steps:
+        for step in cot_steps_math:
             self.logger.info(f"CoT Step: {step}")
         
         for step in cot_steps_factual:
