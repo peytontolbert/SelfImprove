@@ -1,7 +1,6 @@
 import logging
 import numpy as np
-from qiskit import QuantumCircuit
-from qiskit.execute_function import execute
+from qiskit import QuantumCircuit, execute
 from qiskit_aer import Aer
 from qiskit.algorithms import VQE
 from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
