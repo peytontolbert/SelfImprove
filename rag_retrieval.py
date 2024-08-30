@@ -48,4 +48,4 @@ class RAGRetrieval:
         # Log the augmented prompt for debugging
         self.logger.debug(f"Augmented prompt: {augmented_prompt}")
         self.logger.info(f"Augmented prompt for task '{task}': {augmented_prompt}")
-        return augmented_prompt
+        return str(augmented_prompt)
