@@ -74,7 +74,7 @@ class KnowledgeBase:
         )
         tx.run(query, from_node=from_node, to_node=to_node, properties=properties or {})
 
-    def add_capability(self, capability_name, properties):
+    async def add_capability(self, capability_name, properties):
         """Add a new capability node to the graph."""
         with self.driver.session() as session:
             session.write_transaction(self._create_node, "Capability", {"name": capability_name, **properties})
