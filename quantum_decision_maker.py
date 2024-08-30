@@ -37,6 +37,9 @@ class QuantumDecisionMaker:
         except Exception as e:
             self.logger.error(f"Error evaluating possibilities for action '{action}': {e}")
             return []
+        finally:
+            # Log the feedback loop completion
+            self.logger.info("Feedback loop for evaluating possibilities completed.")
 
     async def quantum_decision_tree(self, decision_space: Dict[str, Any]) -> Dict[str, Any]:
         """

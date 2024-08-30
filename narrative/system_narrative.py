@@ -1014,7 +1014,9 @@ class OmniscientDataAbsorber:
             "recent_changes": context.get("recent_changes", "Recent changes in the system"),
             "longterm_memory": context.get("longterm_memory", {}).get("thoughts", {}),
             "current_tasks": context.get("current_tasks", "List of current tasks"),
-            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {})
+            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {}),
+            "user_feedback": context.get("user_feedback", "No user feedback available"),
+            "environmental_factors": context.get("environmental_factors", "No environmental factors available")
         }
         try:
             self.logger.info(f"System State: {message} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
@@ -1069,6 +1071,12 @@ class OmniscientDataAbsorber:
         feedback = await self.ollama.query_ollama("error_feedback", f"Provide feedback on the recovery strategy: {recovery_strategy}. Consider the error context and suggest improvements.", context=context)
         self.logger.info(f"Error handling feedback: {feedback}")
         await self.knowledge_base.add_entry("error_handling_feedback", feedback)
+        # Implement additional recovery logic if needed
+        if recovery_strategy.get("additional_steps"):
+            for step in recovery_strategy["additional_steps"]:
+                self.logger.info(f"Executing additional recovery step: {step}")
+                # Execute the recovery step
+                # For example: await self.execute_recovery_step(step)
 
 
     async def control_improvement_process(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh):
