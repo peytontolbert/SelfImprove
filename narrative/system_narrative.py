@@ -149,8 +149,8 @@ class SystemNarrative:
         """Model future thoughts using predictive analytics."""
         # Example logic for predictive modeling
         predictive_thoughts = [f"Predictive {thought}" for thought in thought_processes]
-        # Log predictive thought modeling
-        await self.log_chain_of_thought("Predictive thought modeling completed.")
+        # Log predictive thought modeling separately to avoid recursion
+        self.logger.info("Predictive thought modeling completed.")
         return predictive_thoughts
 
     def provide_examples(self, thought_processes):
