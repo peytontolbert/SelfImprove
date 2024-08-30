@@ -302,19 +302,13 @@ class SystemManager:
         self.logger = logging.getLogger(__name__)
 
     def manage_component(self, component_name, action="status"):
-        component = self.components.components.get(component_name)
-        if component:
-            self.logger.info(f"Managing component: {component_name} with action: {action}")
-            if action == "status":
-                self.logger.info(f"Component {component_name} status: {component}")
-            elif action == "restart":
-                self.restart_component(component_name)
-            elif action == "update":
-                self.update_component(component_name)
-            elif action == "scale":
-                self.scale_component(component_name)
+        self.logger.info(f"Managing component: {component_name} with action: {action}")
+        if action == "status":
+            self.log_system_state()
+        elif action == "scale":
+            self.scale_component(component_name)
         else:
-            self.logger.warning(f"Component {component_name} not found.")
+            self.logger.warning(f"Action {action} is not supported for component {component_name}.")
 
     def scale_component(self, component_name):
         self.logger.info(f"Scaling component: {component_name}")
@@ -336,17 +330,6 @@ class SystemManager:
         for name, component in self.components.components.items():
             self.logger.info(f"Component {name}: {component}")
 
-    def restart_component(self, component_name):
-        self.logger.info(f"Restarting component: {component_name}")
-        component = self.components.components.get(component_name)
-        if component and hasattr(component, 'restart'):
-            try:
-                component.restart()
-                self.logger.info(f"Component {component_name} restarted successfully.")
-            except Exception as e:
-                self.logger.error(f"Failed to restart component {component_name}: {e}")
-        else:
-            self.logger.warning(f"Component {component_name} does not support restart operation.")
 
     def update_component(self, component_name):
         self.logger.info(f"Updating component: {component_name}")
@@ -369,32 +352,18 @@ class SystemManager:
 
     import psutil
 
-    def collect_performance_metrics(self):
-        self.logger.info("Collecting performance metrics.")
-        metrics = {}
-        for name, component in self.components.items():
-            # Collect detailed system metrics
-            cpu_usage = psutil.cpu_percent(interval=1)
-            memory_info = psutil.virtual_memory()
-            disk_io = psutil.disk_io_counters()
-            net_io = psutil.net_io_counters()
-            metrics[name] = {
-                "cpu_usage": cpu_usage,
-                "memory_usage": memory_info.percent,
-                "disk_read_bytes": disk_io.read_bytes,
-                "disk_write_bytes": disk_io.write_bytes,
-                "net_sent_bytes": net_io.bytes_sent,
-                "net_recv_bytes": net_io.bytes_recv
-            }
+    async def collect_performance_metrics(self):
+        self.logger.info("Collecting performance metrics from Ollama.")
+        metrics = await self.components["ollama"].query_ollama("performance_metrics", "Collect current performance metrics.")
         return metrics
 
-    def adapt_system_based_on_metrics(self, metrics):
+    async def adapt_system_based_on_metrics(self, metrics):
         self.logger.info(f"Adapting system based on metrics: {metrics}")
         for component_name, load in metrics.items():
-            if load["cpu_usage"] > 80 or load["memory_usage"] > 80:
+            if load.get("cpu_usage", 0) > 80 or load.get("memory_usage", 0) > 80:
                 self.logger.info(f"High load on {component_name}, scaling up.")
                 self.scale_up(component_name)
-            elif load["cpu_usage"] < 20 and load["memory_usage"] < 20:
+            elif load.get("cpu_usage", 0) < 20 and load.get("memory_usage", 0) < 20:
                 self.logger.info(f"Low load on {component_name}, scaling down.")
                 self.scale_down(component_name)
 
