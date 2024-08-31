@@ -1293,6 +1293,7 @@ class OmniscientDataAbsorber:
             self.logger.error(f"Database error during update: {str(e)}")
         except Exception as e:
             self.logger.error(f"Unexpected error during database update: {str(e)}")
+    async def handle_file_operation(self, details):
         """Handle file operations such as create, edit, or delete."""
         operation = details.get("operation")
         filename = details.get("filename")
@@ -1300,6 +1301,7 @@ class OmniscientDataAbsorber:
         try:
             if operation == "create":
                 self.logger.info(f"Creating file: {filename}")
+                result = subprocess.run(["touch", filename], capture_output=True, text=True, check=True)
                 with open(filename, 'w') as f:
                     f.write(content)
             elif operation == "edit":
@@ -1308,11 +1310,11 @@ class OmniscientDataAbsorber:
                     f.write(content)
             elif operation == "delete":
                 self.logger.info(f"Deleting file: {filename}")
-                os.remove(filename)
+                result = subprocess.run(["rm", filename], capture_output=True, text=True, check=True)
             else:
                 self.logger.warning(f"Unknown file operation: {operation}")
-        except Exception as e:
-            self.logger.error(f"Error handling file operation: {str(e)}")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Error handling file operation: {e.stderr}")
 
     async def handle_system_update(self, details):
         """Handle system updates."""
@@ -1320,11 +1322,9 @@ class OmniscientDataAbsorber:
         try:
             self.logger.info(f"Executing system update: {update_command}")
             result = subprocess.run(update_command, shell=True, check=True, capture_output=True, text=True)
-            self.logger.info(f"System update executed successfully: {update_command}")
-            self.logger.debug(f"Update output: {result.stdout}")
+            self.logger.info(f"System update executed successfully: {result.stdout}")
         except subprocess.CalledProcessError as e:
-            self.logger.error(f"Failed to execute system update: {str(e)}")
-            self.logger.debug(f"Update error output: {e.stderr}")
+            self.logger.error(f"Failed to execute system update: {e.stderr}")
         except Exception as e:
             self.logger.error(f"Unexpected error during system update: {str(e)}")
 
