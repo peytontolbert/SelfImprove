@@ -211,8 +211,7 @@ class SystemNarrative:
         })
         short_term_goals = await self.ollama.query_ollama("goal_setting", "Define short-term goals for incremental improvement.", context={"system_state": system_state})
         self.logger.info(f"Short-term goals: {short_term_goals}")
-        # Assuming get_entry is the intended method, adjust accordingly
-        await self.knowledge_base.get_entry("short_term_goals")
+        await self.knowledge_base.add_entry("short_term_goals", short_term_goals)
 
         # Evaluate progress towards short-term goals
         progress_evaluation = await self.ollama.query_ollama("progress_evaluation", "Evaluate progress towards short-term goals.", context={"system_state": system_state, "short_term_goals": short_term_goals})
