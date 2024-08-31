@@ -434,8 +434,17 @@ async def main():
     consciousness_emulator = components.components["consciousness_emulator"]
     task_queue = components.components["task_queue"]
 
-    await system_initialization(system_manager, ollama, narrative)
-    await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
+    # Initialize configuration settings
+    config = load_configuration()
+    # Implement dynamic configuration updates
+    config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
+    logger.info(f"Configuration updates suggested by Ollama: {config_updates}")
+    await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
+    logging.getLogger().setLevel(config.get("log_level", logging.INFO))
+    logger.info("System components initialized with detailed logging and context management")
+    await narrative.log_chain_of_thought("Initializing system components with detailed logging and context management.")
+    await narrative.log_chain_of_thought("Starting main narrative control process.")
+    await narrative.log_state("System components initialized successfully", "Initialization complete")
 
 async def handle_main_loop_error(e, components):
     logger.exception("An error occurred in the main loop", exc_info=e)
