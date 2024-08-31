@@ -331,24 +331,38 @@ class SystemManager:
             self.logger.info(f"Component {name}: {component}")
 
 
-    def update_component(self, component_name):
+    async def update_component(self, component_name):
+        """Update a specified component using subprocess."""
         self.logger.info(f"Updating component: {component_name}")
-        # Implement component update logic using subprocess
         try:
-            subprocess.run(["apt-get", "update", component_name], check=True)
-            self.logger.info(f"Component {component_name} updated successfully.")
-        except subprocess.CalledProcessError as e:
-            self.logger.error(f"Failed to update component {component_name}: {e}")
+            # Example command to update a component
+            result = await asyncio.create_subprocess_exec(
+                "python", "-m", "pip", "install", "--upgrade", component_name,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout, stderr = await result.communicate()
+            if result.returncode == 0:
+                self.logger.info(f"Component {component_name} updated successfully: {stdout.decode()}")
+            else:
+                self.logger.error(f"Failed to update component {component_name}: {stderr.decode()}")
+        except Exception as e:
+            self.logger.error(f"Unexpected error during component update: {e}")
 
-    async def monitor_performance(self):
-        self.logger.info("Monitoring system performance in real-time.")
-        import random
-
-        # Simulate real-time performance monitoring
-        while True:
-            performance_metrics = self.collect_performance_metrics()
-            self.adapt_system_based_on_metrics(performance_metrics)
-            await asyncio.sleep(5)  # Monitor every 5 seconds
+    async def check_for_updates(self):
+        """Check for updates and apply them automatically."""
+        self.logger.info("Checking for system updates.")
+        try:
+            # Example logic to check for updates
+            updates_available = await self.ollama.query_ollama("check_updates", "Check for available updates.")
+            if updates_available.get("updates", False):
+                for component in updates_available["components"]:
+                    await self.update_component(component)
+                self.logger.info("System updated successfully.")
+            else:
+                self.logger.info("No updates available.")
+        except Exception as e:
+            self.logger.error(f"Error checking for updates: {e}")
 
     import psutil
 
