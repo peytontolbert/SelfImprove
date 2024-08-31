@@ -667,7 +667,7 @@ async def handle_complex_tasks(components, context):
     consciousness_emulator = components["consciousness_emulator"]
     task_queue = components["task_queue"]
     
-    task_generation_prompt = "Generate complex tasks for the current system state."
+    task_generation_prompt = "Generate complex tasks to improve automated ai software assistant."
     complex_tasks_response = await ollama.query_ollama("task_generation", task_generation_prompt, context=context)
     complex_tasks = complex_tasks_response.get("tasks", [])
     
