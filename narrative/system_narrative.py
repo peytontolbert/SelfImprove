@@ -386,12 +386,33 @@ class SystemNarrative:
 
     async def notify_admin(self, message):
         """Notify administrators about critical issues."""
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
         try:
             self.logger.critical(f"Notifying administrators: {message}")
-            # Example logic to send an email notification
-            subprocess.run(["sendmail", "admin@example.com"], input=message.encode(), check=True)
+            # Set up the server and login details
+            smtp_server = "smtp.example.com"
+            smtp_port = 587
+            smtp_user = "your_email@example.com"
+            smtp_password = "your_password"
+
+            # Create the email
+            msg = MIMEMultipart()
+            msg['From'] = smtp_user
+            msg['To'] = "admin@example.com"
+            msg['Subject'] = "Critical Issue Notification"
+            msg.attach(MIMEText(message, 'plain'))
+
+            # Send the email
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                server.send_message(msg)
+
             self.logger.info("Administrators notified successfully.")
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
             self.logger.error(f"Failed to notify administrators: {e}")
 
     async def suggest_recovery_strategy(self, error):
