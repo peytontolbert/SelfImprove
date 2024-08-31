@@ -277,8 +277,10 @@ class KnowledgeBase:
 
     @staticmethod
     def _create_node(tx, label, properties):
-        query = f"MERGE (n:{label} {{name: $name}}) SET n += $properties"
-        tx.run(query, name=properties.get("name"), properties=properties)
+        # Ensure no null values are passed to the database
+        sanitized_properties = {k: v for k, v in properties.items() if v is not None}
+        query = f"MERGE (n:{label} {{name: $name}}) SET n += $sanitized_properties"
+        tx.run(query, name=sanitized_properties.get("name"), sanitized_properties=sanitized_properties)
 
     async def list_entries(self):
         entries = [f.split('.')[0] for f in os.listdir(self.base_directory) if f.endswith('.json')]
