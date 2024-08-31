@@ -41,9 +41,23 @@ class WorkflowExecutor:
         consciousness_result = await self.consciousness_emulator.emulate_consciousness(context)
         self.logger.info(f"Consciousness emulation result: {consciousness_result}")
 
-        # Use consciousness insights to guide project creation
-        project_insights = consciousness_result.get("enhanced_awareness", {})
-        await self.create_and_learn_from_projects(project_insights)
+        # Use consciousness insights to decide the next action with Ollama
+        self.logger.info("Deciding next action based on consciousness result.")
+        next_action_decision = await self.ollama.query_ollama(
+            "next_action_decision",
+            "Decide the next action based on consciousness result.",
+            context={"consciousness_result": consciousness_result}
+        )
+        self.logger.info(f"Next action decision: {next_action_decision}")
+
+        # Execute the decided action
+        next_action = next_action_decision.get("action", "create_and_learn_from_projects")
+        if next_action == "create_and_learn_from_projects":
+            project_insights = consciousness_result.get("enhanced_awareness", {})
+            await self.create_and_learn_from_projects(project_insights)
+        elif next_action == "research_and_plan":
+            await self.research_and_plan()
+        # Add more actions as needed
         await self.research_and_plan()
         await self.setup_development_environment()
         await self.implement_initial_prototype()
