@@ -385,13 +385,13 @@ async def initialize_components():
     components = {}
     components["ollama"] = OllamaInterface()
     components["knowledge_base"] = KnowledgeBase()
-    components["improvement_manager"] = ImprovementManager()
+    components["improvement_manager"] = ImprovementManager(components["ollama"])
     components["omniscient_data_absorber"] = OmniscientDataAbsorber(components["knowledge_base"], components["ollama"])
     components["consciousness_emulator"] = ConsciousnessEmulator(components["ollama"])
-    components["self_improvement"] = SelfImprovement()
+    components["self_improvement"] = SelfImprovement(components["ollama"], components["knowledge_base"], components["improvement_manager"], components["consciousness_emulator"])
     components["system_narrative"] = SystemNarrative(components["ollama"], components["knowledge_base"], components["omniscient_data_absorber"], components["self_improvement"])
-    components["reinforcement_learning_module"] = ReinforcementLearningModule()
-    components["task_queue"] = TaskQueue()
+    components["reinforcement_learning_module"] = ReinforcementLearningModule(components["ollama"])
+    components["task_queue"] = TaskQueue(components["ollama"])
     components["version_control_system"] = VersionControlSystem()
     components["code_analysis"] = CodeAnalysis()
     components["testing_framework"] = TestingFramework()
@@ -400,9 +400,9 @@ async def initialize_components():
     components["prompt_manager"] = PromptManager()
     components["error_handler"] = ErrorHandler()
     components["tutorial_manager"] = TutorialManager()
-    components["meta_learner"] = MetaLearner()
-    components["quantum_optimizer"] = QuantumOptimizer()
-    components["swarm_intelligence"] = SwarmIntelligence()
+    components["meta_learner"] = MetaLearner(components["ollama"], components["knowledge_base"])
+    components["quantum_optimizer"] = QuantumOptimizer(components["ollama"])
+    components["swarm_intelligence"] = SwarmIntelligence(components["ollama"])
     components["hyperloop_optimizer"] = HyperloopOptimizer()
 
     return SystemManager(components)
@@ -428,7 +428,7 @@ async def main():
     components = await initialize_components()
     system_manager = SystemManager(components)
     ollama = components.components["ollama"]
-    narrative = components.components["narrative"]
+    narrative = components.components["system_narrative"]
     data_absorber = components.components["omniscient_data_absorber"]
     consciousness_emulator = components.components["consciousness_emulator"]
 
