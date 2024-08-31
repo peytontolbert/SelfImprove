@@ -384,6 +384,16 @@ class SystemNarrative:
         # Execute prioritized actions
         await self.execute_actions(prioritized_actions["prioritized_actions"])
 
+    async def notify_admin(self, message):
+        """Notify administrators about critical issues."""
+        try:
+            self.logger.critical(f"Notifying administrators: {message}")
+            # Example logic to send an email notification
+            subprocess.run(["sendmail", "admin@example.com"], input=message.encode(), check=True)
+            self.logger.info("Administrators notified successfully.")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Failed to notify administrators: {e}")
+
     async def suggest_recovery_strategy(self, error):
         """Suggest a recovery strategy for a given error."""
         error_prompt = f"Suggest a recovery strategy for the following error: {str(error)}"
