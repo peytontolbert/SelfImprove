@@ -39,15 +39,25 @@ class WorkflowExecutor:
 
     async def define_project_scope(self):
         self.logger.info("Defining project scope.")
-        project_scope = await self.ollama.query_ollama("project_scope", "Define the project scope and objectives.")
-        self.logger.info(f"Project scope defined: {project_scope}")
+        try:
+            project_scope = await self.ollama.query_ollama("project_scope", "Define the project scope and objectives.")
+            self.logger.info(f"Project scope defined: {project_scope}")
+        except Exception as e:
+            self.logger.error(f"Error defining project scope: {e}")
 
     async def research_and_plan(self):
         self.logger.info("Conducting research and planning.")
-        # Emulate consciousness to enhance research and planning
-        context = {"task": "research_and_plan"}
-        consciousness_result = await self.consciousness_emulator.emulate_consciousness(context)
-        self.logger.info(f"Consciousness emulation result: {consciousness_result}")
+        try:
+            # Emulate consciousness to enhance research and planning
+            context = {
+                "task": "research_and_plan",
+                "current_state": await self.ollama.evaluate_system_state({}),
+                "recent_changes": await self.knowledge_base.get_entry("recent_changes")
+            }
+            consciousness_result = await self.consciousness_emulator.emulate_consciousness(context)
+            self.logger.info(f"Consciousness emulation result: {consciousness_result}")
+        except Exception as e:
+            self.logger.error(f"Error during research and planning: {e}")
 
         # Use consciousness insights to guide research
         research_insights = consciousness_result.get("enhanced_awareness", {})
