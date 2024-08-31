@@ -107,14 +107,6 @@ class KnowledgeBase:
             self.logger.info(f"Entry added: {entry_name}")
         except Exception as e:
             self.logger.error(f"Error adding entry {entry_name}: {e}")
-    async def add_entry(self, entry_name, data):
-        """Add an entry to the knowledge base."""
-        try:
-            with self.driver.session() as session:
-                session.write_transaction(self._create_node, entry_name, data)
-            self.logger.info(f"Entry added: {entry_name}")
-        except Exception as e:
-            self.logger.error(f"Error adding entry {entry_name}: {e}")
 
     def add_capability_relationship(self, from_capability, to_capability, relationship_type, properties=None):
         """Add a relationship between two capabilities."""
