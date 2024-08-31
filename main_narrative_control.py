@@ -427,50 +427,61 @@ async def initialize_components():
 
 async def main():
     components = await initialize_components()
-    ollama = components["ollama"]
-    rl_module = components["reinforcement_learning_module"]
-    si = components["self_improvement"]
-    metrics = await si.get_system_metrics()
-    rl_feedback = await rl_module.get_feedback(metrics)
-    logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-    task_queue = components["task_queue"]
-    vcs = components["version_control_system"]
-    ca = components["code_analysis"]
-    tf = components["testing_framework"]
-    dm = components["deployment_manager"]
-    kb = components["knowledge_base"]
-    narrative = components["system_narrative"]
-    fs = components["file_system"]
-    pm = components["prompt_manager"]
-    eh = components["error_handler"]
-    tutorial_manager = components["tutorial_manager"]
-    meta_learner = components["meta_learner"]
-    quantum_optimizer = components["quantum_optimizer"]
-    swarm_intelligence = components["swarm_intelligence"]
-    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
+    try:
+        ollama = components["ollama"]
+        rl_module = components["reinforcement_learning_module"]
+        si = components["self_improvement"]
+        metrics = await si.get_system_metrics()
+        rl_feedback = await rl_module.get_feedback(metrics)
+        logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+        task_queue = components["task_queue"]
+        vcs = components["version_control_system"]
+        ca = components["code_analysis"]
+        tf = components["testing_framework"]
+        dm = components["deployment_manager"]
+        kb = components["knowledge_base"]
+        narrative = components["system_narrative"]
+        fs = components["file_system"]
+        pm = components["prompt_manager"]
+        eh = components["error_handler"]
+        tutorial_manager = components["tutorial_manager"]
+        meta_learner = components["meta_learner"]
+        quantum_optimizer = components["quantum_optimizer"]
+        swarm_intelligence = components["swarm_intelligence"]
+        await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
+    finally:
+        await ollama.__aexit__(None, None, None)  # Ensure cleanup
 
 async def handle_main_loop_error(e, components):
     logger.exception("An error occurred in the main loop", exc_info=e)
-    await error_handling_and_recovery(components, e)
+    try:
+        await error_handling_and_recovery(components, e)
+    except Exception as recovery_error:
+        logger.error(f"Error during recovery: {recovery_error}")
 
 async def close_session(session):
     if not session.closed:
         await session.close()
 
 async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
-    await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
-    context = await gather_context(ollama, consciousness_emulator)
+    logger.info("Starting main loop iteration")
+    try:
+        await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
+        context = await gather_context(ollama, consciousness_emulator)
 
-    await process_tasks(components, context)
-    await manage_prompts(components, context)
-    await analyze_and_improve_system(components, context)
-    await optimize_system(components, context)
-    await handle_complex_tasks(components, context)
+        await process_tasks(components, context)
+        await manage_prompts(components, context)
+        await analyze_and_improve_system(components, context)
+        await optimize_system(components, context)
+        await handle_complex_tasks(components, context)
 
-    # Log detailed insights and context at the end of the main loop iteration
-    context_insights = await narrative.generate_detailed_thoughts(context)
-    await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
-    await asyncio.sleep(60)  # Adjust the sleep time as needed
+        # Log detailed insights and context at the end of the main loop iteration
+        context_insights = await narrative.generate_detailed_thoughts(context)
+        await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
+    except Exception as e:
+        logger.error(f"Error during main loop iteration: {e}")
+    finally:
+        await asyncio.sleep(60)  # Adjust the sleep time as needed
 
 async def perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator):
     """

@@ -33,45 +33,42 @@ class SelfImprovingAssistant:
     async def self_improvement_loop(self):
         while True:
             try:
-                try:
-                    # Evaluate current state
-                    state = await self.evaluate_state()
-                    self.logger.info(f"Current state: {state}")
+                # Evaluate current state
+                state = await self.evaluate_state()
+                self.logger.info(f"Current state: {state}")
 
-                    # Apply AI's Guide to Coding
-                    coding_guide = self.get_guide_by_title("AI's Guide to Coding")
-                    if coding_guide:
-                        self.logger.info("Applying AI's Guide to Coding")
-                        for step in coding_guide['content']:
-                            self.logger.info(f"Step: {step}")
-                            # Implement logic to apply each step
+                # Apply AI's Guide to Coding
+                coding_guide = self.get_guide_by_title("AI's Guide to Coding")
+                if coding_guide:
+                    self.logger.info("Applying AI's Guide to Coding")
+                    for step in coding_guide['content']:
+                        self.logger.info(f"Step: {step}")
+                        # Implement logic to apply each step
 
-                    # Generate improvements
-                    improvements = await self.ollama.query_ollama("generate_improvements", "Suggest improvements for the current state.", context={"state": state})
-                    self.logger.info(f"Suggested improvements: {improvements}")
+                # Generate improvements
+                improvements = await self.ollama.query_ollama("generate_improvements", "Suggest improvements for the current state.", context={"state": state})
+                self.logger.info(f"Suggested improvements: {improvements}")
 
-                    # Apply improvements
-                    for improvement in improvements.get("suggestions", []):
-                        await self.apply_improvement(improvement)
+                # Apply improvements
+                for improvement in improvements.get("suggestions", []):
+                    await self.apply_improvement(improvement)
 
-                    # Validate improvements
-                    await self.run_tests()
+                # Validate improvements
+                await self.run_tests()
 
-                    # Apply Maintaining and Scaling guide
-                    scaling_guide = self.get_guide_by_title("Maintaining and Scaling Your AI Software Assistant")
-                    if scaling_guide:
-                        self.logger.info("Applying Maintaining and Scaling guide")
-                        for step in scaling_guide['content']:
-                            self.logger.info(f"Step: {step}")
-                            # Implement logic to apply each step
+                # Apply Maintaining and Scaling guide
+                scaling_guide = self.get_guide_by_title("Maintaining and Scaling Your AI Software Assistant")
+                if scaling_guide:
+                    self.logger.info("Applying Maintaining and Scaling guide")
+                    for step in scaling_guide['content']:
+                        self.logger.info(f"Step: {step}")
+                        # Implement logic to apply each step
 
-                    # Wait before next iteration
-                    await asyncio.sleep(60)
-                except Exception as e:
-                    self.logger.error(f"Error in self-improvement loop: {e}")
-                    # Implement recovery or fallback logic here
+                # Wait before next iteration
+                await asyncio.sleep(60)
             except Exception as e:
                 self.logger.error(f"Error in self-improvement loop: {e}")
+                # Implement recovery or fallback logic here
 
     async def evaluate_state(self):
         try:
