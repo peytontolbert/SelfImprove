@@ -150,4 +150,10 @@ class SelfImprovingAssistant:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     assistant = SelfImprovingAssistant()
-    asyncio.run(assistant.self_improvement_loop())
+    try:
+        asyncio.run(assistant.self_improvement_loop())
+    except RuntimeError as e:
+        if str(e) == "Event loop is closed":
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(assistant.self_improvement_loop())

@@ -732,7 +732,13 @@ def load_configuration():
     }
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except RuntimeError as e:
+        if str(e) == "Event loop is closed":
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(main())
     def scale_up(self, component_name):
         self.logger.info(f"Increasing resource allocation for {component_name}")
         # Implement logic to adjust resource allocation, e.g., increase CPU or memory limits
