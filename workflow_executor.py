@@ -46,6 +46,29 @@ class WorkflowExecutor:
         research_insights = self.get_local_research_insights()
         self.logger.info(f"Research insights: {research_insights}")
 
+        # Collect user feedback to supplement research
+        user_feedback = await self.collect_user_feedback()
+        self.logger.info(f"User feedback: {user_feedback}")
+
+        # Combine research insights with user feedback
+        combined_insights = self.combine_insights_with_feedback(research_insights, user_feedback)
+        self.logger.info(f"Combined insights: {combined_insights}")
+
+    async def collect_user_feedback(self):
+        """Collect user feedback to supplement research insights."""
+        try:
+            feedback = await self.ollama.query_ollama("user_feedback", "Collect user feedback to enhance research insights.")
+            return feedback.get("feedback", [])
+        except Exception as e:
+            self.logger.error(f"Error collecting user feedback: {e}")
+            return []
+
+    def combine_insights_with_feedback(self, insights, feedback):
+        """Combine research insights with user feedback."""
+        combined = insights.copy()
+        combined["user_feedback"] = feedback
+        return combined
+
     def get_local_research_insights(self):
         # Placeholder for local research logic
         # This could involve querying a local database or using a predefined dataset
