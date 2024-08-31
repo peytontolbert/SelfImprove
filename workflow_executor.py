@@ -27,11 +27,19 @@ class WorkflowExecutor:
         self.logger = logging.getLogger("WorkflowExecutor")
 
     async def execute_workflow(self):
-        # Emulate consciousness to kickstart the workflow
-        self.logger.info("Emulating consciousness to initiate project creation.")
-        context = {"task": "initiate_project_creation"}
+        # Check for existing long-term memory to resume from
+        self.logger.info("Checking for existing long-term memory.")
+        longterm_memory = await self.knowledge_base.get_longterm_memory()
+        if longterm_memory:
+            self.logger.info("Existing memory found. Resuming from last known state.")
+            context = {"task": "resume_from_memory", "longterm_memory": longterm_memory}
+        else:
+            self.logger.info("No existing memory found. Starting fresh.")
+            context = {"task": "initiate_project_creation"}
+
+        # Emulate consciousness to kickstart or resume the workflow
         consciousness_result = await self.consciousness_emulator.emulate_consciousness(context)
-        self.logger.info(f"Initial consciousness emulation result: {consciousness_result}")
+        self.logger.info(f"Consciousness emulation result: {consciousness_result}")
 
         # Use consciousness insights to guide project creation
         project_insights = consciousness_result.get("enhanced_awareness", {})
