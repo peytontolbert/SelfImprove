@@ -1289,10 +1289,8 @@ class OmniscientDataAbsorber:
             # For example, using an async database client
             # await database_client.execute(query)
             self.logger.info("Database update executed successfully.")
-        except DatabaseError as e:
-            self.logger.error(f"Database error during update: {str(e)}")
-        except Exception as e:
-            self.logger.error(f"Unexpected error during database update: {str(e)}")
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Error executing database update: {e.stderr}")
     async def handle_file_operation(self, details):
         """Handle file operations such as create, edit, or delete."""
         operation = details.get("operation")
