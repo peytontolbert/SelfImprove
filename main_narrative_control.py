@@ -43,6 +43,7 @@ from knowledge_base import KnowledgeBase
 from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
+from project_planner import ProjectPlanner
 from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
@@ -432,6 +433,7 @@ async def main():
     data_absorber = components.components["omniscient_data_absorber"]
     consciousness_emulator = components.components["consciousness_emulator"]
     task_queue = components.components["task_queue"]
+    project_planner = ProjectPlanner()
 
     await system_initialization(system_manager, ollama, narrative)
 
@@ -447,12 +449,12 @@ async def main():
             logger.info(f"Generated Thoughts: {thoughts}")
 
             # Generate Tasks
-            tasks = await ollama.query_ollama("task_generation", "Generate tasks to improve the system as an automated software assistant.", context=thoughts)
+            tasks = project_planner.generate_tasks(thoughts)
             logger.info(f"Generated Tasks: {tasks}")
 
             # Complete Tasks
             for task in tasks.get("tasks", []):
-                await task_queue.execute_task(task)
+                await project_planner.execute_task(task)
                 await narrative.log_chain_of_thought(f"Executed task: {task}")
 
             # Log detailed insights and context at the end of the main loop iteration
