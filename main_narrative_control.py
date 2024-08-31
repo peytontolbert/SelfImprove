@@ -437,7 +437,27 @@ async def main():
     session = aiohttp.ClientSession()
     try:
         while True:
-            await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
+            # View System State
+            system_state = await ollama.evaluate_system_state({})
+            logger.info(f"System State: {system_state}")
+
+            # Generate Thoughts
+            thoughts = await consciousness_emulator.emulate_consciousness(system_state)
+            logger.info(f"Generated Thoughts: {thoughts}")
+
+            # Generate Tasks
+            tasks = await ollama.query_ollama("task_generation", "Generate tasks to improve the system.", context=thoughts)
+            logger.info(f"Generated Tasks: {tasks}")
+
+            # Complete Tasks
+            for task in tasks.get("tasks", []):
+                await task_queue.execute_task(task)
+                await narrative.log_chain_of_thought(f"Executed task: {task}")
+
+            # Log detailed insights and context at the end of the main loop iteration
+            context_insights = await narrative.generate_detailed_thoughts(thoughts)
+            await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
+            await asyncio.sleep(60)  # Adjust the sleep time as needed
     except Exception as e:
         await handle_main_loop_error(e, components)
     finally:
