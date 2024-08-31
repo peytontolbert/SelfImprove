@@ -392,12 +392,15 @@ async def initialize_components():
     ]
 
     for component_name in component_names:
-        process = await asyncio.create_subprocess_exec(
-            "python", "-m", component_name.lower(),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        components[component_name] = process
+        if component_name == "OllamaInterface":
+            components[component_name] = OllamaInterface()
+        else:
+            process = await asyncio.create_subprocess_exec(
+                "python", "-m", component_name.lower(),
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            components[component_name] = process
 
     return SystemManager(components)
 
