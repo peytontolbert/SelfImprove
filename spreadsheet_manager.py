@@ -36,7 +36,11 @@ class SpreadsheetManager:
                 for j, value in enumerate(row):
                     # Ensure that only valid data types are written to the spreadsheet
                     if isinstance(value, (int, float, type(None))):
-                        sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
+                        # Ensure that only valid data types are written to the spreadsheet
+                        if isinstance(value, (int, float, type(None))):
+                            sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
+                        else:
+                            sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=str(value))
                     else:
                         sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=str(value))
             self.workbook.save(self.file_path)
