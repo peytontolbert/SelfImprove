@@ -22,12 +22,20 @@ class ConsciousnessEmulator:
         feedback = context.get("feedback", {})
         longterm_memory = context.get("longterm_memory") or await self.ollama.get_longterm_memory()
 
-        # Streamline context processing
+        # Enhance context processing for long context understanding
         refined_context = self.extract_and_refine_context(context)
+        self.logger.info(f"Initial refined context: {refined_context}")
+
+        # Analyze and integrate long-term memory insights
         self.analyze_context(refined_context)
+        self.logger.info(f"Context after analysis: {refined_context}")
+
+        # Calculate composite scores with enhanced context
         self.calculate_composite_scores(actions, system_state, feedback, longterm_memory, refined_context)
         self.update_action_scores(actions, feedback)
         self.apply_adaptive_learning(actions, feedback)
+
+        # Prioritize actions based on enhanced context understanding
         prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         self.logger.info(f"Consciousness-emulated prioritized actions: {prioritized_actions}")
