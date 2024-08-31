@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from attention_mechanism import ConsciousnessEmulator
 from core.ollama_interface import OllamaInterface
 from knowledge_base import KnowledgeBase
 from narrative.system_narrative import SystemNarrative
@@ -13,6 +14,7 @@ class WorkflowExecutor:
     def __init__(self):
         self.ollama = OllamaInterface()
         self.knowledge_base = KnowledgeBase()
+        self.consciousness_emulator = ConsciousnessEmulator(self.ollama)
         self.system_narrative = SystemNarrative(self.ollama, self.knowledge_base, None, None)
         self.consciousness_emulator = ConsciousnessEmulator(self.ollama)
         self.version_control = VersionControlSystem()
@@ -42,17 +44,17 @@ class WorkflowExecutor:
 
     async def research_and_plan(self):
         self.logger.info("Conducting research and planning.")
-        # Use a local database or predefined dataset for research insights
-        research_insights = self.get_local_research_insights()
-        self.logger.info(f"Research insights: {research_insights}")
+        # Emulate consciousness to enhance research and planning
+        context = {"task": "research_and_plan"}
+        consciousness_result = await self.consciousness_emulator.emulate_consciousness(context)
+        self.logger.info(f"Consciousness emulation result: {consciousness_result}")
 
-        # Collect user feedback to supplement research
-        user_feedback = await self.collect_user_feedback()
-        self.logger.info(f"User feedback: {user_feedback}")
+        # Use consciousness insights to guide research
+        research_insights = consciousness_result.get("enhanced_awareness", {})
+        self.logger.info(f"Research insights from consciousness: {research_insights}")
 
-        # Combine research insights with user feedback
-        combined_insights = self.combine_insights_with_feedback(research_insights, user_feedback)
-        self.logger.info(f"Combined insights: {combined_insights}")
+        # Continuously create new projects for learning
+        await self.create_and_learn_from_projects(research_insights)
 
     async def collect_user_feedback(self):
         """Collect user feedback to supplement research insights."""
@@ -79,7 +81,13 @@ class WorkflowExecutor:
             ]
         }
 
-    async def setup_development_environment(self):
+    async def create_and_learn_from_projects(self, insights):
+        """Create new projects based on insights and learn from them."""
+        self.logger.info("Creating new projects for learning.")
+        # Example logic to create and learn from projects
+        for insight in insights.get("insights", []):
+            self.logger.info(f"Creating project based on insight: {insight}")
+            # Implement project creation and learning logic here
         self.logger.info("Setting up development environment.")
         await self.version_control.create_branch(self.ollama, "development", "Setup development environment")
         self.logger.info("Development environment setup completed.")
