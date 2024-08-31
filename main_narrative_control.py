@@ -475,30 +475,6 @@ async def perform_main_loop_iteration(components):
         logger.error(f"Error during main loop iteration: {e}")
     finally:
         await asyncio.sleep(60)  # Adjust the sleep time as needed
-    logger.info("Starting main loop iteration")
-    try:
-        # Absorb knowledge and update consciousness
-        await data_absorber.absorb_knowledge()
-        context = await ollama.evaluate_system_state({})
-        consciousness_result = await consciousness_emulator.emulate_consciousness(context)
-
-        # Generate tasks based on consciousness insights
-        tasks = consciousness_result.get("prioritized_actions", [])
-        for task in tasks:
-            await components["task_queue"].add_task(task)
-
-        # Process tasks and manage system improvements
-        await process_tasks(components, context)
-        await analyze_and_improve_system(components, context)
-        await optimize_system(components, context)
-
-        # Log insights and context
-        context_insights = await narrative.generate_detailed_thoughts(context)
-        await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
-    except Exception as e:
-        logger.error(f"Error during main loop iteration: {e}")
-    finally:
-        await asyncio.sleep(60)  # Adjust the sleep time as needed
 
 async def perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator):
     """
