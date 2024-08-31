@@ -34,7 +34,11 @@ class SpreadsheetManager:
                 sheet = self.workbook.active
             for i, row in enumerate(data):
                 for j, value in enumerate(row):
-                    sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
+                    # Ensure that only valid data types are written to the spreadsheet
+                    if isinstance(value, (int, float, type(None))):
+                        sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
+                    else:
+                        sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=str(value))
             self.workbook.save(self.file_path)
             logging.info(f"Data written successfully to {start_cell} in sheet '{sheet_name or self.workbook.active.title}'.")
         except Exception as e:
