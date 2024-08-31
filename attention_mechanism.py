@@ -20,7 +20,7 @@ class ConsciousnessEmulator:
         actions = context.get("actions", [])
         system_state = context.get("system_state", {})
         feedback = context.get("feedback", {})
-        longterm_memory = context.get("longterm_memory", await self.ollama.get_longterm_memory())
+        longterm_memory = context.get("longterm_memory") or await self.ollama.get_longterm_memory()
 
         # Streamline context processing
         refined_context = self.extract_and_refine_context(context)
@@ -31,6 +31,7 @@ class ConsciousnessEmulator:
         prioritized_actions = sorted(actions, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         self.logger.info(f"Consciousness-emulated prioritized actions: {prioritized_actions}")
+
         # Use Ollama to refine consciousness emulation
         refinement_suggestions = await self.ollama.query_ollama(
             "consciousness_refinement",
@@ -38,13 +39,18 @@ class ConsciousnessEmulator:
             context={"longterm_memory": longterm_memory, "refined_context": refined_context}
         )
         self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
+
         await self.system_narrative.log_chain_of_thought({
             "process": "Consciousness emulation",
             "context": refined_context,
             "prioritized_actions": prioritized_actions,
             "refinement_suggestions": refinement_suggestions
         })
-        return {"enhanced_awareness": refined_context, "prioritized_actions": prioritized_actions}
+
+        return {
+            "enhanced_awareness": refined_context,
+            "prioritized_actions": prioritized_actions
+        }
 
     def extract_and_refine_context(self, context):
         """
