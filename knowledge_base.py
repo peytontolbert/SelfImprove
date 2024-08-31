@@ -212,6 +212,9 @@ class KnowledgeBase:
         context = {"entry_name": entry_name, "data": data}
         relevance_decision = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="relevance_evaluation", context=context)
         self.logger.info(f"Relevance evaluation for {entry_name}: {relevance_decision}")
+        if not relevance_decision.get('is_relevant', False):
+            self.logger.info(f"Entry deemed irrelevant and not added: {entry_name}")
+            return False
         return relevance_decision
 
     async def get_longterm_memory(self) -> Dict[str, Any]:

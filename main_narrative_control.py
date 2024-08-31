@@ -428,29 +428,11 @@ async def initialize_components():
 async def main():
     components = await initialize_components()
     try:
-        ollama = components["ollama"]
-        rl_module = components["reinforcement_learning_module"]
-        si = components["self_improvement"]
-        metrics = await si.get_system_metrics()
-        rl_feedback = await rl_module.get_feedback(metrics)
-        logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-        task_queue = components["task_queue"]
-        vcs = components["version_control_system"]
-        ca = components["code_analysis"]
-        tf = components["testing_framework"]
-        dm = components["deployment_manager"]
-        kb = components["knowledge_base"]
-        narrative = components["system_narrative"]
-        fs = components["file_system"]
-        pm = components["prompt_manager"]
-        eh = components["error_handler"]
-        tutorial_manager = components["tutorial_manager"]
-        meta_learner = components["meta_learner"]
-        quantum_optimizer = components["quantum_optimizer"]
-        swarm_intelligence = components["swarm_intelligence"]
-        await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
+        await perform_main_loop_iteration(components)
+    except Exception as e:
+        await handle_main_loop_error(e, components)
     finally:
-        await ollama.__aexit__(None, None, None)  # Ensure cleanup
+        await components["ollama"].__aexit__(None, None, None)  # Ensure cleanup
 
 async def handle_main_loop_error(e, components):
     logger.exception("An error occurred in the main loop", exc_info=e)
@@ -463,7 +445,36 @@ async def close_session(session):
     if not session.closed:
         await session.close()
 
-async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
+async def perform_main_loop_iteration(components):
+    logger.info("Starting main loop iteration")
+    try:
+        # Absorb knowledge and update consciousness
+        data_absorber = components["omniscient_data_absorber"]
+        ollama = components["ollama"]
+        consciousness_emulator = components["consciousness_emulator"]
+        narrative = components["system_narrative"]
+
+        await data_absorber.absorb_knowledge()
+        context = await ollama.evaluate_system_state({})
+        consciousness_result = await consciousness_emulator.emulate_consciousness(context)
+
+        # Generate tasks based on consciousness insights
+        tasks = consciousness_result.get("prioritized_actions", [])
+        for task in tasks:
+            await components["task_queue"].add_task(task)
+
+        # Process tasks and manage system improvements
+        await process_tasks(components, context)
+        await analyze_and_improve_system(components, context)
+        await optimize_system(components, context)
+
+        # Log insights and context
+        context_insights = await narrative.generate_detailed_thoughts(context)
+        await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
+    except Exception as e:
+        logger.error(f"Error during main loop iteration: {e}")
+    finally:
+        await asyncio.sleep(60)  # Adjust the sleep time as needed
     logger.info("Starting main loop iteration")
     try:
         # Absorb knowledge and update consciousness

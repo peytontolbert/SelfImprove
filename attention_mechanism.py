@@ -40,7 +40,7 @@ class ConsciousnessEmulator:
         )
         self.logger.info(f"Consciousness refinement suggestions: {refinement_suggestions}")
 
-        await self.system_narrative.log_chain_of_thought({
+        await self.ollama.log_chain_of_thought({
             "process": "Consciousness emulation",
             "context": refined_context,
             "prioritized_actions": prioritized_actions,

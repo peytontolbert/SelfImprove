@@ -154,7 +154,7 @@ class SystemNarrative:
                 self.spreadsheet_manager.write_data((5, 1), [["Thought Process"], [thought_process]], sheet_name="SystemData")
                 await log_with_ollama(self.ollama, thought_process, relevant_context)
                 # Generate and log thoughts about the current state
-                await self.data_absorber.generate_thoughts(relevant_context)
+                await self.omniscient_data_absorber.generate_thoughts(relevant_context)
                 # Analyze feedback and suggest improvements
                 self.track_request("feedback_analysis", f"Analyze feedback for the current thought process: {thought_process}. Consider system performance, recent changes, and long-term memory.", "feedback")
                 feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current thought process: {thought_process}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
