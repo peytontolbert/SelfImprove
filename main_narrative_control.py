@@ -435,43 +435,7 @@ async def main():
     task_queue = components.components["task_queue"]
 
     await system_initialization(system_manager, ollama, narrative)
-
-    session = aiohttp.ClientSession()
-    try:
-        while True:
-            # View System State
-            system_state = await ollama.evaluate_system_state({})
-            logger.info(f"System State: {system_state}")
-
-            # Perform Knowledge Absorption
-            await data_absorber.absorb_knowledge()
-            logger.info("Knowledge absorption completed.")
-
-            # Gather Context
-            context = await gather_context(ollama, consciousness_emulator)
-            logger.info(f"Gathered Context: {context}")
-
-            # Generate Thoughts
-            thoughts = await consciousness_emulator.emulate_consciousness(context)
-            logger.info(f"Generated Thoughts: {thoughts}")
-
-            # Generate Tasks
-            tasks = project_planner.generate_tasks(thoughts)
-            logger.info(f"Generated Tasks: {tasks}")
-
-            # Complete Tasks
-            for task in tasks.get("tasks", []):
-                await project_planner.execute_task(task)
-                await narrative.log_chain_of_thought(f"Executed task: {task}")
-
-            # Log detailed insights and context at the end of the main loop iteration
-            context_insights = await narrative.generate_detailed_thoughts(thoughts)
-            await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
-            await asyncio.sleep(60)  # Adjust the sleep time as needed
-    except Exception as e:
-        await handle_main_loop_error(e, components)
-    finally:
-        await close_session(session)
+    await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
 
 async def handle_main_loop_error(e, components):
     logger.exception("An error occurred in the main loop", exc_info=e)
