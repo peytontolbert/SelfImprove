@@ -394,6 +394,7 @@ async def initialize_components():
     for component_name in component_names:
         if component_name == "OllamaInterface":
             components[component_name] = OllamaInterface()
+            components["ollama"] = components[component_name]
         else:
             process = await asyncio.create_subprocess_exec(
                 "python", "-m", component_name.lower(),
