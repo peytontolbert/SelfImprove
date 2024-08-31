@@ -43,7 +43,7 @@ from knowledge_base import KnowledgeBase
 from meta_learner import MetaLearner
 from spreadsheet_manager import SpreadsheetManager
 from narrative.system_narrative import SystemNarrative, OmniscientDataAbsorber
-from project_planner import ProjectPlanner
+from attention_mechanism import ConsciousnessEmulator
 from self_improvement import SelfImprovement
 from swarm_intelligence import SwarmIntelligence
 from tutorial_manager import TutorialManager
@@ -466,16 +466,22 @@ async def close_session(session):
 async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
     logger.info("Starting main loop iteration")
     try:
-        await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
-        context = await gather_context(ollama, consciousness_emulator)
+        # Absorb knowledge and update consciousness
+        await data_absorber.absorb_knowledge()
+        context = await ollama.evaluate_system_state({})
+        consciousness_result = await consciousness_emulator.emulate_consciousness(context)
 
+        # Generate tasks based on consciousness insights
+        tasks = consciousness_result.get("prioritized_actions", [])
+        for task in tasks:
+            await components["task_queue"].add_task(task)
+
+        # Process tasks and manage system improvements
         await process_tasks(components, context)
-        await manage_prompts(components, context)
         await analyze_and_improve_system(components, context)
         await optimize_system(components, context)
-        await handle_complex_tasks(components, context)
 
-        # Log detailed insights and context at the end of the main loop iteration
+        # Log insights and context
         context_insights = await narrative.generate_detailed_thoughts(context)
         await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
     except Exception as e:
