@@ -383,25 +383,27 @@ class SystemManager:
 
 async def initialize_components():
     components = {}
-    component_names = [
-        "OllamaInterface", "KnowledgeBase", "ImprovementManager", "OmniscientDataAbsorber",
-        "ConsciousnessEmulator", "SelfImprovement", "SystemNarrative", "ReinforcementLearningModule",
-        "TaskQueue", "VersionControlSystem", "CodeAnalysis", "TestingFramework", "DeploymentManager",
-        "FileSystem", "PromptManager", "ErrorHandler", "TutorialManager", "MetaLearner",
-        "QuantumOptimizer", "SwarmIntelligence", "HyperloopOptimizer"
-    ]
-
-    for component_name in component_names:
-        if component_name == "OllamaInterface":
-            components[component_name] = OllamaInterface()
-            components["ollama"] = components[component_name]
-        else:
-            process = await asyncio.create_subprocess_exec(
-                "python", "-m", component_name.lower(),
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-            components[component_name] = process
+    components["ollama"] = OllamaInterface()
+    components["knowledge_base"] = KnowledgeBase()
+    components["improvement_manager"] = ImprovementManager()
+    components["omniscient_data_absorber"] = OmniscientDataAbsorber(components["knowledge_base"], components["ollama"])
+    components["consciousness_emulator"] = ConsciousnessEmulator(components["ollama"])
+    components["self_improvement"] = SelfImprovement()
+    components["system_narrative"] = SystemNarrative(components["ollama"], components["knowledge_base"], components["omniscient_data_absorber"], components["self_improvement"])
+    components["reinforcement_learning_module"] = ReinforcementLearningModule()
+    components["task_queue"] = TaskQueue()
+    components["version_control_system"] = VersionControlSystem()
+    components["code_analysis"] = CodeAnalysis()
+    components["testing_framework"] = TestingFramework()
+    components["deployment_manager"] = DeploymentManager()
+    components["file_system"] = FileSystem()
+    components["prompt_manager"] = PromptManager()
+    components["error_handler"] = ErrorHandler()
+    components["tutorial_manager"] = TutorialManager()
+    components["meta_learner"] = MetaLearner()
+    components["quantum_optimizer"] = QuantumOptimizer()
+    components["swarm_intelligence"] = SwarmIntelligence()
+    components["hyperloop_optimizer"] = HyperloopOptimizer()
 
     return SystemManager(components)
 
