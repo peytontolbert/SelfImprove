@@ -549,122 +549,126 @@ class {component_name}:
 
 
     async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
-        await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", "Improvement cycle initiation")
-        # Log the start of an improvement cycle in the knowledge base
-        await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
-        # Log the start of an improvement cycle in the knowledge base
-        await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
-        
-        # System state analysis
-        await self.log_state("Analyzing current system state", "System state analysis")
-        system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
-        self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
+        try:
+            await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", "Improvement cycle initiation")
+            # Log the start of an improvement cycle in the knowledge base
+            await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
+            # Log the start of an improvement cycle in the knowledge base
+            await kb.add_entry("improvement_cycle_start", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
+            
+            # System state analysis
+            await self.log_state("Analyzing current system state", "System state analysis")
+            system_state = await ollama.evaluate_system_state({"metrics": await si.get_system_metrics()})
+            self.logger.info(f"System state: {json.dumps(system_state, indent=2)}")
 
-        # Generate hypotheses for potential improvements
-        hypotheses = await si.generate_hypotheses(system_state)
-        tested_hypotheses = await si.test_hypotheses(hypotheses)
-        self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
+            # Generate hypotheses for potential improvements
+            hypotheses = await si.generate_hypotheses(system_state)
+            tested_hypotheses = await si.test_hypotheses(hypotheses)
+            self.logger.info(f"Tested hypotheses results: {tested_hypotheses}")
 
-        # Generate and apply improvements in parallel
-        await self.log_state("Generating improvement suggestions", "Improvement suggestion generation")
-        # Retrieve insights from the knowledge base for generating improvements
-        insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
-        self.logger.info(f"Retrieved insights for improvement: {insights}")
-        # Retrieve insights from the knowledge base for generating improvements
-        insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
-        self.logger.info(f"Retrieved insights for improvement: {insights}")
-        improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
-        
-        # Validate and apply improvements in parallel
-        if improvements:
-            tasks = [self.apply_and_log_improvement(si, kb, improvement, system_state) for improvement in improvements]
-            await asyncio.gather(*tasks)
+            # Generate and apply improvements in parallel
+            await self.log_state("Generating improvement suggestions", "Improvement suggestion generation")
+            # Retrieve insights from the knowledge base for generating improvements
+            insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
+            self.logger.info(f"Retrieved insights for improvement: {insights}")
+            # Retrieve insights from the knowledge base for generating improvements
+            insights = await kb.query_insights("MATCH (n:Node) RETURN n LIMIT 5")
+            self.logger.info(f"Retrieved insights for improvement: {insights}")
+            improvements = await si.retry_ollama_call(si.analyze_performance, system_state)
+            
+            # Validate and apply improvements in parallel
+            if improvements:
+                tasks = [self.apply_and_log_improvement(si, kb, improvement, system_state) for improvement in improvements]
+                await asyncio.gather(*tasks)
 
-        # Add capabilities to the knowledge base
-        for improvement in improvements:
-            await kb.add_capability(improvement, {"status": "suggested"})
+            # Add capabilities to the knowledge base
+            for improvement in improvements:
+                await kb.add_capability(improvement, {"status": "suggested"})
 
-        # Perform additional tasks in parallel
-        await asyncio.gather(
-            self.perform_additional_tasks(task_queue, ca, tf, dm, vcs, ollama, si),
-            self.manage_prompts_and_errors(pm, eh, ollama),
-            self.assess_alignment_implications(ollama)
-        )
+            # Perform additional tasks in parallel
+            await asyncio.gather(
+                self.perform_additional_tasks(task_queue, ca, tf, dm, vcs, ollama, si),
+                self.manage_prompts_and_errors(pm, eh, ollama),
+                self.assess_alignment_implications(ollama)
+            )
 
-        # Manage prompts and check for errors
-        await self.manage_prompts_and_errors(pm, eh, ollama)
+            # Manage prompts and check for errors
+            await self.manage_prompts_and_errors(pm, eh, ollama)
 
-        # Assess alignment implications
-        await self.assess_alignment_implications(ollama)
+            # Assess alignment implications
+            await self.assess_alignment_implications(ollama)
 
-        # Use reinforcement learning feedback and predictive analysis
-        rl_feedback = await self.rl_module.get_feedback(system_state)
-        self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
-        # Integrate reinforcement learning feedback into improvements
-        improvements.extend(rl_feedback)
-        self.logger.info(f"Integrated reinforcement learning feedback into improvements: {rl_feedback}")
-        await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
-        # Log the feedback and any actions taken based on it
-        self.logger.info("Long-term memory updated with reinforcement learning feedback.")
-        for feedback in rl_feedback:
-            self.logger.info(f"Processing feedback: {feedback}")
-            # Example: Adjust strategies based on feedback
-            if "optimize" in feedback:
-                self.logger.info("Optimizing system based on feedback.")
-                # Implement optimization logic here
-        self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
+            # Use reinforcement learning feedback and predictive analysis
+            rl_feedback = await self.rl_module.get_feedback(system_state)
+            self.logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+            # Integrate reinforcement learning feedback into improvements
+            improvements.extend(rl_feedback)
+            self.logger.info(f"Integrated reinforcement learning feedback into improvements: {rl_feedback}")
+            await self.knowledge_base.add_entry("rl_feedback", {"feedback": rl_feedback})
+            # Log the feedback and any actions taken based on it
+            self.logger.info("Long-term memory updated with reinforcement learning feedback.")
+            for feedback in rl_feedback:
+                self.logger.info(f"Processing feedback: {feedback}")
+                # Example: Adjust strategies based on feedback
+                if "optimize" in feedback:
+                    self.logger.info("Optimizing system based on feedback.")
+                    # Implement optimization logic here
+            self.spreadsheet_manager.write_data((25, 1), [["Reinforcement Learning Feedback"], [rl_feedback]])
 
-        # Integrate predictive analysis
-        # Enhance predictive analysis with historical data
-        historical_data = await self.knowledge_base.get_entry("historical_metrics")
-        predictive_context = {**system_state, "historical_data": historical_data}
-        predictive_insights = await self.ollama.query_ollama("predictive_analysis", "Provide predictive insights based on current and historical system metrics.", context=predictive_context)
-        self.logger.info(f"Enhanced Predictive insights: {predictive_insights}")
-        await self.knowledge_base.add_entry("predictive_insights", {"insights": predictive_insights})
-        self.logger.info("Long-term memory updated with predictive insights.")
-        self.spreadsheet_manager.write_data((30, 1), [["Enhanced Predictive Insights"], [predictive_insights]])
+            # Integrate predictive analysis
+            # Enhance predictive analysis with historical data
+            historical_data = await self.knowledge_base.get_entry("historical_metrics")
+            predictive_context = {**system_state, "historical_data": historical_data}
+            predictive_insights = await self.ollama.query_ollama("predictive_analysis", "Provide predictive insights based on current and historical system metrics.", context=predictive_context)
+            self.logger.info(f"Enhanced Predictive insights: {predictive_insights}")
+            await self.knowledge_base.add_entry("predictive_insights", {"insights": predictive_insights})
+            self.logger.info("Long-term memory updated with predictive insights.")
+            self.spreadsheet_manager.write_data((30, 1), [["Enhanced Predictive Insights"], [predictive_insights]])
 
-        # Implement advanced predictive analysis for future challenges
-        future_challenges = await self.ollama.query_ollama("advanced_predictive_analysis", "Utilize advanced predictive analytics to anticipate future challenges and develop proactive strategies.", context=predictive_context)
-        self.logger.info(f"Advanced future challenges and strategies: {future_challenges}")
-        await self.knowledge_base.add_entry("advanced_future_challenges", future_challenges)
+            # Implement advanced predictive analysis for future challenges
+            future_challenges = await self.ollama.query_ollama("advanced_predictive_analysis", "Utilize advanced predictive analytics to anticipate future challenges and develop proactive strategies.", context=predictive_context)
+            self.logger.info(f"Advanced future challenges and strategies: {future_challenges}")
+            await self.knowledge_base.add_entry("advanced_future_challenges", future_challenges)
 
-        # Evolve feedback loop for long-term evolution with adaptive mechanisms
-        await self.evolve_feedback_loop(rl_feedback, predictive_insights)
-        # Continuously refine feedback based on historical data and real-time performance
-        refined_feedback = await self.ollama.query_ollama("refine_feedback", "Refine feedback using historical data and real-time performance metrics.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
-        self.logger.info(f"Refined feedback: {refined_feedback}")
-        await self.knowledge_base.add_entry("refined_feedback", refined_feedback)
+            # Evolve feedback loop for long-term evolution with adaptive mechanisms
+            await self.evolve_feedback_loop(rl_feedback, predictive_insights)
+            # Continuously refine feedback based on historical data and real-time performance
+            refined_feedback = await self.ollama.query_ollama("refine_feedback", "Refine feedback using historical data and real-time performance metrics.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+            self.logger.info(f"Refined feedback: {refined_feedback}")
+            await self.knowledge_base.add_entry("refined_feedback", refined_feedback)
 
-        # Enhance feedback loop with adaptive mechanisms
-        feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Enhance feedback loops for rapid learning and adaptation using advanced machine learning models.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
-        adaptive_feedback = await self.ollama.query_ollama("adaptive_feedback", "Integrate advanced machine learning models to adapt feedback loops dynamically based on historical data and real-time performance.")
-        self.logger.info(f"Enhanced adaptive feedback integration: {adaptive_feedback}")
-        self.logger.info(f"Enhanced feedback loop optimization: {feedback_optimization}")
-        await self.knowledge_base.add_entry("enhanced_feedback_optimization", feedback_optimization)
+            # Enhance feedback loop with adaptive mechanisms
+            feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Enhance feedback loops for rapid learning and adaptation using advanced machine learning models.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+            adaptive_feedback = await self.ollama.query_ollama("adaptive_feedback", "Integrate advanced machine learning models to adapt feedback loops dynamically based on historical data and real-time performance.")
+            self.logger.info(f"Enhanced adaptive feedback integration: {adaptive_feedback}")
+            self.logger.info(f"Enhanced feedback loop optimization: {feedback_optimization}")
+            await self.knowledge_base.add_entry("enhanced_feedback_optimization", feedback_optimization)
 
-        # Optimize feedback loop for rapid learning
-        feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
-        # Integrate machine learning models for adaptive feedback
-        adaptive_feedback = await self.ollama.query_ollama("adaptive_feedback", "Use machine learning to adapt feedback loops based on historical data and current performance.")
-        self.logger.info(f"Adaptive feedback integration: {adaptive_feedback}")
-        self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
-        await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
-        # Periodically analyze long-term memory for insights
-        if improvement_cycle_count % 10 == 0:  # Every 10 cycles
-            longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
-            self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
-        await self.log_state(f"Completed improvement cycle {improvement_cycle_count}", "Improvement cycle completion")
-        # Log the completion of an improvement cycle in the knowledge base
-        await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
-        # Log the completion of an improvement cycle in the knowledge base
-        await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
+            # Optimize feedback loop for rapid learning
+            feedback_optimization = await self.ollama.query_ollama("feedback_optimization", "Optimize feedback loops for rapid learning and adaptation.", context={"rl_feedback": rl_feedback, "predictive_insights": predictive_insights})
+            # Integrate machine learning models for adaptive feedback
+            adaptive_feedback = await self.ollama.query_ollama("adaptive_feedback", "Use machine learning to adapt feedback loops based on historical data and current performance.")
+            self.logger.info(f"Adaptive feedback integration: {adaptive_feedback}")
+            self.logger.info(f"Feedback loop optimization: {feedback_optimization}")
+            await self.knowledge_base.add_entry("feedback_optimization", feedback_optimization)
+            # Periodically analyze long-term memory for insights
+            if improvement_cycle_count % 10 == 0:  # Every 10 cycles
+                longterm_memory_analysis = await self.knowledge_base.get_longterm_memory()
+                self.logger.info(f"Periodic long-term memory analysis: {longterm_memory_analysis}")
+            await self.log_state(f"Completed improvement cycle {improvement_cycle_count}", "Improvement cycle completion")
+            # Log the completion of an improvement cycle in the knowledge base
+            await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
+            # Log the completion of an improvement cycle in the knowledge base
+            await kb.add_entry("improvement_cycle_end", {"cycle_number": improvement_cycle_count, "timestamp": time.time()})
 
-        # Self-reflection mechanism
-        if improvement_cycle_count % 5 == 0:  # Every 5 cycles
-            self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
-            self.logger.info(f"Self-reflection insights: {self_reflection}")
-            await self.knowledge_base.add_entry("self_reflection", self_reflection)
+            # Self-reflection mechanism
+            if improvement_cycle_count % 5 == 0:  # Every 5 cycles
+                self_reflection = await self.ollama.query_ollama("self_reflection", "Reflect on recent performance and suggest adjustments.", context={"system_state": system_state})
+                self.logger.info(f"Self-reflection insights: {self_reflection}")
+                await self.knowledge_base.add_entry("self_reflection", self_reflection)
+        except Exception as e:
+            self.logger.error(f"Error during improvement cycle: {e}")
+            # Implement recovery or fallback logic here
 
     async def evolve_feedback_loop(self, rl_feedback, predictive_insights):
         """Evolve the feedback loop by integrating reinforcement learning feedback and predictive insights."""
