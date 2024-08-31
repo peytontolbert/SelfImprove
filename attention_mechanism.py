@@ -1,11 +1,13 @@
 import logging
 from typing import Dict, Any
 from core.ollama_interface import OllamaInterface
+from actions import Actions
 
 class ConsciousnessEmulator:
     def __init__(self, ollama: OllamaInterface):
         self.ollama = ollama
         self.logger = logging.getLogger(__name__)
+        self.actions = Actions()
 
     async def emulate_consciousness(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -21,6 +23,9 @@ class ConsciousnessEmulator:
         system_state = context.get("system_state", {})
         feedback = context.get("feedback", {})
         longterm_memory = context.get("longterm_memory") or await self.ollama.get_longterm_memory()
+
+        # Include available actions in the context
+        context["available_actions"] = self.actions.get_available_actions()
 
         # Enhance context processing for long context understanding
         refined_context = self.extract_and_refine_context(context)
