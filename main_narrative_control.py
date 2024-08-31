@@ -431,6 +431,7 @@ async def main():
     narrative = components.components["system_narrative"]
     data_absorber = components.components["omniscient_data_absorber"]
     consciousness_emulator = components.components["consciousness_emulator"]
+    task_queue = components.components["task_queue"]
 
     await system_initialization(system_manager, ollama, narrative)
 
