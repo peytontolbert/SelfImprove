@@ -389,6 +389,11 @@ class KnowledgeBase:
         return analysis_result
 
 
+    async def add_capability(self, capability_name, data):
+        """Add a capability to the knowledge base."""
+        self.longterm_memory[capability_name] = data
+        self.logger.info(f"Added capability: {capability_name} with data: {data}")
+
     async def log_interaction(self, source, action, details, improvement):
         """Log interactions with the knowledge base."""
         self.logger.info(f"Interaction logged from {source}: {action} with details: {details}")
