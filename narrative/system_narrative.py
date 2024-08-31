@@ -438,8 +438,8 @@ class {component_name}:
 
     async def execute_actions(self, actions):
         """Execute a list of actions derived from thoughts and improvements."""
-        try:
-            for action in actions:
+        for action in actions:
+            try:
                 action_type = action.get("type")
                 details = action.get("details", {})
                 if action_type == "file_operation":
@@ -452,10 +452,10 @@ class {component_name}:
                     await self.handle_database_update(details)
                 else:
                     self.logger.error(f"Unknown action type: {action_type}. Please check the action details.")
-            # Log the execution of actions
-            self.logger.info(f"Executed actions: {actions}")
-        except Exception as e:
-            self.logger.error(f"Error executing actions: {e}")
+            except Exception as e:
+                self.logger.error(f"Error executing action {action}: {e}")
+        # Log the execution of actions
+        self.logger.info(f"Executed actions: {actions}")
         await self.self_optimization(self.ollama, self.kb)
         system_state = {}
         improvement_cycle_count = 0
@@ -1268,14 +1268,17 @@ class OmniscientDataAbsorber:
         url = details.get("url")
         method = details.get("method", "GET")
         data = details.get("data", {})
+        headers = details.get("headers", {})
         try:
-            self.logger.info(f"Performing network operation: {method} {url}")
+            self.logger.info(f"Performing network operation: {method} {url} with data: {data} and headers: {headers}")
             async with aiohttp.ClientSession() as session:
-                async with session.request(method, url, json=data) as response:
+                async with session.request(method, url, json=data, headers=headers) as response:
                     response_data = await response.json()
                     self.logger.info(f"Network operation successful: {response_data}")
+        except aiohttp.ClientError as e:
+            self.logger.error(f"Network error during operation: {str(e)}")
         except Exception as e:
-            self.logger.error(f"Error performing network operation: {str(e)}")
+            self.logger.error(f"Unexpected error during network operation: {str(e)}")
 
     async def handle_database_update(self, details):
         """Handle database updates."""
@@ -1286,8 +1289,10 @@ class OmniscientDataAbsorber:
             # For example, using an async database client
             # await database_client.execute(query)
             self.logger.info("Database update executed successfully.")
+        except DatabaseError as e:
+            self.logger.error(f"Database error during update: {str(e)}")
         except Exception as e:
-            self.logger.error(f"Error executing database update: {str(e)}")
+            self.logger.error(f"Unexpected error during database update: {str(e)}")
         """Handle file operations such as create, edit, or delete."""
         operation = details.get("operation")
         filename = details.get("filename")
@@ -1320,6 +1325,8 @@ class OmniscientDataAbsorber:
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Failed to execute system update: {str(e)}")
             self.logger.debug(f"Update error output: {e.stderr}")
+        except Exception as e:
+            self.logger.error(f"Unexpected error during system update: {str(e)}")
 
     async def log_state(self, message, thought_process="Default thought process", context=None):
         context = context or {}
