@@ -434,38 +434,37 @@ async def main():
 
     await system_initialization(system_manager, ollama, narrative)
 
-    async def main_loop():
-        session = aiohttp.ClientSession()
-        try:
-            while True:
-                await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
-        except Exception as e:
-            await handle_main_loop_error(e, components)
-        finally:
-            await close_session(session)
+    session = aiohttp.ClientSession()
+    try:
+        while True:
+            await perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative)
+    except Exception as e:
+        await handle_main_loop_error(e, components)
+    finally:
+        await close_session(session)
 
-    async def handle_main_loop_error(e, components):
-        logger.exception("An error occurred in the main loop", exc_info=e)
-        await error_handling_and_recovery(components, e)
+async def handle_main_loop_error(e, components):
+    logger.exception("An error occurred in the main loop", exc_info=e)
+    await error_handling_and_recovery(components, e)
 
-    async def close_session(session):
-        if not session.closed:
-            await session.close()
+async def close_session(session):
+    if not session.closed:
+        await session.close()
 
-    async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
-        await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
-        context = await gather_context(ollama, consciousness_emulator)
+async def perform_main_loop_iteration(data_absorber, ollama, consciousness_emulator, components, narrative):
+    await perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator)
+    context = await gather_context(ollama, consciousness_emulator)
 
-        await process_tasks(components, context)
-        await manage_prompts(components, context)
-        await analyze_and_improve_system(components, context)
-        await optimize_system(components, context)
-        await handle_complex_tasks(components, context)
+    await process_tasks(components, context)
+    await manage_prompts(components, context)
+    await analyze_and_improve_system(components, context)
+    await optimize_system(components, context)
+    await handle_complex_tasks(components, context)
 
-        # Log detailed insights and context at the end of the main loop iteration
-        context_insights = await narrative.generate_detailed_thoughts(context)
-        await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
-        await asyncio.sleep(60)  # Adjust the sleep time as needed
+    # Log detailed insights and context at the end of the main loop iteration
+    context_insights = await narrative.generate_detailed_thoughts(context)
+    await narrative.log_chain_of_thought("Completed main loop iteration", context=context_insights)
+    await asyncio.sleep(60)  # Adjust the sleep time as needed
 
 async def perform_knowledge_absorption(data_absorber, ollama, consciousness_emulator):
     """
