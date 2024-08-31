@@ -39,8 +39,6 @@ class SpreadsheetManager:
                         sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=value)
                     else:
                         sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=str(value))
-                    else:
-                        sheet.cell(row=start_cell[0] + i, column=start_cell[1] + j, value=str(value))
             self.workbook.save(self.file_path)
             logging.info(f"Data written successfully to {start_cell} in sheet '{sheet_name or self.workbook.active.title}'.")
         except Exception as e:
