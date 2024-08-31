@@ -447,7 +447,7 @@ async def main():
             logger.info(f"Generated Thoughts: {thoughts}")
 
             # Generate Tasks
-            tasks = await ollama.query_ollama("task_generation", "Generate tasks to improve the system.", context=thoughts)
+            tasks = await ollama.query_ollama("task_generation", "Generate tasks to improve the system as an automated software assistant.", context=thoughts)
             logger.info(f"Generated Tasks: {tasks}")
 
             # Complete Tasks
