@@ -444,8 +444,16 @@ async def main():
             system_state = await ollama.evaluate_system_state({})
             logger.info(f"System State: {system_state}")
 
+            # Perform Knowledge Absorption
+            await data_absorber.absorb_knowledge()
+            logger.info("Knowledge absorption completed.")
+
+            # Gather Context
+            context = await gather_context(ollama, consciousness_emulator)
+            logger.info(f"Gathered Context: {context}")
+
             # Generate Thoughts
-            thoughts = await consciousness_emulator.emulate_consciousness(system_state)
+            thoughts = await consciousness_emulator.emulate_consciousness(context)
             logger.info(f"Generated Thoughts: {thoughts}")
 
             # Generate Tasks
