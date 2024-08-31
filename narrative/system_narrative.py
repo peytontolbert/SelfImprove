@@ -1349,7 +1349,10 @@ class OmniscientDataAbsorber:
         })
         short_term_goals = await self.ollama.query_ollama("goal_setting", "Define short-term goals for incremental improvement.", context={"system_state": system_state})
         self.logger.info(f"Short-term goals: {short_term_goals}")
-        await self.knowledge_base.add_entry("short_term_goals", short_term_goals)
+        if short_term_goals is not None:
+            await self.knowledge_base.add_entry("short_term_goals", short_term_goals)
+        else:
+            self.logger.warning("short_term_goals is None, skipping add_entry.")
 
         # Evaluate progress towards short-term goals
         progress_evaluation = await self.ollama.query_ollama("progress_evaluation", "Evaluate progress towards short-term goals.", context={"system_state": system_state, "short_term_goals": short_term_goals})
