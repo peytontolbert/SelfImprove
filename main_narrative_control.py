@@ -382,37 +382,24 @@ class SystemManager:
                 self.scale_down(component_name)
 
 async def initialize_components():
-    ollama = OllamaInterface()
-    kb = KnowledgeBase(ollama_interface=ollama)
-    improvement_manager = ImprovementManager(ollama)
-    omniscient_data_absorber = OmniscientDataAbsorber(knowledge_base=kb, ollama_interface=ollama)
-    consciousness_emulator = ConsciousnessEmulator(ollama)
-    si = SelfImprovement(ollama, kb, improvement_manager, consciousness_emulator)
-    systemnarrative = SystemNarrative(ollama_interface=ollama, knowledge_base=kb, data_absorber=omniscient_data_absorber, si=si)
-    si.system_narrative = systemnarrative
-    components = SystemManager({
-        "consciousness_emulator": consciousness_emulator,
-        "ollama": ollama,
-        "rl_module": ReinforcementLearningModule(ollama),
-        "task_queue": TaskQueue(ollama),
-        "vcs": VersionControlSystem(),
-        "ca": CodeAnalysis(),
-        "tf": TestingFramework(),
-        "dm": DeploymentManager(),
-        "kb": kb,
-        "omniscient_data_absorber": omniscient_data_absorber,
-        "narrative": systemnarrative,
-        "improvement_manager": improvement_manager,
-        "si": si,
-        "fs": FileSystem(),
-        "pm": PromptManager(),
-        "eh": ErrorHandler(),
-        "tutorial_manager": TutorialManager(),
-        "meta_learner": MetaLearner(ollama, kb),
-        "quantum_optimizer": QuantumOptimizer(ollama),
-        "swarm_intelligence": SwarmIntelligence(ollama),
-        "hyperloop_optimizer": HyperloopOptimizer(),
-    })
+    components = {}
+    component_names = [
+        "OllamaInterface", "KnowledgeBase", "ImprovementManager", "OmniscientDataAbsorber",
+        "ConsciousnessEmulator", "SelfImprovement", "SystemNarrative", "ReinforcementLearningModule",
+        "TaskQueue", "VersionControlSystem", "CodeAnalysis", "TestingFramework", "DeploymentManager",
+        "FileSystem", "PromptManager", "ErrorHandler", "TutorialManager", "MetaLearner",
+        "QuantumOptimizer", "SwarmIntelligence", "HyperloopOptimizer"
+    ]
+
+    for component_name in component_names:
+        process = await asyncio.create_subprocess_exec(
+            "python", "-m", component_name.lower(),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        components[component_name] = process
+
+    return SystemManager(components)
 
     # Ensure all components are initialized
     for component_name, component in components.components.items():
