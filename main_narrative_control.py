@@ -427,24 +427,27 @@ async def initialize_components():
 
 async def main():
     components = await initialize_components()
-    system_manager = SystemManager(components)
-    ollama = components.components["ollama"]
-    narrative = components.components["system_narrative"]
-    data_absorber = components.components["omniscient_data_absorber"]
-    consciousness_emulator = components.components["consciousness_emulator"]
-    task_queue = components.components["task_queue"]
-
-    # Initialize configuration settings
-    config = load_configuration()
-    # Implement dynamic configuration updates
-    config_updates = await ollama.query_ollama("config_updates", "Suggest configuration updates based on current system state.")
-    logger.info(f"Configuration updates suggested by Ollama: {config_updates}")
-    await ollama.query_ollama("dynamic_configuration", "Update configuration settings dynamically based on current system state.")
-    logging.getLogger().setLevel(config.get("log_level", logging.INFO))
-    logger.info("System components initialized with detailed logging and context management")
-    await narrative.log_chain_of_thought("Initializing system components with detailed logging and context management.")
-    await narrative.log_chain_of_thought("Starting main narrative control process.")
-    await narrative.log_state("System components initialized successfully", "Initialization complete")
+    ollama = components["ollama"]
+    rl_module = components["reinforcement_learning_module"]
+    si = components["self_improvement"]
+    metrics = await si.get_system_metrics()
+    rl_feedback = await rl_module.get_feedback(metrics)
+    logger.info(f"Reinforcement learning feedback: {rl_feedback}")
+    task_queue = components["task_queue"]
+    vcs = components["version_control_system"]
+    ca = components["code_analysis"]
+    tf = components["testing_framework"]
+    dm = components["deployment_manager"]
+    kb = components["knowledge_base"]
+    narrative = components["system_narrative"]
+    fs = components["file_system"]
+    pm = components["prompt_manager"]
+    eh = components["error_handler"]
+    tutorial_manager = components["tutorial_manager"]
+    meta_learner = components["meta_learner"]
+    quantum_optimizer = components["quantum_optimizer"]
+    swarm_intelligence = components["swarm_intelligence"]
+    await ollama.__aenter__()  # Ensure OllamaInterface is fully initialized
 
 async def handle_main_loop_error(e, components):
     logger.exception("An error occurred in the main loop", exc_info=e)
