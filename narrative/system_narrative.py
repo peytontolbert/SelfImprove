@@ -201,7 +201,7 @@ class SystemNarrative:
             self.logger.error(f"Error during log state operation: {str(e)}")
         # Initialize system_state and other required variables
         improvement_cycle_count = 0
-        performance_metrics = self.si.get_system_metrics()
+        performance_metrics = await self.si.get_system_metrics()
         recent_changes = await self.knowledge_base.get_entry("recent_changes")
         feedback_data = await self.knowledge_base.get_entry("user_feedback")
         system_state = await self.ollama.evaluate_system_state({
@@ -497,6 +497,40 @@ class {component_name}:
         goal_adjustments = await ollama.query_ollama("goal_setting", f"Adjust current goals based on system performance: {system_state}", context={"current_goals": current_goals})
         self.logger.info(f"Goal adjustments: {goal_adjustments}")
         await self.knowledge_base.add_entry("goal_adjustments", goal_adjustments)
+
+    async def generate_thoughts(self, context=None):
+        """Generate detailed thoughts or insights about the current state and tasks."""
+        try:
+            longterm_memory = context.get("longterm_memory", await self.knowledge_base.get_longterm_memory())
+            self.logger.info(f"Using long-term memory: {json.dumps(longterm_memory, indent=2)}")
+            context = context or {}
+            context.update({
+                "longterm_memory": longterm_memory,
+                "current_tasks": "List of current tasks",
+                "system_status": "Current system status"
+            })
+            prompt = "Generate detailed thoughts about the current system state, tasks, and potential improvements."
+            if context:
+                prompt += f" | Context: {context}"
+            self.logger.info(f"Generated thoughts with context: {json.dumps(context, indent=2)}")
+            await self.knowledge_base.log_interaction("OmniscientDataAbsorber", "generate_thoughts", {"context": context}, improvement="Generated thoughts")
+            self.track_request("thought_generation", prompt, "thoughts")
+            ollama_response = await self.ollama.query_ollama(self.ollama.system_prompt, prompt, task="thought_generation", context=context)
+            thoughts = ollama_response.get('thoughts', 'No thoughts generated')
+            self.logger.info(f"Ollama Detailed Thoughts: {thoughts}", extra={"thoughts": thoughts})
+            # Update long-term memory with generated thoughts
+            if thoughts != 'No thoughts generated':
+                longterm_memory.update({"thoughts": thoughts})
+            else:
+                self.logger.warning("No new thoughts generated to update long-term memory.")
+            await self.knowledge_base.save_longterm_memory(longterm_memory)
+            # Log thoughts to spreadsheet
+            self.spreadsheet_manager.write_data((1, 1), [["Thoughts"], [thoughts]], sheet_name="NarrativeData")
+            return thoughts
+        except Exception as e:
+            self.logger.error(f"Error generating thoughts: {e}")
+            return "Error generating thoughts"
+
 
     async def improvement_cycle(self, ollama, si, kb, task_queue, vcs, ca, tf, dm, fs, pm, eh, improvement_cycle_count):
         await self.log_state(f"Starting improvement cycle {improvement_cycle_count}", "Improvement cycle initiation")
@@ -904,6 +938,33 @@ class {component_name}:
         objectives = ["Optimize performance", "Enhance user experience"]
         await self.temporal_engine.temporal_loop(objectives, context={"system_state": "current"})
         return recovery_actions
+    
+
+    
+    async def log_state(self, message, thought_process="Default thought process", context=None):
+        context = context or {}
+        # Extract relevant elements from the context
+        relevant_context = {
+            "system_status": context.get("system_status", "Current system status"),
+            "recent_changes": context.get("recent_changes", "Recent changes in the system"),
+            "longterm_memory": context.get("longterm_memory", {}).get("thoughts", {}),
+            "current_tasks": context.get("current_tasks", "List of current tasks"),
+            "performance_metrics": context.get("performance_metrics", {}).get("overall_assessment", {}),
+            "user_feedback": context.get("user_feedback", "No user feedback available"),
+            "environmental_factors": context.get("environmental_factors", "No environmental factors available")
+        }
+        try:
+            self.logger.info(f"System State: {message} | Context: {json.dumps(relevant_context, indent=2)} | Timestamp: {time.time()}")
+            self.spreadsheet_manager.write_data((5, 1), [["State"], [message]], sheet_name="SystemData")
+            await log_with_ollama(self.ollama, message, relevant_context)
+            await self.generate_thoughts(relevant_context)
+            self.track_request("feedback_analysis", f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", "feedback")
+            feedback = await self.ollama.query_ollama(self.ollama.system_prompt, f"Analyze feedback for the current state: {message}. Consider system performance, recent changes, and long-term memory.", task="feedback_analysis", context=relevant_context)
+            self.logger.info(f"Feedback analysis: {feedback}")
+        except Exception as e:
+            self.logger.error(f"Error during log state operation: {str(e)}", exc_info=True)
+            await self.suggest_recovery_strategy(e)
+
 
 class QuantumPredictiveAnalyzer:
     def __init__(self, ollama_interface: OllamaInterface):
