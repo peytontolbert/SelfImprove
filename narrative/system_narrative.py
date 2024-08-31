@@ -385,33 +385,18 @@ class SystemNarrative:
         await self.execute_actions(prioritized_actions["prioritized_actions"])
 
     async def notify_admin(self, message):
-        """Notify administrators about critical issues."""
-        import smtplib
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
-
+        """Notify administrators about critical issues by creating a JSON file."""
         try:
             self.logger.critical(f"Notifying administrators: {message}")
-            # Set up the server and login details
-            smtp_server = "smtp.example.com"
-            smtp_port = 587
-            smtp_user = "your_email@example.com"
-            smtp_password = "your_password"
-
-            # Create the email
-            msg = MIMEMultipart()
-            msg['From'] = smtp_user
-            msg['To'] = "admin@example.com"
-            msg['Subject'] = "Critical Issue Notification"
-            msg.attach(MIMEText(message, 'plain'))
-
-            # Send the email
-            with smtplib.SMTP(smtp_server, smtp_port) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_password)
-                server.send_message(msg)
-
-            self.logger.info("Administrators notified successfully.")
+            notification = {
+                "subject": "Critical Issue Notification",
+                "message": message,
+                "timestamp": time.time()
+            }
+            # Write the notification to a JSON file
+            with open("admin_notification.json", "w") as json_file:
+                json.dump(notification, json_file, indent=2)
+            self.logger.info("Administrators notified successfully via JSON file.")
         except Exception as e:
             self.logger.error(f"Failed to notify administrators: {e}")
 
