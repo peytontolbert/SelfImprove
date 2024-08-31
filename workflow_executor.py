@@ -42,8 +42,19 @@ class WorkflowExecutor:
 
     async def research_and_plan(self):
         self.logger.info("Conducting research and planning.")
-        research_insights = await self.ollama.query_ollama("research", "Conduct research on similar projects.")
+        # Use a local database or predefined dataset for research insights
+        research_insights = self.get_local_research_insights()
         self.logger.info(f"Research insights: {research_insights}")
+
+    def get_local_research_insights(self):
+        # Placeholder for local research logic
+        # This could involve querying a local database or using a predefined dataset
+        return {
+            "insights": [
+                "Insight 1: Example of a similar project approach.",
+                "Insight 2: Key challenges and solutions from past projects."
+            ]
+        }
 
     async def setup_development_environment(self):
         self.logger.info("Setting up development environment.")
