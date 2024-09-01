@@ -385,26 +385,29 @@ class SystemManager:
 async def initialize_components():
     components = {}
     components["ollama"] = OllamaInterface()
-    components["knowledge_base"] = KnowledgeBase()
-    components["improvement_manager"] = ImprovementManager(components["ollama"])
-    components["omniscient_data_absorber"] = OmniscientDataAbsorber(components["knowledge_base"], components["ollama"])
-    components["consciousness_emulator"] = ConsciousnessEmulator(components["ollama"])
-    components["self_improvement"] = SelfImprovement(components["ollama"], components["knowledge_base"], components["improvement_manager"], components["consciousness_emulator"])
-    components["system_narrative"] = SystemNarrative(components["ollama"], components["knowledge_base"], components["omniscient_data_absorber"], components["self_improvement"])
-    components["reinforcement_learning_module"] = ReinforcementLearningModule(components["ollama"])
-    components["task_queue"] = TaskQueue(components["ollama"])
-    components["version_control_system"] = VersionControlSystem()
-    components["code_analysis"] = CodeAnalysis()
-    components["testing_framework"] = TestingFramework()
-    components["deployment_manager"] = DeploymentManager()
-    components["file_system"] = FileSystem()
-    components["prompt_manager"] = PromptManager()
-    components["error_handler"] = ErrorHandler()
-    components["tutorial_manager"] = TutorialManager()
-    components["meta_learner"] = MetaLearner(components["ollama"], components["knowledge_base"])
-    components["quantum_optimizer"] = QuantumOptimizer(components["ollama"])
-    components["swarm_intelligence"] = SwarmIntelligence(components["ollama"])
-    components["hyperloop_optimizer"] = HyperloopOptimizer()
+    components = {
+        "ollama": OllamaInterface(),
+        "knowledge_base": KnowledgeBase(),
+        "improvement_manager": ImprovementManager(components["ollama"]),
+        "omniscient_data_absorber": OmniscientDataAbsorber(components["knowledge_base"], components["ollama"]),
+        "consciousness_emulator": ConsciousnessEmulator(components["ollama"]),
+        "self_improvement": SelfImprovement(components["ollama"], components["knowledge_base"], components["improvement_manager"], components["consciousness_emulator"]),
+        "system_narrative": SystemNarrative(components["ollama"], components["knowledge_base"], components["omniscient_data_absorber"], components["self_improvement"]),
+        "reinforcement_learning_module": ReinforcementLearningModule(components["ollama"]),
+        "task_queue": TaskQueue(components["ollama"]),
+        "version_control_system": VersionControlSystem(),
+        "code_analysis": CodeAnalysis(),
+        "testing_framework": TestingFramework(),
+        "deployment_manager": DeploymentManager(),
+        "file_system": FileSystem(),
+        "prompt_manager": PromptManager(),
+        "error_handler": ErrorHandler(),
+        "tutorial_manager": TutorialManager(),
+        "meta_learner": MetaLearner(components["ollama"], components["knowledge_base"]),
+        "quantum_optimizer": QuantumOptimizer(components["ollama"]),
+        "swarm_intelligence": SwarmIntelligence(components["ollama"]),
+        "hyperloop_optimizer": HyperloopOptimizer()
+    }
 
     return SystemManager(components)
 
@@ -432,7 +435,7 @@ async def main():
     except Exception as e:
         await handle_main_loop_error(e, components)
     finally:
-        await components["ollama"].__aexit__(None, None, None)  # Ensure cleanup
+        await components.components["ollama"].__aexit__(None, None, None)  # Ensure cleanup
 
 async def handle_main_loop_error(e, components):
     logger.exception("An error occurred in the main loop", exc_info=e)
@@ -449,10 +452,10 @@ async def perform_main_loop_iteration(components):
     logger.info("Starting main loop iteration")
     try:
         # Absorb knowledge and update consciousness
-        data_absorber = components["omniscient_data_absorber"]
-        ollama = components["ollama"]
-        consciousness_emulator = components["consciousness_emulator"]
-        narrative = components["system_narrative"]
+        data_absorber = components.components["omniscient_data_absorber"]
+        ollama = components.components["ollama"]
+        consciousness_emulator = components.components["consciousness_emulator"]
+        narrative = components.components["system_narrative"]
 
         await data_absorber.absorb_knowledge()
         context = await ollama.evaluate_system_state({})
@@ -461,7 +464,7 @@ async def perform_main_loop_iteration(components):
         # Generate tasks based on consciousness insights
         tasks = consciousness_result.get("prioritized_actions", [])
         for task in tasks:
-            await components["task_queue"].add_task(task)
+            await components.components["task_queue"].add_task(task)
 
         # Process tasks and manage system improvements
         await process_tasks(components, context)
@@ -534,8 +537,8 @@ async def system_initialization(system_manager, ollama, narrative):
     await narrative.log_state("System components initialized successfully", "Initialization complete")
 
 async def process_tasks(components, context):
-    ollama = components["ollama"]
-    task_queue = components["task_queue"]
+    ollama = components.components["ollama"]
+    task_queue = components.components["task_queue"]
     spreadsheet_manager = SpreadsheetManager("system_data.xlsx")
     
     tasks_data = spreadsheet_manager.read_data("A1:B10", sheet_name="Tasks")
