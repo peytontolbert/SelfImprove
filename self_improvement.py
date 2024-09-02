@@ -101,7 +101,7 @@ class SelfImprovement:
         results = await self.improvement_manager.apply_improvements(improvements)
         return results
 
-    def get_system_metrics(self):
+    async def get_system_metrics(self):
         """
         Retrieve current system metrics.
 
