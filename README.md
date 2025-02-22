@@ -27,7 +27,7 @@ This project is an ambitious attempt to create a fully automated end-to-end soft
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/ollama-dev-system.git
+   git clone https://github.com/peytontolbert/ollama-dev-system.git
    cd ollama-dev-system
    ```
 
